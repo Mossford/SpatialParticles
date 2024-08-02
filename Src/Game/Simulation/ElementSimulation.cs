@@ -76,7 +76,7 @@ namespace SpatialGame
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
             }
 
-            //DebugSimulation.Init();
+            DebugSimulation.Init();
 
             Input.input.Mice[0].MouseDown += MouseDown;
             Input.input.Mice[0].MouseUp += MouseUp;
@@ -94,7 +94,7 @@ namespace SpatialGame
                     PixelColorer.pixelColors[PixelColorer.PosToIndex(elements[i].position)] = new Vector4(elements[i].color / new Vector3(255f, 255f, 255f), 1.0f);
             }
 
-            //DebugSimulation.Update();
+            DebugSimulation.Update();
             CreateSphere();
         }
 
@@ -117,7 +117,7 @@ namespace SpatialGame
             if (mousePressed == false)
                 return;
 
-            Vector2 position = Input.input.Mice[0].Position;
+            Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (Input.input.Mice[0].Position / (Vector2)Globals.window.Size);
 
             for (int x = (int)position.X - 10; x < position.X + 10; x++)
             {
@@ -141,6 +141,7 @@ namespace SpatialGame
                     }
                 }
             }
+            mousePressed = false;
         }
     }
 }

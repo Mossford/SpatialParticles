@@ -50,7 +50,7 @@ namespace SpatialEngine
 
         public static bool showWireFrame = false;
         //going to be true because my gpu squeals if vsync is off
-        public static bool vsync = true;
+        public static bool vsync = false;
         public static uint vertCount;
         public static uint indCount;
 
@@ -58,6 +58,7 @@ namespace SpatialEngine
 
         public static uint DrawCallCount = 0;
         public static float totalTime = 0.0f;
+        public static float deltaTime = 0.0f;
 
         /// <summary>
         /// In Seconds
@@ -65,6 +66,7 @@ namespace SpatialEngine
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GetTime() => totalTime;
+        public static float GetDeltaTime() => deltaTime;
     }
 
     public class Game
@@ -193,6 +195,7 @@ namespace SpatialEngine
         static void OnUpdate(double dt)
         {
             totalTime += (float)dt;
+            deltaTime = (float)dt;
             
             Input.Update();
 

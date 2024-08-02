@@ -1,10 +1,12 @@
-﻿using System;
+﻿using SpatialEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SpatialGame
 {
@@ -50,19 +52,53 @@ namespace SpatialGame
         public void MoveElement(int type, float deltaTime)
         {
             //find new position
-            Vector2 posMove = position + (velocity / deltaTime);
+            Vector2 posMove = position + (velocity * deltaTime);
             //do line algorithim
 
             Vector2 dir = Vector2.Normalize(posMove - position);
 
-            for (int x = (int)position.X; x < posMove.X; x++)
+            int matrixX1 = (int)position.X;
+            int matrixY1 = (int)position.Y;
+            int matrixX2 = (int)posMove.X;
+            int matrixY2 = (int)posMove.Y;
+
+            int xDir = matrixX1 - matrixX2;
+            int yDir = matrixY1 + matrixY2;
+            bool xDirIsLarger = Math.Abs(xDir) > Math.Abs(yDir);
+
+            int xModifier = xDir < 0 ? 1 : -1;
+            int yModifier = yDir < 0 ? -1 : 1;
+
+            int longerSideLength = Math.Max(Math.Abs(xDir), Math.Abs(yDir));
+            int shorterSideLength = Math.Min(Math.Abs(xDir), Math.Abs(yDir));
+            float slope = (shorterSideLength == 0 || longerSideLength == 0) ? 0 : ((float)(shorterSideLength) / (longerSideLength));
+
+            int shorterSideIncrease;
+            for (int i = 1; i <= longerSideLength; i++)
             {
-                int id = ElementSimulation.idCheck[PixelColorer.PosToIndex(position + dir)];
-                if (id == 0)
+                shorterSideIncrease = (int)Math.Round(i * slope);
+                int yIncrease, xIncrease;
+                if (xDirIsLarger)
+                {
+                    xIncrease = i;
+                    yIncrease = shorterSideIncrease;
+                }
+                else
+                {
+                    yIncrease = i;
+                    xIncrease = shorterSideIncrease;
+                }
+                int currentY = matrixY1 + (yIncrease * yModifier);
+                int currentX = matrixX1 + (xIncrease * xModifier);
+
+                Vector2 pos = new Vector2(currentX, currentY);
+
+                int idBefore = ElementSimulation.idCheck[PixelColorer.PosToIndex(pos)];
+                if (idBefore == 0)
                 {
                     ElementSimulation.positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 0;
                     ElementSimulation.idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 0;
-                    position += dir;
+                    position = pos;
                     ElementSimulation.positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = type;
                     ElementSimulation.idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = id;
                 }
@@ -120,17 +156,14 @@ namespace SpatialGame
                 return;
             }
 
+            velocity = new Vector2(0, 0.01f);
+
             //if there is air under the solid
 
-            /*bool grounded = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] == 0;
+            bool grounded = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] == 0;
             if (grounded)
             {
-                positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 0;
-                idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 0;
-
-                positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] = 1;
-                idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] = id;
-                elements[id].position = new Vector2(position.X, position.Y + 1);
+                MoveElement(1, Globals.GetDeltaTime());
                 return;
             }
             bool LUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y + 1))] == 0;
@@ -154,10 +187,7 @@ namespace SpatialGame
                 idCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y + 1))] = id;
                 elements[id].position = new Vector2(position.X + 1, position.Y + 1);
                 return;
-            }*/
-            velocity = new Vector2(0, 1);
-
-            MoveElement(1, 1.0f / 60.0f);
+            }
         }
 
         public override int GetElementType()
@@ -186,11 +216,7 @@ namespace SpatialGame
             bool ground = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] == 0;
             if (ground)
             {
-                positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 0;
-                idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 0;
-                position += new Vector2(0, 1f);
-                positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = 2;
-                idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = id;
+                MoveElement(2, Globals.GetDeltaTime());
                 return;
             }
             bool LUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y + 1))] == 0 && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y))] == 0;
