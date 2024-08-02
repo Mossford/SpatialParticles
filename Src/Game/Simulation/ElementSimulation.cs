@@ -69,13 +69,13 @@ namespace SpatialGame
             //get the id at the position
             int id = idCheck[PixelColorer.PosToIndex(position)];
             //check if a element exsists at the position
-            if (id == -1)
+            if (id == 0)
                 return;
 
             //set its position to nothing
-            positionCheck[PixelColorer.PosToIndex(position)] = 0;
+            positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
             //set its id at its position to nothing
-            idCheck[PixelColorer.PosToIndex(position)] = -1;
+            idCheck[PixelColorer.PosToIndex(position)] = 0;
             //delete it from the array
             elements.RemoveAt(id);
         }

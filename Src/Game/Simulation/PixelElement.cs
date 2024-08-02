@@ -113,10 +113,10 @@ namespace SpatialGame
                 Vector2 pos = new Vector2(currentX, currentY);
 
                 int idAfter = ElementSimulation.idCheck[PixelColorer.PosToIndex(pos)];
-                if (idAfter == -1)
+                if (idAfter == 0)
                 {
                     ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                    ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = -1;
+                    ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = 0;
                     position = pos;
                     ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = type.ToUshort();
                     ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -129,7 +129,7 @@ namespace SpatialGame
         public void MoveElementOne(Vector2 dir, ElementType type)
         {
             ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = type.ToUshort();
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = -1;
+            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = 0;
             position += dir;
             ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = GetElementType().ToUshort();
             ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -140,7 +140,7 @@ namespace SpatialGame
             //set its position to nothing
             ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
             //set its id at its position to nothing
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = -1;
+            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = 0;
             //delete it from the array
             ElementSimulation.elements.RemoveAt(id);
         }
@@ -200,7 +200,7 @@ namespace SpatialGame
             if (grounded)
             {
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(0, 1);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.solid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -211,7 +211,7 @@ namespace SpatialGame
             if (LUnder && num == 0)
             {
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(-1, 1);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.solid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -221,7 +221,7 @@ namespace SpatialGame
             if (RUnder && num == 1)
             {
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(1, 1);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.solid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -256,7 +256,7 @@ namespace SpatialGame
             if (ground)
             {
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(0, 1);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -268,7 +268,7 @@ namespace SpatialGame
             if (!ground && LUnder && num == 0)
             {
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(-1, 1);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -279,7 +279,7 @@ namespace SpatialGame
             if (!ground && RUnder && num == 1)
             {
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(1, 1);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -302,7 +302,7 @@ namespace SpatialGame
                     }
                 }
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(-count, 0);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
@@ -325,7 +325,7 @@ namespace SpatialGame
                     }
                 }
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
+                idCheck[PixelColorer.PosToIndex(position)] = 0;
                 position += new Vector2(count, 0);
                 positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToUshort();
                 idCheck[PixelColorer.PosToIndex(position)] = id;
