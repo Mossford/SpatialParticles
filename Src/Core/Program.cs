@@ -266,7 +266,7 @@ namespace SpatialEngine
 
             UiRenderer.Draw();
 
-            Renderer.Draw(scene, ref shader, player.camera.viewMat, player.camera.projMat, player.camera.position);
+            //Renderer.Draw(scene, ref shader, player.camera.viewMat, player.camera.projMat, player.camera.position);
 
             //render players
             if(NetworkManager.didInit && !NetworkManager.isServer)

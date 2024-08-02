@@ -14,13 +14,29 @@ using Shader = SpatialEngine.Rendering.Shader;
 
 namespace SpatialGame
 {
+    public struct Vector4Byte
+    {
+        public byte x;
+        public byte y;
+        public byte z;
+        public byte w;
+
+        public Vector4Byte(byte x, byte y, byte z, byte w)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
+        }
+    }
+
     public static class PixelColorer
     {
-        public static Vector4[] pixelColors;
+        public static Vector4Byte[] pixelColors;
         public static int width = 1920;
         public static int height = 1080;
         public static UiQuad quad;
-        public static BufferObject<Vector4> pixelBuffer;
+        public static BufferObject<Vector4Byte> pixelBuffer;
         public static Shader shader;
         public static Matrix4x4 mat;
 
@@ -29,7 +45,7 @@ namespace SpatialGame
             quad = new UiQuad();
             quad.Bind();
             shader = new Shader(Globals.gl, "PixelColorer.vert", "PixelColorer.frag");
-            pixelColors = new Vector4[width * height];
+            pixelColors = new Vector4Byte[width * height];
             mat = Matrix4x4.Identity;
             mat *= Matrix4x4.CreateScale(width, height, 1f);
             mat *= Matrix4x4.CreateOrthographic(width, height, -1, 1);
@@ -38,11 +54,11 @@ namespace SpatialGame
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    pixelColors[index] = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+                    pixelColors[index] = new Vector4Byte(51, 51, 51, 255);
                 }
             }
 
-            pixelBuffer = new BufferObject<Vector4>(pixelColors, 4, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
+            pixelBuffer = new BufferObject<Vector4Byte>(pixelColors, 4, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
         }
 
         public static unsafe void Update()
@@ -65,7 +81,7 @@ namespace SpatialGame
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    pixelColors[index] = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+                    pixelColors[index] = new Vector4Byte(51, 51, 51, 255);
                 }
             }
         }
@@ -78,10 +94,10 @@ namespace SpatialGame
             return 0;
         }
 
-        public static void SetColorAtPos(Vector2 pos, float r, float g, float b)
+        public static void SetColorAtPos(Vector2 pos, byte r, byte g, byte b)
         {
             int index = PosToIndex(pos);
-            pixelColors[index] = new Vector4(r / 255, g / 255, b / 255, 1.0f);
+            pixelColors[index] = new Vector4Byte(r,g,b,255);
         }
 
         public static Vector2 IndexToPos(int index)

@@ -50,9 +50,9 @@ namespace SpatialGame
             int currentId = 0;
             for (int i = 0; i < ElementSimulation.elements.Count; i++)
             {
-                if(currentId != ElementSimulation.elements[i].GetElementType().ToUshort())
+                if(currentId != ElementSimulation.elements[i].GetElementType().ToByte())
                 {
-                    currentId = ElementSimulation.elements[i].GetElementType().ToUshort();
+                    currentId = ElementSimulation.elements[i].GetElementType().ToByte();
                     if(!currentElementCount.TryAdd(currentId, 0))
                     {
                         //we hit a error where it tried to add a key that is there

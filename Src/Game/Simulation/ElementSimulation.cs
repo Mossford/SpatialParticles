@@ -17,7 +17,7 @@ namespace SpatialGame
         /// 3 is movable gas at position,
         /// 100 is a unmovable at position
         /// </summary>
-        public static ushort[] positionCheck;
+        public static byte[] positionCheck;
         /// <summary>
         /// the ids of the elements at their position
         /// </summary>
@@ -28,7 +28,7 @@ namespace SpatialGame
 
         public static void InitPixelSim()
         {
-            positionCheck = new ushort[PixelColorer.width * PixelColorer.height];
+            positionCheck = new byte[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
             for (int i = 0; i < 1920; i++)
             {
@@ -40,7 +40,7 @@ namespace SpatialGame
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
             }
 
-            DebugSimulation.Init();
+            //DebugSimulation.Init();
 
             Input.input.Mice[0].MouseDown += MouseDown;
             Input.input.Mice[0].MouseUp += MouseUp;
@@ -52,16 +52,16 @@ namespace SpatialGame
             {
                 //reset the color to background from where they were and will be overwritten if they dont move
                 if (!elements[i].BoundsCheck(0, 0, PixelColorer.width, PixelColorer.height))
-                    PixelColorer.pixelColors[PixelColorer.PosToIndex(elements[i].position)] = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+                    PixelColorer.SetColorAtPos(elements[i].position, 51, 51, 51);
                 elements[i].Update(ref elements, ref positionCheck, ref idCheck);
                 if (!elements[i].BoundsCheck(0, 0, PixelColorer.width, PixelColorer.height))
-                    PixelColorer.pixelColors[PixelColorer.PosToIndex(elements[i].position)] = new Vector4(elements[i].color / new Vector3(255f, 255f, 255f), 1.0f);
+                    PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
             }
 
             CreateSphere();
 
 
-            DebugSimulation.Update();
+            //DebugSimulation.Update();
         }
 
         public static void DeleteElement(Vector2 position)
@@ -73,7 +73,7 @@ namespace SpatialGame
                 return;
 
             //set its position to nothing
-            positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToUshort();
+            positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
             //set its id at its position to nothing
             idCheck[PixelColorer.PosToIndex(position)] = 0;
             //delete it from the array
