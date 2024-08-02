@@ -32,6 +32,7 @@ namespace SpatialGame
 
             foreach (var value in beforeElementCount)
             {
+                //put in imgui
                 Console.WriteLine("Element " + value.Key + " has " + value.Value);
                 if (currentElementCount[value.Key] < value.Value)
                 {
@@ -49,19 +50,30 @@ namespace SpatialGame
             int currentId = 0;
             for (int i = 0; i < ElementSimulation.elements.Count; i++)
             {
-                if(currentId != ElementSimulation.elements[i].GetElementType())
+                if(currentId != ElementSimulation.elements[i].GetElementType().ToUshort())
                 {
-                    currentId = ElementSimulation.elements[i].GetElementType();
-                    currentElementCount.Add(currentId, 0);
+                    currentId = ElementSimulation.elements[i].GetElementType().ToUshort();
+                    if(!currentElementCount.TryAdd(currentId, 0))
+                    {
+                        //we hit a error where it tried to add a key that is there
+                        //but should not because its cleared but it still crashes sometimes
+                        //so this is the fix
+                        currentElementCount.Clear();
+                        return;
+                    }
                 }
             }
 
             for (int i = 0; i < ElementSimulation.positionCheck.Length; i++)
             {
                 int type = ElementSimulation.positionCheck[i];
-                if(currentElementCount.ContainsKey(type))
+                if (type == 0)
+                    continue;
+                if(currentElementCount.TryGetValue(type, out int value))
                 {
-                    currentElementCount[type]++;
+                    //moving the add like value++ does not add one to it for some reason
+                    //possible c# bug?
+                    currentElementCount[type] = ++value;
                 }
             }
         }

@@ -66,6 +66,7 @@ namespace SpatialEngine
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GetTime() => totalTime;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GetDeltaTime() => deltaTime;
     }
 

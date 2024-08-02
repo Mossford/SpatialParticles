@@ -33,11 +33,11 @@ namespace SpatialGame
             mat = Matrix4x4.Identity;
             mat *= Matrix4x4.CreateScale(width, height, 1f);
             mat *= Matrix4x4.CreateOrthographic(width, height, -1, 1);
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
-                for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    int index = x * height + y;
+                    int index = y * width + x;
                     pixelColors[index] = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
                 }
             }
@@ -60,11 +60,11 @@ namespace SpatialGame
 
         public static void ResetBackground()
         {
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
-                for (int y = 0; y < height; y++)
+                for (int x = 0; x < width; x++)
                 {
-                    int index = x * height + y;
+                    int index = y * width + x;
                     pixelColors[index] = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
                 }
             }

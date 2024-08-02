@@ -10,16 +10,16 @@ namespace SpatialGame
     {
         public static List<Element> elements = new List<Element>();
         /// <summary>
+        /// the type of the element at its position
         /// 0 is no pixel at position,
         /// 1 is movable solid at position,
         /// 2 is movable liquid at position,
         /// 3 is movable gas at position,
         /// 100 is a unmovable at position
         /// </summary>
-        public static int[] positionCheck;
+        public static ushort[] positionCheck;
         /// <summary>
-        /// Holds an element id with position tied at index,
-        /// for getting a element from index by id
+        /// the ids of the elements at their position
         /// </summary>
         public static int[] idCheck;
 
@@ -28,7 +28,7 @@ namespace SpatialGame
 
         public static void InitPixelSim()
         {
-            positionCheck = new int[PixelColorer.width * PixelColorer.height];
+            positionCheck = new ushort[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
             for (int i = 0; i < 1920; i++)
             {
@@ -37,42 +37,6 @@ namespace SpatialGame
                 elements[id].id = id;
                 elements[id].position = new Vector2(i, 600);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }
-            for (int i = 0; i < 10000; i++)
-            {
-                int id = elements.Count;
-                elements.Add(new WaterPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(850, 10);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 2;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }
-            for (int i = 0; i < 1000; i++)
-            {
-                int id = elements.Count;
-                elements.Add(new SandPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(850, 400);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 2;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }
-            for (int i = 0; i < 1000; i++)
-            {
-                int id = elements.Count;
-                elements.Add(new SandPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(450, 10);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 2;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }
-            for (int i = 0; i < 1000; i++)
-            {
-                int id = elements.Count;
-                elements.Add(new SandPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(1250, 10);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 2;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
             }
 
@@ -94,8 +58,26 @@ namespace SpatialGame
                     PixelColorer.pixelColors[PixelColorer.PosToIndex(elements[i].position)] = new Vector4(elements[i].color / new Vector3(255f, 255f, 255f), 1.0f);
             }
 
-            DebugSimulation.Update();
             CreateSphere();
+
+
+            DebugSimulation.Update();
+        }
+
+        public static void DeleteElement(Vector2 position)
+        {
+            //get the id at the position
+            int id = idCheck[PixelColorer.PosToIndex(position)];
+            //check if a element exsists at the position
+            if (id == -1)
+                return;
+
+            //set its position to nothing
+            positionCheck[PixelColorer.PosToIndex(position)] = 0;
+            //set its id at its position to nothing
+            idCheck[PixelColorer.PosToIndex(position)] = -1;
+            //delete it from the array
+            elements.RemoveAt(id);
         }
 
         public static void MouseDown(IMouse mouse, MouseButton button)
@@ -126,6 +108,7 @@ namespace SpatialGame
                     float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
                     if (check < 20)
                     {
+                        DeleteElement(new Vector2(x, y));
                         int id = elements.Count;
                         if(type)
                             elements.Add(new WaterPE());
