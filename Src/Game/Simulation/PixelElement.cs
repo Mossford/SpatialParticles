@@ -291,8 +291,7 @@ namespace SpatialGame
                 int count = 0;
                 for (int i = 0; i < disp; i++)
                 {
-                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - (i + 1), position.Y))] == ElementType.empty.ToByte()
-                        && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - (i + 1), position.Y + 1))] != ElementType.empty.ToByte())
+                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - (i + 1), position.Y))] == ElementType.empty.ToByte())
                     {
                         count++;
                     }
@@ -314,8 +313,7 @@ namespace SpatialGame
                 int count = 0;
                 for (int i = 0; i < disp; i++)
                 {
-                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + (i + 1), position.Y))] == ElementType.empty.ToByte()
-                        && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + (i + 1), position.Y + 1))] != ElementType.empty.ToByte())
+                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + (i + 1), position.Y))] == ElementType.empty.ToByte())
                     {
                         count++;
                     }
