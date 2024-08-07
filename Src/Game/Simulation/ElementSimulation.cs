@@ -30,12 +30,36 @@ namespace SpatialGame
         {
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
-            for (int i = 0; i < 1920; i++)
+            for (int i = 0; i < PixelColorer.width; i++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
                 elements[id].id = id;
-                elements[id].position = new Vector2(i, 600);
+                elements[id].position = new Vector2(i, PixelColorer.height - 1);
+                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
+                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
+
+                id = elements.Count;
+                elements.Add(new WallPE());
+                elements[id].id = id;
+                elements[id].position = new Vector2(i, 0);
+                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
+                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
+            }
+
+            for (int i = 0; i < PixelColorer.height; i++)
+            {
+                int id = elements.Count;
+                elements.Add(new WallPE());
+                elements[id].id = id;
+                elements[id].position = new Vector2(0, i);
+                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
+                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
+
+                id = elements.Count;
+                elements.Add(new WallPE());
+                elements[id].id = id;
+                elements[id].position = new Vector2(PixelColorer.width - 1, i);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
             }
@@ -52,7 +76,7 @@ namespace SpatialGame
             {
                 //reset the color to background from where they were and will be overwritten if they dont move
                 if (!elements[i].BoundsCheck(0, 0, PixelColorer.width, PixelColorer.height))
-                    PixelColorer.SetColorAtPos(elements[i].position, 51, 51, 51);
+                    PixelColorer.SetColorAtPos(elements[i].position, 102, 178, 204);
                 elements[i].Update(ref elements, ref positionCheck, ref idCheck);
                 if (!elements[i].BoundsCheck(0, 0, PixelColorer.width, PixelColorer.height))
                     PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
@@ -69,15 +93,24 @@ namespace SpatialGame
             //get the id at the position
             int id = idCheck[PixelColorer.PosToIndex(position)];
             //check if a element exsists at the position
-            if (id == 0)
+            if (id == -1)
                 return;
 
             //set its position to nothing
             positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
             //set its id at its position to nothing
-            idCheck[PixelColorer.PosToIndex(position)] = 0;
+            idCheck[PixelColorer.PosToIndex(position)] = -1;
             //delete it from the array
             elements.RemoveAt(id);
+            //set the color to empty
+     PixelColorer.SetColorAtPos(position, 102, 178, 204);
+
+            for(int i = id; i < elements.Count; i++)
+            {
+                elements[i].id--;
+                idCheck[PixelColorer.PosToIndex(elements[i].position)] = elements[i].id;
+            }
+
         }
 
         public static void MouseDown(IMouse mouse, MouseButton button)
@@ -117,9 +150,9 @@ namespace SpatialGame
                         elements[id].id = id;
                         elements[id].position = new Vector2(x, y);
                         if(type)
-                            positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 2;
+                            positionCheck[PixelColorer.PosToIndex(elements[id].position)] = ElementType.liquid.ToByte();
                         else
-                            positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 1;
+                            positionCheck[PixelColorer.PosToIndex(elements[id].position)] = ElementType.solid.ToByte();
                         idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
                     }
                 }

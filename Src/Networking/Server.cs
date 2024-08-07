@@ -135,7 +135,7 @@ namespace SpatialEngine.Networking
         {
             if(stopping)
             {
-                return [];
+                return null;
             }
             return server.Clients;
         }

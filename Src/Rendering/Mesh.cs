@@ -274,8 +274,8 @@ namespace SpatialEngine.Rendering
         /// </summary>
         public void CreateCubeMesh(Vector3 position, Quaternion rotation)
         {
-            vertexes =
-            [
+            vertexes = new Vertex[]
+            {
                 new Vertex(new Vector3(-1.0f, -1.0f, 1.0f),new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-1.0f, 1.0f, 1.0f),new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-1.0f, -1.0f, -1.0f),new Vector3(0), new Vector2(0)),
@@ -284,9 +284,9 @@ namespace SpatialEngine.Rendering
                 new Vertex(new Vector3(1.0f,1.0f, 1.0f),new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(1.0f,-1.0f, -1.0f),new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(1.0f,1.0f, -1.0f),new Vector3(0), new Vector2(0))
-            ];
-            indices =
-            [
+            };
+            indices = new uint[]
+            {
                 1, 2, 0,
                 3, 6, 2,
                 7, 4, 6,
@@ -299,7 +299,7 @@ namespace SpatialEngine.Rendering
                 5, 1, 0,
                 6, 4, 0,
                 3, 1, 5
-            ];
+            };
 
             modelLocation = ((int)MeshType.CubeMesh).ToString();
             this.position = position;
@@ -316,8 +316,8 @@ namespace SpatialEngine.Rendering
             float t = 0.52573111f;
             float b = 0.850650808f;
 
-            vertexes =
-            [
+            vertexes = new Vertex[]
+            {
                 new Vertex(new Vector3(-t,  b,  0), new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(t,  b,  0),  new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-t, -b,  0), new Vector3(0), new Vector2(0)),
@@ -330,10 +330,10 @@ namespace SpatialEngine.Rendering
                 new Vertex(new Vector3(b,  0,  t),  new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-b,  0, -t), new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-b,  0,  t), new Vector3(0), new Vector2(0))
-            ];
+            };
 
-            indices =
-            [
+            indices = new uint[]
+            {
                 0, 11, 5,
                 0, 5, 1,
                 0, 1, 7,
@@ -357,7 +357,7 @@ namespace SpatialEngine.Rendering
                 6, 2, 10,
                 8, 6, 7,
                 9, 8, 1
-            ];
+            };
 
             for (int i = 0; i < subdivideNum; i++)
             {
@@ -414,8 +414,8 @@ namespace SpatialEngine.Rendering
         public void CreateSpikerMesh(Vector3 position, Quaternion rotation, float size, int sphereSubDivide = 2)
         {
 
-            vertexes =
-            [
+            vertexes = new Vertex[]
+            {
                 new Vertex(new Vector3(-1.0f,  1.0f,  0), new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(1.0f,  1.0f,  0),  new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-1.0f, -1.0f,  0), new Vector3(0), new Vector2(0)),
@@ -428,10 +428,10 @@ namespace SpatialEngine.Rendering
                 new Vertex(new Vector3(1.0f,  0,  1.0f),  new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-1.0f,  0, -1.0f), new Vector3(0), new Vector2(0)),
                 new Vertex(new Vector3(-1.0f,  0,  1.0f), new Vector3(0), new Vector2(0))
-            ];
+            };
 
-            indices =
-            [
+            indices = new uint[]
+            {
                 0, 11, 5,
                 0, 5, 1,
                 0, 1, 7,
@@ -455,7 +455,7 @@ namespace SpatialEngine.Rendering
                 6, 2, 10,
                 8, 6, 7,
                 9, 8, 1
-            ];
+            };
 
             for (int i = 0; i < sphereSubDivide; i++)
             {

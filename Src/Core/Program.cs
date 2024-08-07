@@ -37,8 +37,8 @@ namespace SpatialEngine
         public static GL gl;
         public static GraphicsAPI glApi = GraphicsAPI.Default;
         public static IWindow window;
-        public const int SCR_WIDTH = 1920;
-        public const int SCR_HEIGHT = 1080;
+        public const int SCR_WIDTH = 1280;
+        public const int SCR_HEIGHT = 720;
         public static string EngVer = "0.6.8 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";

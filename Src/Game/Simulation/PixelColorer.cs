@@ -33,8 +33,8 @@ namespace SpatialGame
     public static class PixelColorer
     {
         public static Vector4Byte[] pixelColors;
-        public static int width = 1920;
-        public static int height = 1080;
+        public static int width = 640;
+        public static int height = 480;
         public static UiQuad quad;
         public static BufferObject<Vector4Byte> pixelBuffer;
         public static Shader shader;
@@ -54,7 +54,7 @@ namespace SpatialGame
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    pixelColors[index] = new Vector4Byte(51, 51, 51, 255);
+                    pixelColors[index] = new Vector4Byte(102, 178, 204, 255);
                 }
             }
 
@@ -71,6 +71,7 @@ namespace SpatialGame
             Globals.gl.UseProgram(shader.shader);
             shader.setMat4("model", mat);
             shader.setVec2("resolution", (Vector2)Globals.window.Size);
+            shader.setVec2("particleResolution", new Vector2(width, height));
             quad.Draw();
         }
 
@@ -81,7 +82,7 @@ namespace SpatialGame
                 for (int x = 0; x < width; x++)
                 {
                     int index = y * width + x;
-                    pixelColors[index] = new Vector4Byte(51, 51, 51, 255);
+                    pixelColors[index] = new Vector4Byte(102, 178, 204, 255);
                 }
             }
         }
@@ -91,7 +92,7 @@ namespace SpatialGame
             int index = (int)((height * pos.X) + pos.Y);
             if(IndexCheck(index))
                 return index;
-            return 0;
+            return -1;
         }
 
         public static void SetColorAtPos(Vector2 pos, byte r, byte g, byte b)
