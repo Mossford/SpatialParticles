@@ -12,15 +12,15 @@ uniform vec2 resolution;
 
 void main()
 {
-    vec2 fragPos = vec2(gl_FragCoord.x / (resolution.x), gl_FragCoord.y / (resolution.y));
+    vec2 fragPos = vec2(gl_FragCoord.x / resolution.x, gl_FragCoord.y / resolution.y);
     int x = int(fragPos.x * particleResolution.x);
-    int y = int(fragPos.y * -particleResolution.y);
+    int y = int(fragPos.y * particleResolution.y);
     //get position index
-    int index = int((x * particleResolution.y) + y);
+    int index = int((x * particleResolution.y) - y + particleResolution.y - 1);
     //convert to index in the stored array
     index = int(floor(index / 4));
     //get the component that has the color
-    int indexColor = int(x * particleResolution.y + y) % 4;
+    int indexColor = int((x * particleResolution.y) - y + particleResolution.y - 1) % 4;
     //opengl just put the bits into the float and did no conversion
     //so we take the bits and turn them into a int
     int Color = floatBitsToInt(pixelColors.Colors[index][indexColor]);

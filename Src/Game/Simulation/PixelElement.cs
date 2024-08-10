@@ -28,6 +28,7 @@ namespace SpatialGame
             return (byte)elementType;
         }
     }
+    
 
     public abstract class Element
     {
@@ -37,17 +38,19 @@ namespace SpatialGame
         public bool canMove { get; set; }
         public int id { get; set; }
         public Vector2 oldpos { get; set; }
+        public bool toBeDeleted {get; set;}
+        public int deleteIndex {get; set;}
 
         /// <summary>
         /// Position check must be updated when pixel pos changed
         /// </summary>
-        public abstract void Update(ref List<Element> elements, ref byte[] positionCheck, ref int[] idCheck);
+        public abstract void Update();
         public abstract ElementType GetElementType();
-        public bool BoundsCheck(int minX, int minY, int maxX, int maxY)
+        public bool BoundsCheck(Vector2 position)
         {
-            if (position.X <= minX || position.X >= maxX || position.Y <= minY || position.Y >= maxY)
-                return true;
-            return false;
+            if (position.X < 0 || position.X >= PixelColorer.width || position.Y < 0 || position.Y >= PixelColorer.height)
+                return false;
+            return true;
         }
 
         public void SwapElement(Vector2 newPos, ElementType type)
@@ -128,19 +131,48 @@ namespace SpatialGame
 
         public void MoveElementOne(Vector2 dir, ElementType type)
         {
-            ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = type.ToByte();
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = -1;
+            //push to simulation to be deleted
+            if(!BoundsCheck(position + dir))
+            {
+                ElementSimulation.idsToDelete.Add(id);
+                toBeDeleted = true;
+                deleteIndex = ElementSimulation.idsToDelete.Count - 1;
+                velocity = dir;
+                ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
+                ElementSimulation.SafeIdCheckSet(-1, position);
+                return;
+            }
+
+            ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
+            ElementSimulation.SafeIdCheckSet(-1, position);
             position += dir;
-            ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = GetElementType().ToByte();
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = id;
+
+            ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
+            ElementSimulation.SafeIdCheckSet(id, position);
         }
 
         public void Delete()
         {
+            //quick check again for bounds if it has been moved outside of its update 
+            if(BoundsCheck(position + velocity))
+            {
+                ElementSimulation.idsToDelete.RemoveAt(deleteIndex);
+                ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
+                ElementSimulation.SafeIdCheckSet(id, position);
+                return;
+            }
+
             //set its position to nothing
-            ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
+            ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
             //set its id at its position to nothing
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = -1;
+            ElementSimulation. SafeIdCheckSet(-1, position);
+            //set the color to empty
+            PixelColorer.SetColorAtPos(position, 102, 178, 204);
+            for(int i = id + 1; i < ElementSimulation.elements.Count; i++)
+            {
+                ElementSimulation.elements[i].id--;
+                ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, position);
+            }
             //delete it from the array
             ElementSimulation.elements.RemoveAt(id);
 
@@ -153,10 +185,10 @@ namespace SpatialGame
 
     public abstract class Unmoveable : Element
     {
-        public override void Update(ref List<Element> elements, ref byte[] positionCheck, ref int[] idCheck)
+        public override void Update()
         {
-            positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = ElementType.wall.ToByte();
-            idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = id;
+            ElementSimulation.SafePositionCheckSet(ElementType.wall.ToByte(), position);
+            ElementSimulation.SafeIdCheckSet(id, position);
         }
 
         public override ElementType GetElementType()
@@ -170,63 +202,49 @@ namespace SpatialGame
     /// </summary>
     public abstract class Solid : Element
     {
-        public override void Update(ref List<Element> elements, ref byte[] positionCheck, ref int[] idCheck)
+        public override void Update()
         {
 
             int num = new Random().Next(0, 2); // choose random size to pick to favor instead of always left
-            bool displaceLiq = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] == ElementType.liquid.ToByte();
+            bool displaceLiq = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.liquid.ToByte();
             //swapping down with a liquid
             if (displaceLiq)
             {
                 SwapElement(new Vector2(position.X, position.Y + 1), ElementType.liquid);
                 return;
             }
-            bool displaceLiqLU = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y + 1))] == ElementType.liquid.ToByte();
+            bool displaceLiqLU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.liquid.ToByte();
             if (displaceLiqLU && num == 0)
             {
                 SwapElement(new Vector2(position.X - 1, position.Y + 1), ElementType.liquid);
                 return;
             }
-            bool displaceLiqRU = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y + 1))] == ElementType.liquid.ToByte();
+            bool displaceLiqRU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.liquid.ToByte();
             if (displaceLiqRU && num == 1)
             {
                 SwapElement(new Vector2(position.X + 1, position.Y + 1), ElementType.liquid);
                 return;
             }
 
-            velocity = new Vector2(0, 0.01f);
-
             //if there is air under the solid
 
-            bool grounded = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] == ElementType.empty.ToByte();
+            bool grounded = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (grounded)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(0, 1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.solid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
-                //MoveElement(1, Globals.GetDeltaTime());
+                MoveElementOne(new Vector2(0, 1), GetElementType());
+
                 return;
             }
-            bool LUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y + 1))] == ElementType.empty.ToByte();
+            bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(-1, 1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.solid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+                MoveElementOne(new Vector2(-1, 1), GetElementType());
                 return;
             }
-            bool RUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y + 1))] == ElementType.empty.ToByte();
+            bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(1, 1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.solid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+                MoveElementOne(new Vector2(1, 1), GetElementType());
                 return;
             }
         }
@@ -246,7 +264,7 @@ namespace SpatialGame
         public int disp { get; set; } // viscosity
         public int level { get; set; } // bouyency
 
-        public override void Update(ref List<Element> elements, ref byte[] positionCheck, ref int[] idCheck)
+        public override void Update()
         {
             int num = new Random().Next(0, 2); // choose random size to pick to favor instead of always left
 
@@ -254,81 +272,64 @@ namespace SpatialGame
             //displacement
 
             //gravity stuff
-            bool ground = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y + 1))] == ElementType.empty.ToByte();
+            bool ground = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (ground)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(0, 1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
-                //MoveElement(2, Globals.GetDeltaTime());
+                MoveElementOne(new Vector2(0, 1), GetElementType());
                 return;
             }
-            bool LUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y + 1))] == ElementType.empty.ToByte()
-                && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y))] == ElementType.empty.ToByte();
+            bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte()
+                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(-1, 1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+                MoveElementOne(new Vector2(-1, 1), GetElementType());
                 return;
             }
-            bool RUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y + 1))] == ElementType.empty.ToByte()
-                && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y))] == ElementType.empty.ToByte();
+            bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte()
+                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(1, 1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+                MoveElementOne(new Vector2(1, 1), GetElementType());
                 return;
             }
-            bool Left = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y))] == ElementType.empty.ToByte();
+            bool Left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
             if (!ground && Left && num == 0)
             {
-                int count = 0;
                 for (int i = 0; i < disp; i++)
                 {
-                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - (i + 1), position.Y))] == ElementType.empty.ToByte())
+                    if (!BoundsCheck(new Vector2(position.X - (i + 1), position.Y)))
+                        return;
+
+                    if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X - (i + 1), position.Y)) == ElementType.empty.ToByte())
                     {
-                        count++;
+                        MoveElementOne(new Vector2(-1, 0), GetElementType());
                     }
                     else
                     {
                         break;
                     }
                 }
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(-count, 0);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+
                 return;
             }
-            bool Right = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y))] == ElementType.empty.ToByte();
+            bool Right = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
             if (!ground && Right && num == 1)
             {
-                int count = 0;
                 for (int i = 0; i < disp; i++)
                 {
-                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + (i + 1), position.Y))] == ElementType.empty.ToByte())
+                    if (!BoundsCheck(new Vector2(position.X + (i + 1), position.Y)))
+                        return;
+
+                    if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X + (i + 1), position.Y)) == ElementType.empty.ToByte())
                     {
-                        count++;
+                        MoveElementOne(new Vector2(1, 0), GetElementType());
                     }
                     else
                     {
                         break;
                     }
                 }
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = -1;
-                position += new Vector2(count, 0);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.liquid.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+
                 return;
             }
         }
@@ -339,14 +340,14 @@ namespace SpatialGame
         }
     }
 
-    public abstract class Gas : Element
+    /*public abstract class Gas : Element
     {
 
 
         public int disp { get; set; } // viscosity
         public int level { get; set; } // bouyency
 
-        public override void Update(ref List<Element> elements, ref byte[] positionCheck, ref int[] idCheck)
+        public override void Update()
         {
             int num = new Random().Next(0, 3); // choose random size to pick to favor instead of always left
 
@@ -437,7 +438,7 @@ namespace SpatialGame
         {
             return ElementType.gas;
         }
-    }
+    }*/
 
     //----Elements----
     //Can only run things using stuff from element
@@ -475,7 +476,7 @@ namespace SpatialGame
         public WallPE()
         {
             canMove = false;
-            color = new Vector3(30, 30, 30);
+            color = new Vector3(40, 40, 40);
         }
     }
 
@@ -497,7 +498,7 @@ namespace SpatialGame
     /// <summary>
     /// Reacts to gravity and solids
     /// </summary>
-    public class CarbonDioxidePE : Gas
+    /*public class CarbonDioxidePE : Gas
     {
 
         public CarbonDioxidePE()
@@ -507,5 +508,5 @@ namespace SpatialGame
             color = new Vector3(60, 60, 60);
         }
 
-    }
+    }*/
 }

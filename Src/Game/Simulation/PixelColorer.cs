@@ -33,8 +33,8 @@ namespace SpatialGame
     public static class PixelColorer
     {
         public static Vector4Byte[] pixelColors;
-        public static int width = 640;
-        public static int height = 480;
+        public static int width = 128;
+        public static int height = 72;
         public static UiQuad quad;
         public static BufferObject<Vector4Byte> pixelBuffer;
         public static Shader shader;
@@ -53,7 +53,7 @@ namespace SpatialGame
             {
                 for (int x = 0; x < width; x++)
                 {
-                    int index = y * width + x;
+                    int index = (y * width) + x;
                     pixelColors[index] = new Vector4Byte(102, 178, 204, 255);
                 }
             }
@@ -81,13 +81,23 @@ namespace SpatialGame
             {
                 for (int x = 0; x < width; x++)
                 {
-                    int index = y * width + x;
+                    int index = (y * width) + x;
                     pixelColors[index] = new Vector4Byte(102, 178, 204, 255);
                 }
             }
         }
 
         public static int PosToIndex(Vector2 pos)
+        {
+            if (!BoundCheck(pos))
+                return -1;
+            int index = (int)((height * pos.X) + pos.Y);
+            if(IndexCheck(index))
+                return index;
+            return -1;
+        }
+
+        public static int PosToIndexNoBC(Vector2 pos)
         {
             int index = (int)((height * pos.X) + pos.Y);
             if(IndexCheck(index))
@@ -109,6 +119,13 @@ namespace SpatialGame
         public static bool IndexCheck(int index)
         {
             if(index < 0 || index >= height * width)
+                return false;
+            return true;
+        }
+
+        public static bool BoundCheck(Vector2 pos)
+        {
+            if(pos.X < 0 || pos.X >= width || pos.Y < 0 || pos.Y >= height)
                 return false;
             return true;
         }

@@ -28,7 +28,6 @@ namespace SpatialGame
         public static void UpdateGame(float dt)
         {
             GameInput.Update(dt);
-            ElementSimulation.RunPixelSim();
 
             PixelColorer.Update();
             //PixelColorer.ResetBackground();
@@ -36,7 +35,7 @@ namespace SpatialGame
 
         public static void FixedUpdateGame(float dt)
         {
-
+            ElementSimulation.RunPixelSim();
         }
     }
 }
