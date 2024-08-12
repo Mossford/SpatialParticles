@@ -155,6 +155,9 @@ namespace SpatialGame
             ElementSimulation.SafeIdCheckSet(id, position);
         }
 
+        /// <summary>
+        /// Should be used when deletion needs to happen during a particles update loop
+        /// </summary>
         public void QueueDelete()
         {
             ElementSimulation.idsToDelete.Add(id);
@@ -164,6 +167,9 @@ namespace SpatialGame
             //ElementSimulation.SafeIdCheckSet(-1, position);
         }
 
+        /// <summary>
+        /// Should be used when a deletion is needed right away and outside of a particles update loop
+        /// </summary>
         public void Delete()
         {
             //set its position to nothing

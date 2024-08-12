@@ -123,29 +123,6 @@ namespace SpatialGame
             //DebugSimulation.Update();
         }
 
-        // SHOULD NOT USE
-        public static void DeleteElement(Vector2 position, int element)
-        {
-            //no element is there
-            if(element < 0)
-                return;
-
-            //set its position to nothing
-            SafePositionCheckSet(ElementType.empty.ToByte(), position);
-            //set its id at its position to nothing
-            SafeIdCheckSet(-1, position);
-            //delete it from the array
-            elements.RemoveAt(element);
-            //set the color to empty
-            PixelColorer.SetColorAtPos(position, 102, 178, 204);
-            for(int i = element; i < elements.Count; i++)
-            {
-                elements[i].id--;
-                SafeIdCheckSet(elements[i].id, position);
-            }
-
-        }
-
         public static void SafePositionCheckSet(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
@@ -214,12 +191,12 @@ namespace SpatialGame
 
                         if(idToCheck != -1)
                         {
-                            elements[idToCheck].QueueDelete();
+                            elements[idToCheck].Delete();
                         }
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new WaterPE());
+                            elements.Add(new SandPE());
                             elements[id].id = id;
                             elements[id].position = pos;
                             SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
