@@ -55,18 +55,26 @@ namespace SpatialGame
 
         public void SwapElement(Vector2 newPos, ElementType type)
         {
-            ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = type.ToByte();
+            ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
             //get the id of the element below this current element
-            int swapid = ElementSimulation.idCheck[PixelColorer.PosToIndex(newPos)];
+            int swapid = ElementSimulation.SafeIdCheckGet(newPos);
+
+            if (swapid == -1)
+                return;
+
+            //check position of swap element beacuse it has a possibility to be out of bounds somehow
+            if (!BoundsCheck(ElementSimulation.elements[swapid].position))
+                return;
+
             //set the element below the current element to the same position
             ElementSimulation.elements[swapid].position = position;
             //set the id at the current position to the id from the element below
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y))] = swapid;
+            ElementSimulation.SafeIdCheckSet(swapid, position);
 
             //set the type to the new position to our current element
-            ElementSimulation.positionCheck[PixelColorer.PosToIndex(newPos)] = GetElementType().ToByte();
+            ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
             //set the id of our element to the new position
-            ElementSimulation.idCheck[PixelColorer.PosToIndex(newPos)] = id;
+            ElementSimulation.SafeIdCheckSet(id, newPos);
             //set the new position of the current element
             ElementSimulation.elements[id].position = newPos;
         }
@@ -134,49 +142,50 @@ namespace SpatialGame
             //push to simulation to be deleted
             if(!BoundsCheck(position + dir))
             {
-                ElementSimulation.idsToDelete.Add(id);
-                toBeDeleted = true;
-                deleteIndex = ElementSimulation.idsToDelete.Count - 1;
                 velocity = dir;
-                ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
-                ElementSimulation.SafeIdCheckSet(-1, position);
+                QueueDelete();
                 return;
             }
 
             ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
             ElementSimulation.SafeIdCheckSet(-1, position);
             position += dir;
-
+            velocity = dir;
             ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
             ElementSimulation.SafeIdCheckSet(id, position);
         }
 
+        public void QueueDelete()
+        {
+            ElementSimulation.idsToDelete.Add(id);
+            toBeDeleted = true;
+            deleteIndex = ElementSimulation.idsToDelete.Count - 1;
+            //ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
+            //ElementSimulation.SafeIdCheckSet(-1, position);
+        }
+
         public void Delete()
         {
-            //quick check again for bounds if it has been moved outside of its update 
-            if(BoundsCheck(position + velocity))
-            {
-                ElementSimulation.idsToDelete.RemoveAt(deleteIndex);
-                ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
-                ElementSimulation.SafeIdCheckSet(id, position);
-                return;
-            }
-
             //set its position to nothing
             ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
             //set its id at its position to nothing
-            ElementSimulation. SafeIdCheckSet(-1, position);
+            ElementSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
-            for(int i = id + 1; i < ElementSimulation.elements.Count; i++)
+            for (int i = id + 1; i < ElementSimulation.elements.Count; i++)
             {
                 ElementSimulation.elements[i].id--;
-                ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, position);
+                ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, ElementSimulation.elements[i].position);
             }
+
+            //subtract from ids so that they dont go out of bounds
+            for (int i = deleteIndex; i < ElementSimulation.idsToDelete.Count; i++)
+            {
+                ElementSimulation.idsToDelete[i]--;
+            }
+
             //delete it from the array
             ElementSimulation.elements.RemoveAt(id);
-
-
         }
     }
 

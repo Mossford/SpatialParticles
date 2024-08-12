@@ -118,7 +118,7 @@ namespace SpatialGame
 
         public static bool IndexCheck(int index)
         {
-            if(index < 0 || index >= height * width)
+            if(index < 0 && index >= height * width)
                 return false;
             return true;
         }

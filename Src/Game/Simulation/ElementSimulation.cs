@@ -41,7 +41,7 @@ namespace SpatialGame
                 idCheck[i] = -1;
             }
 
-            /*for (int x = 0; x < PixelColorer.width; x++)
+            for (int x = 0; x < PixelColorer.width; x++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
@@ -56,9 +56,9 @@ namespace SpatialGame
                 elements[id].position = new Vector2(x, PixelColorer.height - 1);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }*/
+            }
 
-            /*for (int y = 0; y < PixelColorer.height; y++)
+            for (int y = 0; y < PixelColorer.height; y++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
@@ -73,7 +73,7 @@ namespace SpatialGame
                 elements[id].position = new Vector2(PixelColorer.width - 1, y);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }*/
+            }
 
             //DebugSimulation.Init();
 
@@ -83,6 +83,15 @@ namespace SpatialGame
 
         public static void RunPixelSim()
         {
+            for (int i = 0; i < idsToDelete.Count; i++)
+            {
+                int id = idsToDelete[i];
+                if (id >= 0 && id < elements.Count && elements[id].toBeDeleted)
+                    elements[id].Delete();
+            }
+
+            idsToDelete.Clear();
+
             for (int i = 0; i < elements.Count; i++)
             {
                 //check if pass bounds check and delete if not
@@ -100,11 +109,11 @@ namespace SpatialGame
             for (int i = 0; i < idsToDelete.Count; i++)
             {
                 int id = idsToDelete[i];
-                if(id >= 0 && id < elements.Count)
+                if(id >= 0 && id < elements.Count && elements[id].toBeDeleted)
                     elements[id].Delete();
             }
 
-            Console.WriteLine(elements.Count);
+            Console.WriteLine(elements.Count - ((PixelColorer.width * 2) + (PixelColorer.height * 2)));
 
             idsToDelete.Clear();
 
@@ -198,14 +207,14 @@ namespace SpatialGame
                         continue;
 
                     float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
-                    if (check < 10)
-                    {
+                    //if (check < 20)
+                    //{
                         Vector2 pos = new Vector2(x, y);
-                        int idCheck = SafeIdCheckGet(pos);
+                        int idToCheck = SafeIdCheckGet(pos);
 
-                        if(idCheck != -1 || idCheck >= elements.Count)
+                        if(idToCheck != -1)
                         {
-                            elements[idCheck].toBeDeleted = true;
+                            elements[idToCheck].QueueDelete();
                         }
                         int id = elements.Count;
                         if(type)
@@ -216,7 +225,7 @@ namespace SpatialGame
                             SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
-                    }
+                    //}
                 }
             }
             mousePressed = false;
