@@ -77,8 +77,8 @@ namespace SpatialGame
 
             //DebugSimulation.Init();
 
-            Input.input.Mice[0].MouseDown += MouseDown;
             Input.input.Mice[0].MouseUp += MouseUp;
+            Input.input.Mice[0].MouseDown += MouseDown;
         }
 
         public static void RunPixelSim()
@@ -113,11 +113,9 @@ namespace SpatialGame
                     elements[id].Delete();
             }
 
-            Console.WriteLine(elements.Count - ((PixelColorer.width * 2) + (PixelColorer.height * 2)));
-
             idsToDelete.Clear();
-
-            CreateSphere();
+            if(mousePressed)
+                CreateSphere();
 
 
             //DebugSimulation.Update();
@@ -171,10 +169,11 @@ namespace SpatialGame
 
         public static void CreateSphere()
         {
-            if (mousePressed == false)
-                return;
 
             Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (Input.input.Mice[0].Position / (Vector2)Globals.window.Size);
+
+            position.X = MathF.Floor(position.X);
+            position.Y = MathF.Floor(position.Y);
 
             for (int x = (int)position.X - 10; x < position.X + 10; x++)
             {
@@ -184,8 +183,8 @@ namespace SpatialGame
                         continue;
 
                     float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
-                    //if (check < 20)
-                    //{
+                    if (check < 10)
+                    {
                         Vector2 pos = new Vector2(x, y);
                         int idToCheck = SafeIdCheckGet(pos);
 
@@ -196,16 +195,15 @@ namespace SpatialGame
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new SandPE());
+                            elements.Add(new WaterPE());
                             elements[id].id = id;
                             elements[id].position = pos;
                             SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
-                    //}
+                    }
                 }
             }
-            mousePressed = false;
         }
     }
 }

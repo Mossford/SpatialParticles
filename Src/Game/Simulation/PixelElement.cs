@@ -137,7 +137,7 @@ namespace SpatialGame
             }
         }
 
-        public void MoveElementOne(Vector2 dir, ElementType type)
+        public void MoveElementOne(Vector2 dir)
         {
             //push to simulation to be deleted
             if(!BoundsCheck(position + dir))
@@ -151,7 +151,7 @@ namespace SpatialGame
             ElementSimulation.SafeIdCheckSet(-1, position);
             position += dir;
             velocity = dir;
-            ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
+            ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
             ElementSimulation.SafeIdCheckSet(id, position);
         }
 
@@ -178,6 +178,8 @@ namespace SpatialGame
             ElementSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
+            //swap this to a variable and subtract and change so performance is not degraded
+            //-------------------------------------------------------------
             for (int i = id + 1; i < ElementSimulation.elements.Count; i++)
             {
                 ElementSimulation.elements[i].id--;
@@ -223,7 +225,7 @@ namespace SpatialGame
             int num = new Random().Next(0, 2); // choose random size to pick to favor instead of always left
             bool displaceLiq = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.liquid.ToByte();
             //swapping down with a liquid
-            if (displaceLiq)
+            /*if (displaceLiq)
             {
                 SwapElement(new Vector2(position.X, position.Y + 1), ElementType.liquid);
                 return;
@@ -239,27 +241,27 @@ namespace SpatialGame
             {
                 SwapElement(new Vector2(position.X + 1, position.Y + 1), ElementType.liquid);
                 return;
-            }
+            }*/
 
             //if there is air under the solid
 
             bool grounded = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (grounded)
             {
-                MoveElementOne(new Vector2(0, 1), GetElementType());
+                MoveElementOne(new Vector2(0, 1));
 
                 return;
             }
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                MoveElementOne(new Vector2(-1, 1), GetElementType());
+                MoveElementOne(new Vector2(-1, 1));
                 return;
             }
             bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                MoveElementOne(new Vector2(1, 1), GetElementType());
+                MoveElementOne(new Vector2(1, 1));
                 return;
             }
         }
@@ -290,21 +292,21 @@ namespace SpatialGame
             bool ground = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (ground)
             {
-                MoveElementOne(new Vector2(0, 1), GetElementType());
+                MoveElementOne(new Vector2(0, 1));
                 return;
             }
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte()
                 && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                MoveElementOne(new Vector2(-1, 1), GetElementType());
+                MoveElementOne(new Vector2(-1, 1));
                 return;
             }
             bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte()
                 && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                MoveElementOne(new Vector2(1, 1), GetElementType());
+                MoveElementOne(new Vector2(1, 1));
                 return;
             }
             bool Left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
@@ -317,7 +319,7 @@ namespace SpatialGame
 
                     if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X - (i + 1), position.Y)) == ElementType.empty.ToByte())
                     {
-                        MoveElementOne(new Vector2(-1, 0), GetElementType());
+                        MoveElementOne(new Vector2(-1, 0));
                     }
                     else
                     {
@@ -337,7 +339,7 @@ namespace SpatialGame
 
                     if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X + (i + 1), position.Y)) == ElementType.empty.ToByte())
                     {
-                        MoveElementOne(new Vector2(1, 0), GetElementType());
+                        MoveElementOne(new Vector2(1, 0));
                     }
                     else
                     {
@@ -355,9 +357,11 @@ namespace SpatialGame
         }
     }
 
-    /*public abstract class Gas : Element
+    /// <summary>
+    /// Swaps places with solid and gas
+    /// </summary>
+    public abstract class Gas : Element
     {
-
 
         public int disp { get; set; } // viscosity
         public int level { get; set; } // bouyency
@@ -370,81 +374,64 @@ namespace SpatialGame
             //displacement
 
             //gravity stuff
-            bool ground = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X, position.Y - 1))] == ElementType.empty.ToByte();
+            bool ground = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y - 1)) == ElementType.empty.ToByte();
             if (ground && num == 2)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = 0;
-                position += new Vector2(0, -1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.gas.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
-                //MoveElement(2, Globals.GetDeltaTime());
+                MoveElementOne(new Vector2(0, -1));
                 return;
             }
-            bool LUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y - 1))] == ElementType.empty.ToByte()
-                && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y))] == ElementType.empty.ToByte();
+            bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y - 1)) == ElementType.empty.ToByte()
+                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = 0;
-                position += new Vector2(-1, -1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.gas.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+                MoveElementOne(new Vector2(-1, -1));
                 return;
             }
-            bool RUnder = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y - 1))] == ElementType.empty.ToByte()
-                && positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y))] == ElementType.empty.ToByte();
+            bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y - 1)) == ElementType.empty.ToByte()
+                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = 0;
-                position += new Vector2(1, -1);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.gas.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+                MoveElementOne(new Vector2(1, -1));
                 return;
             }
-            bool Left = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - 1, position.Y))] == ElementType.empty.ToByte();
+            bool Left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
             if (!ground && Left && num == 0)
             {
-                int count = 0;
                 for (int i = 0; i < disp; i++)
                 {
-                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X - (i + 1), position.Y))] == ElementType.empty.ToByte())
+                    if (!BoundsCheck(new Vector2(position.X - (i + 1), position.Y)))
+                        return;
+
+                    if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X - (i + 1), position.Y)) == ElementType.empty.ToByte())
                     {
-                        count++;
+                        MoveElementOne(new Vector2(-1, 0));
                     }
                     else
                     {
                         break;
                     }
                 }
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = 0;
-                position += new Vector2(-count, 0);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.gas.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+
                 return;
             }
-            bool Right = positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + 1, position.Y))] == ElementType.empty.ToByte();
+            bool Right = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
             if (!ground && Right && num == 1)
             {
-                int count = 0;
                 for (int i = 0; i < disp; i++)
                 {
-                    if (positionCheck[PixelColorer.PosToIndex(new Vector2(position.X + (i + 1), position.Y))] == ElementType.empty.ToByte())
+                    if (!BoundsCheck(new Vector2(position.X + (i + 1), position.Y)))
+                        return;
+
+                    if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X + (i + 1), position.Y)) == ElementType.empty.ToByte())
                     {
-                        count++;
+                        MoveElementOne(new Vector2(1, 0));
                     }
                     else
                     {
                         break;
                     }
                 }
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = 0;
-                position += new Vector2(count, 0);
-                positionCheck[PixelColorer.PosToIndex(position)] = ElementType.gas.ToByte();
-                idCheck[PixelColorer.PosToIndex(position)] = id;
+
                 return;
             }
         }
@@ -453,7 +440,7 @@ namespace SpatialGame
         {
             return ElementType.gas;
         }
-    }*/
+    }
 
     //----Elements----
     //Can only run things using stuff from element
@@ -513,9 +500,8 @@ namespace SpatialGame
     /// <summary>
     /// Reacts to gravity and solids
     /// </summary>
-    /*public class CarbonDioxidePE : Gas
+    public class CarbonDioxidePE : Gas
     {
-
         public CarbonDioxidePE()
         {
             disp = 10;
@@ -523,5 +509,5 @@ namespace SpatialGame
             color = new Vector3(60, 60, 60);
         }
 
-    }*/
+    }
 }
