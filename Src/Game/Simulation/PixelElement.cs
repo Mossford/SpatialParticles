@@ -308,41 +308,85 @@ namespace SpatialGame
                 MoveElementOne(new Vector2(1, 1));
                 return;
             }
-            bool Left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
-            if (!ground && Left && num == 0)
+            bool left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) != ElementType.empty.ToByte()
+                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) != ElementType.empty.ToByte();
+            if (!ground && left && num == 0)
             {
-                for (int i = 0; i < disp; i++)
+                int moveDisp = new Random().Next(0, disp);
+                for (int i = 0; i < moveDisp; i++)
                 {
-                    if (!BoundsCheck(new Vector2(position.X - (i + 1), position.Y)))
-                        return;
-
-                    if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X - (i + 1), position.Y)) == ElementType.empty.ToByte())
+                    if(i < 5)
                     {
-                        MoveElementOne(new Vector2(-1, 0));
+                        Vector2 checkPos = new Vector2(position.X - 1, position.Y);
+                        if (!BoundsCheck(checkPos))
+                            return;
+
+                        if (ElementSimulation.SafePositionCheckGet(checkPos) == ElementType.empty.ToByte())
+                        {
+                            MoveElementOne(new Vector2(-1, 0));
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
-                        break;
+                        Vector2 checkPos = new Vector2(position.X - 1, position.Y);
+                        if (!BoundsCheck(checkPos))
+                            return;
+
+                        if (ElementSimulation.SafePositionCheckGet(checkPos) == ElementType.empty.ToByte()
+                            && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) != ElementType.empty.ToByte())
+                        {
+                            MoveElementOne(new Vector2(-1, 0));
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
 
                 return;
             }
-            bool Right = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
-            if (!ground && Right && num == 1)
+            bool right = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) != ElementType.empty.ToByte()
+                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) != ElementType.empty.ToByte();
+            if (!ground && right && num == 1)
             {
-                for (int i = 0; i < disp; i++)
+                int moveDisp = new Random().Next(0, disp);
+                for (int i = 0; i < moveDisp; i++)
                 {
-                    if (!BoundsCheck(new Vector2(position.X + (i + 1), position.Y)))
-                        return;
-
-                    if (ElementSimulation.SafePositionCheckGet(new Vector2(position.X + (i + 1), position.Y)) == ElementType.empty.ToByte())
+                    if (i < 5)
                     {
-                        MoveElementOne(new Vector2(1, 0));
+                        Vector2 checkPos = new Vector2(position.X + 1, position.Y);
+                        if (!BoundsCheck(checkPos))
+                            return;
+
+                        if (ElementSimulation.SafePositionCheckGet(checkPos) == ElementType.empty.ToByte())
+                        {
+                            MoveElementOne(new Vector2(1, 0));
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                     else
                     {
-                        break;
+                        Vector2 checkPos = new Vector2(position.X + 1, position.Y);
+                        if (!BoundsCheck(checkPos))
+                            return;
+
+                        if (ElementSimulation.SafePositionCheckGet(checkPos) == ElementType.empty.ToByte()
+                            && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) != ElementType.empty.ToByte())
+                        {
+                            MoveElementOne(new Vector2(1, 0));
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -489,7 +533,7 @@ namespace SpatialGame
 
         public WaterPE()
         {
-            disp = 10;
+            disp = 50;
             canMove = true;
             color = new Vector3(40, 0, 255);
         }

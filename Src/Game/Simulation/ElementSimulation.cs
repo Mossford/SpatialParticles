@@ -114,8 +114,8 @@ namespace SpatialGame
             }
 
             idsToDelete.Clear();
-            if(mousePressed)
-                CreateSphere();
+            //if(mousePressed)
+            //    CreateSphere();
 
 
             //DebugSimulation.Update();
@@ -160,6 +160,7 @@ namespace SpatialGame
                 type = true;
             if (button == MouseButton.Right)
                 type = false;
+            CreateSphere();
         }
 
         public static void MouseUp(IMouse mouse, MouseButton button)
@@ -195,10 +196,10 @@ namespace SpatialGame
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new CarbonDioxidePE());
+                            elements.Add(new WaterPE());
                             elements[id].id = id;
                             elements[id].position = pos;
-                            SafePositionCheckSet(ElementType.gas.ToByte(), elements[id].position);
+                            SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
                     }
