@@ -195,10 +195,10 @@ namespace SpatialGame
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new WaterPE());
+                            elements.Add(new CarbonDioxidePE());
                             elements[id].id = id;
                             elements[id].position = pos;
-                            SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
+                            SafePositionCheckSet(ElementType.gas.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
                     }

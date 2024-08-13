@@ -180,17 +180,17 @@ namespace SpatialGame
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
             //swap this to a variable and subtract and change so performance is not degraded
             //-------------------------------------------------------------
-            for (int i = id + 1; i < ElementSimulation.elements.Count; i++)
+            Parallel.For(id + 1, ElementSimulation.elements.Count, i =>
             {
                 ElementSimulation.elements[i].id--;
                 ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, ElementSimulation.elements[i].position);
-            }
+            });
 
             //subtract from ids so that they dont go out of bounds
-            for (int i = deleteIndex; i < ElementSimulation.idsToDelete.Count; i++)
+            Parallel.For(deleteIndex, ElementSimulation.idsToDelete.Count, i =>
             {
                 ElementSimulation.idsToDelete[i]--;
-            }
+            });
 
             //delete it from the array
             ElementSimulation.elements.RemoveAt(id);
@@ -225,7 +225,7 @@ namespace SpatialGame
             int num = new Random().Next(0, 2); // choose random size to pick to favor instead of always left
             bool displaceLiq = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.liquid.ToByte();
             //swapping down with a liquid
-            /*if (displaceLiq)
+            if (displaceLiq)
             {
                 SwapElement(new Vector2(position.X, position.Y + 1), ElementType.liquid);
                 return;
@@ -241,7 +241,7 @@ namespace SpatialGame
             {
                 SwapElement(new Vector2(position.X + 1, position.Y + 1), ElementType.liquid);
                 return;
-            }*/
+            }
 
             //if there is air under the solid
 
@@ -249,7 +249,6 @@ namespace SpatialGame
             if (grounded)
             {
                 MoveElementOne(new Vector2(0, 1));
-
                 return;
             }
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();
