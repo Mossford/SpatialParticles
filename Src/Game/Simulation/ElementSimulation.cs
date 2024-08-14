@@ -2,6 +2,7 @@
 using SpatialEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace SpatialGame
@@ -26,6 +27,11 @@ namespace SpatialGame
         /// Queue of elements that will be deleted
         /// </summary>
         public static List<int> idsToDelete;
+        /// <summary>
+        /// Holds the amount that should be subtracted from the idcheck array
+        /// turns 1/2n^2 to n
+        /// </summary>
+        public static Dictionary<int, int> indexCountDelete;
 
         static bool mousePressed = false;
         static bool type = false;
@@ -35,13 +41,14 @@ namespace SpatialGame
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
             idsToDelete = new List<int>();
+            indexCountDelete = new Dictionary<int, int>();
 
             for (int i = 0; i < idCheck.Length; i++)
             {
                 idCheck[i] = -1;
             }
 
-            for (int x = 0; x < PixelColorer.width; x++)
+            /*for (int x = 0; x < PixelColorer.width; x++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
@@ -56,9 +63,9 @@ namespace SpatialGame
                 elements[id].position = new Vector2(x, PixelColorer.height - 1);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }
+            }*/
 
-            for (int y = 0; y < PixelColorer.height; y++)
+            /*for (int y = 0; y < PixelColorer.height; y++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
@@ -73,7 +80,7 @@ namespace SpatialGame
                 elements[id].position = new Vector2(PixelColorer.width - 1, y);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }
+            }*/
 
             //DebugSimulation.Init();
 
@@ -86,11 +93,44 @@ namespace SpatialGame
             for (int i = 0; i < idsToDelete.Count; i++)
             {
                 int id = idsToDelete[i];
+                int adder =- 0;
+                int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
+                for (int g = 0; g < ElementSimulation.indexCountDelete.Count; g++)
+                {
+                    if (id > keys[g])
+                        adder++;
+                    else
+                        break;
+                }
+                //Console.WriteLine(id + " " + adder + " " + elements.Count);
+                id -= adder;
+                //Console.WriteLine(id);
                 if (id >= 0 && id < elements.Count && elements[id].toBeDeleted)
                     elements[id].Delete();
             }
 
+            //fix the idcheck array
+            /*int currentSubtract = 0;
+            for (int i = 0; i < idsToDelete.Count; i++)
+            {
+                if (indexCountDelete.ContainsKey(elements[i].id))
+                {
+                    currentSubtract = indexCountDelete[elements[i].id];
+                }
+                else if (currentSubtract == 0)
+                    continue;
+                elements[i].id -= currentSubtract;
+                SafeIdCheckSet(elements[i].id, elements[i].position);
+            }*/
+
+            for (int i = 0; i < elements.Count; i++)
+            {
+                elements[i].id = i;
+                SafeIdCheckSet(elements[i].id, elements[i].position);
+            }
+
             idsToDelete.Clear();
+            indexCountDelete.Clear();
 
             for (int i = 0; i < elements.Count; i++)
             {
@@ -105,15 +145,7 @@ namespace SpatialGame
                         PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
                 }
             }
-
-            for (int i = 0; i < idsToDelete.Count; i++)
-            {
-                int id = idsToDelete[i];
-                if(id >= 0 && id < elements.Count && elements[id].toBeDeleted)
-                    elements[id].Delete();
-            }
-
-            idsToDelete.Clear();
+            
             //if(mousePressed)
             //    CreateSphere();
 
@@ -170,28 +202,41 @@ namespace SpatialGame
 
         public static void CreateSphere()
         {
+            if (!mousePressed)
+                return;
 
             Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (Input.input.Mice[0].Position / (Vector2)Globals.window.Size);
 
             position.X = MathF.Floor(position.X);
             position.Y = MathF.Floor(position.Y);
 
-            for (int x = (int)position.X - 10; x < position.X + 10; x++)
+            for (int x = (int)position.X - 100; x < position.X + 100; x++)
             {
-                for (int y = (int)position.Y - 10; y < position.Y + 10; y++)
+                for (int y = (int)position.Y - 100; y < position.Y + 100; y++)
                 {
                     if(x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
                         continue;
 
                     float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
-                    if (check < 10)
-                    {
+                    //if (check < 10)
+                    //{
                         Vector2 pos = new Vector2(x, y);
                         int idToCheck = SafeIdCheckGet(pos);
 
                         if(idToCheck != -1)
                         {
-                            elements[idToCheck].Delete();
+                            //Find amount that was deleted before the current element and subtract that from the id used
+                            /*int adder = 0;
+                            int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
+                            for (int i = 0; i < ElementSimulation.indexCountDelete.Count; i++)
+                            {
+                                if (idToCheck > keys[i])
+                                    adder++;
+                                else
+                                    break;
+                            }
+                            Console.WriteLine(adder);
+                            elements[idToCheck - adder].Delete(false);*/
                         }
                         int id = elements.Count;
                         if(type)
@@ -202,7 +247,7 @@ namespace SpatialGame
                             SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
-                    }
+                    //}
                 }
             }
         }

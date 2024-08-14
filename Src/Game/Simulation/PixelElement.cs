@@ -1,4 +1,5 @@
-﻿using SpatialEngine;
+﻿using Silk.NET.GLFW;
+using SpatialEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,22 +179,39 @@ namespace SpatialGame
             ElementSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
+
+            //add our index to the dictionary and everything above it will be subtract 1
+            if (ElementSimulation.indexCountDelete.TryAdd(id, 1))
+            {
+
+            }
+            //if we already have that key in the dictionary then add one
+            //and subtract that amount from everything above it
+            else if(ElementSimulation.indexCountDelete.ContainsKey(id))
+            {
+                ElementSimulation.indexCountDelete[id]++;
+            }
+
             //swap this to a variable and subtract and change so performance is not degraded
             //-------------------------------------------------------------
-            Parallel.For(id + 1, ElementSimulation.elements.Count, i =>
+            /*Parallel.For(id + 1, ElementSimulation.elements.Count, i =>
             {
                 ElementSimulation.elements[i].id--;
                 ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, ElementSimulation.elements[i].position);
-            });
+            });*/
 
-            //subtract from ids so that they dont go out of bounds
-            Parallel.For(deleteIndex, ElementSimulation.idsToDelete.Count, i =>
+            //Find amount that was deleted before the current element and subtract that from the id used
+            int adder = 0;
+            int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
+            for (int i = 0; i < ElementSimulation.indexCountDelete.Count; i++)
             {
-                ElementSimulation.idsToDelete[i]--;
-            });
-
+                if(id > keys[i])
+                    adder++;
+                else
+                    break;
+            }
             //delete it from the array
-            ElementSimulation.elements.RemoveAt(id);
+            ElementSimulation.elements.RemoveAt(id - adder);
         }
     }
 
