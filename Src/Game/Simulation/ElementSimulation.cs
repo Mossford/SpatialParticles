@@ -32,6 +32,10 @@ namespace SpatialGame
         /// turns 1/2n^2 to n
         /// </summary>
         public static Dictionary<int, int> indexCountDelete;
+        /// <summary>
+        /// Random that elements will use
+        /// </summary>
+        public static Random random;
 
         static bool mousePressed = false;
         static bool type = false;
@@ -42,13 +46,14 @@ namespace SpatialGame
             idCheck = new int[PixelColorer.width * PixelColorer.height];
             idsToDelete = new List<int>();
             indexCountDelete = new Dictionary<int, int>();
+            random = new Random();
 
             for (int i = 0; i < idCheck.Length; i++)
             {
                 idCheck[i] = -1;
             }
 
-            /*for (int x = 0; x < PixelColorer.width; x++)
+            for (int x = 0; x < PixelColorer.width; x++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
@@ -63,7 +68,7 @@ namespace SpatialGame
                 elements[id].position = new Vector2(x, PixelColorer.height - 1);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }*/
+            }
 
             /*for (int y = 0; y < PixelColorer.height; y++)
             {
@@ -123,10 +128,13 @@ namespace SpatialGame
                 SafeIdCheckSet(elements[i].id, elements[i].position);
             }*/
 
-            for (int i = 0; i < elements.Count; i++)
+            if(idsToDelete.Count > 0) 
             {
-                elements[i].id = i;
-                SafeIdCheckSet(elements[i].id, elements[i].position);
+                for (int i = 0; i < elements.Count; i++)
+                {
+                    elements[i].id = i;
+                    SafeIdCheckSet(elements[i].id, elements[i].position);
+                }
             }
 
             idsToDelete.Clear();
@@ -146,9 +154,9 @@ namespace SpatialGame
                 }
             }
             
-            //if(mousePressed)
-            //    CreateSphere();
-
+            if(mousePressed)
+                CreateSphere();
+            Console.WriteLine(elements.Count);
 
             //DebugSimulation.Update();
         }
@@ -192,7 +200,7 @@ namespace SpatialGame
                 type = true;
             if (button == MouseButton.Right)
                 type = false;
-            CreateSphere();
+            //CreateSphere();
         }
 
         public static void MouseUp(IMouse mouse, MouseButton button)
@@ -210,9 +218,9 @@ namespace SpatialGame
             position.X = MathF.Floor(position.X);
             position.Y = MathF.Floor(position.Y);
 
-            for (int x = (int)position.X - 100; x < position.X + 100; x++)
+            for (int x = (int)position.X - 10; x < position.X + 10; x++)
             {
-                for (int y = (int)position.Y - 100; y < position.Y + 100; y++)
+                for (int y = (int)position.Y - 10; y < position.Y + 10; y++)
                 {
                     if(x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
                         continue;
@@ -235,16 +243,15 @@ namespace SpatialGame
                                 else
                                     break;
                             }
-                            Console.WriteLine(adder);
-                            elements[idToCheck - adder].Delete(false);*/
+                            elements[idToCheck - adder].Delete();*/
                         }
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new WaterPE());
+                            elements.Add(new SandPE());
                             elements[id].id = id;
                             elements[id].position = pos;
-                            SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
+                            SafePositionCheckSet(ElementType.solid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
                     //}

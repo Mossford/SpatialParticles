@@ -200,6 +200,12 @@ namespace SpatialGame
                 ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, ElementSimulation.elements[i].position);
             });*/
 
+            //subtract from ids so that they dont go out of bounds
+            /*Parallel.For(deleteIndex, ElementSimulation.idsToDelete.Count, i =>
+            {
+                ElementSimulation.idsToDelete[i]--;
+            });*/
+
             //Find amount that was deleted before the current element and subtract that from the id used
             int adder = 0;
             int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
@@ -239,8 +245,7 @@ namespace SpatialGame
     {
         public override void Update()
         {
-
-            int num = new Random().Next(0, 2); // choose random size to pick to favor instead of always left
+            int num = ElementSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left
             bool displaceLiq = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.liquid.ToByte();
             //swapping down with a liquid
             if (displaceLiq)
@@ -300,7 +305,7 @@ namespace SpatialGame
 
         public override void Update()
         {
-            int num = new Random().Next(0, 2); // choose random size to pick to favor instead of always left
+            int num = ElementSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left
 
             oldpos = position;
             //displacement
@@ -330,7 +335,7 @@ namespace SpatialGame
                 && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) != ElementType.empty.ToByte();
             if (!ground && left && num == 0)
             {
-                int moveDisp = new Random().Next(0, disp);
+                int moveDisp = ElementSimulation.random.Next(0, disp);
                 for (int i = 0; i < moveDisp; i++)
                 {
                     if(i < 5)
@@ -372,7 +377,7 @@ namespace SpatialGame
                 && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) != ElementType.empty.ToByte();
             if (!ground && right && num == 1)
             {
-                int moveDisp = new Random().Next(0, disp);
+                int moveDisp = ElementSimulation.random.Next(0, disp);
                 for (int i = 0; i < moveDisp; i++)
                 {
                     if (i < 5)
@@ -429,7 +434,7 @@ namespace SpatialGame
 
         public override void Update()
         {
-            int num = new Random().Next(0, 3); // choose random size to pick to favor instead of always left
+            int num = ElementSimulation.random.Next(0, 3); // choose random size to pick to favor instead of always left
 
             oldpos = position;
             //displacement
