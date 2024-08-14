@@ -95,50 +95,7 @@ namespace SpatialGame
 
         public static void RunPixelSim()
         {
-            for (int i = 0; i < idsToDelete.Count; i++)
-            {
-                int id = idsToDelete[i];
-                int adder =- 0;
-                int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
-                for (int g = 0; g < ElementSimulation.indexCountDelete.Count; g++)
-                {
-                    if (id > keys[g])
-                        adder++;
-                    else
-                        break;
-                }
-                //Console.WriteLine(id + " " + adder + " " + elements.Count);
-                id -= adder;
-                //Console.WriteLine(id);
-                if (id >= 0 && id < elements.Count && elements[id].toBeDeleted)
-                    elements[id].Delete();
-            }
-
-            //fix the idcheck array
-            /*int currentSubtract = 0;
-            for (int i = 0; i < idsToDelete.Count; i++)
-            {
-                if (indexCountDelete.ContainsKey(elements[i].id))
-                {
-                    currentSubtract = indexCountDelete[elements[i].id];
-                }
-                else if (currentSubtract == 0)
-                    continue;
-                elements[i].id -= currentSubtract;
-                SafeIdCheckSet(elements[i].id, elements[i].position);
-            }*/
-
-            if(idsToDelete.Count > 0) 
-            {
-                for (int i = 0; i < elements.Count; i++)
-                {
-                    elements[i].id = i;
-                    SafeIdCheckSet(elements[i].id, elements[i].position);
-                }
-            }
-
-            idsToDelete.Clear();
-            indexCountDelete.Clear();
+            DeleteElementsOnQueue();
 
             for (int i = 0; i < elements.Count; i++)
             {
@@ -159,6 +116,40 @@ namespace SpatialGame
             Console.WriteLine(elements.Count);
 
             //DebugSimulation.Update();
+        }
+
+        static void DeleteElementsOnQueue()
+        {
+            if (idsToDelete.Count == 0)
+                return;
+
+            for (int i = 0; i < idsToDelete.Count; i++)
+            {
+                int id = idsToDelete[i];
+                int adder = -0;
+                int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
+                for (int g = 0; g < ElementSimulation.indexCountDelete.Count; g++)
+                {
+                    if (id > keys[g])
+                        adder++;
+                    else
+                        break;
+                }
+                //Console.WriteLine(id + " " + adder + " " + elements.Count);
+                id -= adder;
+                //Console.WriteLine(id);
+                if (id >= 0 && id < elements.Count && elements[id].toBeDeleted)
+                    elements[id].Delete();
+            }
+
+            for (int i = 0; i < elements.Count; i++)
+            {
+                elements[i].id = i;
+                SafeIdCheckSet(elements[i].id, elements[i].position);
+            }
+
+            idsToDelete.Clear();
+            indexCountDelete.Clear();
         }
 
         public static void SafePositionCheckSet(byte type, Vector2 position)
@@ -243,15 +234,15 @@ namespace SpatialGame
                                 else
                                     break;
                             }
-                            elements[idToCheck - adder].Delete();*/
+                            elements[idToCheck].Delete();*/
                         }
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new SandPE());
+                            elements.Add(new WaterPE());
                             elements[id].id = id;
                             elements[id].position = pos;
-                            SafePositionCheckSet(ElementType.solid.ToByte(), elements[id].position);
+                            SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
                     //}
