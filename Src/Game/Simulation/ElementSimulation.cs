@@ -135,9 +135,7 @@ namespace SpatialGame
                     else
                         break;
                 }
-                //Console.WriteLine(id + " " + adder + " " + elements.Count);
                 id -= adder;
-                //Console.WriteLine(id);
                 if (id >= 0 && id < elements.Count && elements[id].toBeDeleted)
                     elements[id].Delete();
             }

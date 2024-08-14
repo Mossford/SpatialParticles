@@ -192,14 +192,6 @@ namespace SpatialGame
                 ElementSimulation.indexCountDelete[id]++;
             }
 
-            //swap this to a variable and subtract and change so performance is not degraded
-            //-------------------------------------------------------------
-            /*Parallel.For(id + 1, ElementSimulation.elements.Count, i =>
-            {
-                ElementSimulation.elements[i].id--;
-                ElementSimulation.SafeIdCheckSet(ElementSimulation.elements[i].id, ElementSimulation.elements[i].position);
-            });*/
-
             //subtract from ids so that they dont go out of bounds
             /*Parallel.For(deleteIndex, ElementSimulation.idsToDelete.Count, i =>
             {
