@@ -9,11 +9,9 @@ using JoltPhysicsSharp;
 
 using SpatialEngine;
 using SpatialEngine.Rendering;
-using SpatialEngine.Terrain;
 using static SpatialEngine.Globals;
 using static SpatialEngine.Rendering.MeshUtils;
 using static SpatialEngine.Resources;
-using static SpatialEngine.Terrain.Terrain;
 
 namespace SpatialGame
 {
