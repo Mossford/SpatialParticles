@@ -113,7 +113,6 @@ namespace SpatialGame
             
             if(mousePressed)
                 CreateSphere();
-            Console.WriteLine(elements.Count);
 
             //DebugSimulation.Update();
         }

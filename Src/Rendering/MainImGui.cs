@@ -53,7 +53,7 @@ namespace SpatialEngine.Rendering
             }
         }
 
-        static ScrollingBuffer frameTimes = new ScrollingBuffer(20000);
+        static ScrollingBuffer frameTimes = new ScrollingBuffer(2000);
         static float HighestFT = 0.0f;
         static bool ShowSceneViewerMenu, ShowObjectViewerMenu, ShowConsoleViewerMenu, ShowNetworkViewerMenu;
         static int IMM_counter = 0;
@@ -84,12 +84,8 @@ namespace SpatialEngine.Rendering
             ImGui.Text("Gpu: " + Gpu);
             ImGui.Text(String.Format("{0:N3} ms/frame ({1:N1} FPS)", 1.0f / ImGui.GetIO().Framerate * 1000.0f, ImGui.GetIO().Framerate));
             ImGui.Text(String.Format("{0} verts, {1} indices ({2} tris)", vertCount, indCount, indCount / 3));
-            ImGui.Text(String.Format("RenderSets: {0}", Renderer.renderSets.Count));
-            ImGui.Text(String.Format("Amount of Spatials: ({0})", scene.SpatialObjects.Count()));
-            ImGui.Text(String.Format("DrawCall Avg: ({0:N1}) DC/frame, DrawCall Total ({1})", MathF.Round(DrawCallCount / (totalTime / deltaTime)), DrawCallCount));
+            ImGui.Text(String.Format("DrawCall Avg: ({0:N1}) DC/frame, DrawCall Total ({1})", MathF.Round(drawCallCount / (totalTime / deltaTime)), drawCallCount));
             ImGui.Text(String.Format("Time Open {0:N1} minutes", totalTime / 60.0f));
-            //ImGui.Text(String.Format("Time taken for Update run %.2fms ", MathF.Abs(updateTime)));
-            //ImGui.Text(String.Format("Time taken for Fixed Update run %.2fms ", MathF.Abs(updateFixedTime)));
 
             //float frameTimeHistory = 2.75f;
             /*ImGui.SliderFloat("FrameTimeHistory", ref frameTimeHistory, 0.1f, 10.0f);
@@ -102,19 +98,10 @@ namespace SpatialEngine.Rendering
                 ImPlot.PlotShaded("FrameTime", &frameTimes.Data[0].x, &frameTimes.Data[0].y, frameTimes.Data.size(), -INFINITY, 0, frameTimes.Offset, 2 * sizeof(float));
                 ImPlot.EndPlot();
             }*/
-            ImGui.Checkbox("Wire Frame", ref showWireFrame);
             if (ImGui.Checkbox("Vsync", ref vsync))
             {
                 window.VSync = vsync;
             }
-
-            ImGui.Spacing();
-            //ImGui.DragFloat("Physics Speed", &PhysicsSpeed, 0.01f, -10.0f, 10.0f);
-            ImGui.DragFloat3("Player Position", ref player.position, 1.0f, -50.0f, 50.0f);
-            ImGui.DragFloat3("Player Rotation", ref player.rotation, 1.0f, -360.0f, 360.0f);
-            ImGui.SliderFloat("Cam Fov", ref player.camera.zoom, 179.9f, 0.01f);
-            Vector3 chunkpos = player.position / 10;
-            ImGui.Text(String.Format("Player in ChunkPos: {0} {1} {2}", (int)chunkpos.X, (int)chunkpos.Y, (int)chunkpos.Z));
 
             if (ImGui.BeginMenuBar())
             {

@@ -56,9 +56,10 @@ namespace SpatialEngine
 
         public static Player player;
 
-        public static uint DrawCallCount = 0;
+        public static uint drawCallCount = 0;
         public static float totalTime = 0.0f;
         public static float deltaTime = 0.0f;
+        public const float fixedUpdateTime = 16.7f;
 
         /// <summary>
         /// In Seconds
@@ -160,7 +161,7 @@ namespace SpatialEngine
             }
             //imgui control stuff
             controller = new ImGuiController(gl, window, input);
-            ImGui.SetWindowSize(new Vector2(400, 600));
+            ImGui.SetWindowSize(new Vector2(850, 500));
 
             //init game
             GameManager.InitGame();
@@ -197,7 +198,7 @@ namespace SpatialEngine
         {
             totalTime += (float)dt;
             deltaTime = (float)dt;
-            
+
             Input.Update();
 
             for (int i = 0; i < scene.SpatialObjects.Count; i++)
@@ -207,11 +208,11 @@ namespace SpatialEngine
             
             GameManager.UpdateGame((float)dt);
 
-            totalTimeUpdate += (float)dt;
-            while (totalTimeUpdate >= 0.0166f)
+            totalTimeUpdate += (float)dt * 1000;
+            while (totalTimeUpdate >= fixedUpdateTime)
             {
-                totalTimeUpdate -= 0.0166f;
-                FixedUpdate(0.0166f);
+                totalTimeUpdate -= fixedUpdateTime;
+                FixedUpdate(fixedUpdateTime);
             }
         
             Input.Clear();

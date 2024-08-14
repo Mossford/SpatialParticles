@@ -108,7 +108,7 @@ namespace SpatialEngine.Rendering
             Globals.gl.BindVertexArray(id);
             Globals.gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
             Globals.gl.BindVertexArray(0);
-            Globals.DrawCallCount++;
+            Globals.drawCallCount++;
         }
 
         //ui renderer usage
@@ -120,7 +120,7 @@ namespace SpatialEngine.Rendering
             shader.setMat4("model", mat);
             Globals.gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
             Globals.gl.BindVertexArray(0);
-            Globals.DrawCallCount++;
+            Globals.drawCallCount++;
         }
 
         public void Dispose()
