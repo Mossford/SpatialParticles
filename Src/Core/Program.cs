@@ -42,7 +42,7 @@ namespace SpatialEngine
         public static string EngVer = "PAR:0.1 | ENG:0.6.8 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";
-        
+
         public static Scene scene;
         public static Physics physics;
         public static PhysicsSystem physicsSystem;
@@ -75,8 +75,6 @@ namespace SpatialEngine
     {
         static ImGuiController controller;
         static Vector2 LastMousePosition;
-        static Shader shader;
-        static Shader depthShader;
 
         public static void Main(string[] args)
         {
@@ -107,8 +105,6 @@ namespace SpatialEngine
                 HeadlessServer.Init();
             }
 
-            scene.SaveScene(ScenePath, "Main.txt");
-            physics.CleanPhysics(ref scene);
             NetworkManager.Cleanup();
         }
 
@@ -137,18 +133,8 @@ namespace SpatialEngine
             gl.DebugMessageCallback(DebugProc, null);
             gl.DebugMessageControl(GLEnum.DontCare, GLEnum.DontCare, GLEnum.DebugSeverityNotification, 0, null, false);
 
-            //init systems
-            scene = new Scene();
-            physics = new Physics();
-            physics.InitPhysics();
-
-            Renderer.Init(scene);
-            shader = new Shader(gl, "Default.vert", "Default.frag");
-            depthShader = new Shader(gl, "Depth.vert", "Depth.frag");
-
             NetworkManager.Init();
-
-            player = new Player(15.0f, new Vector3(-33, 12, -20), new Vector3(300, 15, 0));
+            UiRenderer.Init();
             
             //input stuffs
             Input.Init();
@@ -188,7 +174,6 @@ namespace SpatialEngine
             {
                 Vector2 mousePosMoved = position - LastMousePosition;
                 LastMousePosition = position;
-                player.Look((int)mousePosMoved.X, (int)mousePosMoved.Y, false, false);
                 LastMousePosition = position;
             }
         }
@@ -200,11 +185,6 @@ namespace SpatialEngine
             deltaTime = (float)dt;
 
             Input.Update();
-
-            for (int i = 0; i < scene.SpatialObjects.Count; i++)
-            {
-                scene.SpatialObjects[i].SO_mesh.SetModelMatrix();
-            }
             
             GameManager.UpdateGame((float)dt);
 
@@ -220,9 +200,6 @@ namespace SpatialEngine
 
         static void FixedUpdate(float dt)
         {
-            player.Movement(dt, keysPressed.ToArray());
-            player.UpdatePlayer(dt);
-
             GameManager.FixedUpdateGame(dt);
 
             if (NetworkManager.didInit)
@@ -235,24 +212,20 @@ namespace SpatialEngine
                 {
                     if(!NetworkManager.client.IsConnected())
                     {
-                        physics.UpdatePhysics(ref scene, dt);
+                        //physics.UpdatePhysics(ref scene, dt);
                     }
                     NetworkManager.client.Update(dt);
                 }
             }
             else
             {
-                physics.UpdatePhysics(ref scene, dt);
+                //physics.UpdatePhysics(ref scene, dt);
             }
         }
 
         static unsafe void OnRender(double dt)
         {   
             controller.Update((float)dt);
-
-            player.camera.SetViewMat();
-            player.camera.SetProjMat(window.Size.X, window.Size.Y);
-            player.camera.SetProjMatClose(window.Size.X, window.Size.Y);
 
             ImGuiMenu((float)dt);
 
@@ -274,13 +247,9 @@ namespace SpatialEngine
             {
                 for (int i = 0; i < NetworkManager.client.playerMeshes.Count; i++)
                 {
-                    NetworkManager.client.playerMeshes[i].SetModelMatrix();
-                    NetworkManager.client.playerMeshes[i].DrawMesh(ref shader, player.camera.viewMat, player.camera.projMat, player.camera.position);
+
                 }
             }
-
-            SetNeededDebug(player.camera.projMat, player.camera.viewMat);
-            DrawDebugItems();
 
             PixelColorer.Render();
 

@@ -242,11 +242,11 @@ namespace SpatialGame
             }
 
             //if there is air under the solid
-
             bool grounded = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (grounded)
             {
-                velocity = new Vector2(1, 1);
+                velocity = new Vector2(0, velocity.Y);
+                velocity += new Vector2(0, 0.5f);
                 MoveElement();
                 //MoveElementOne(new Vector2(0, 1));
                 return;
@@ -254,13 +254,15 @@ namespace SpatialGame
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                MoveElementOne(new Vector2(-1, 1));
+                velocity = new Vector2(-1 - (velocity.Y * 0.07f), 1 - (velocity.Y * 0.07f));
+                MoveElement();
                 return;
             }
             bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                MoveElementOne(new Vector2(1, 1));
+                velocity = new Vector2(1 + (velocity.Y * 0.07f), 1 - (velocity.Y * 0.07f));
+                MoveElement();
                 return;
             }
         }
@@ -291,21 +293,25 @@ namespace SpatialGame
             bool ground = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (ground)
             {
-                MoveElementOne(new Vector2(0, 1));
+                velocity = new Vector2(0, velocity.Y);
+                velocity += new Vector2(0, 0.5f);
+                MoveElement();
                 return;
             }
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte()
                 && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                MoveElementOne(new Vector2(-1, 1));
+                velocity = new Vector2(-1 - (velocity.Y * 0.6f), 1 - (velocity.Y * 0.3f));
+                MoveElement();
                 return;
             }
             bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte()
                 && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                MoveElementOne(new Vector2(1, 1));
+                velocity = new Vector2(1 + (velocity.Y * 0.6f), 1 - (velocity.Y * 0.3f));
+                MoveElement();
                 return;
             }
             bool left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) != ElementType.empty.ToByte()

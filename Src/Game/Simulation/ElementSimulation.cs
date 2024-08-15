@@ -70,7 +70,7 @@ namespace SpatialGame
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
             }
 
-            /*for (int y = 0; y < PixelColorer.height; y++)
+            for (int y = 0; y < PixelColorer.height; y++)
             {
                 int id = elements.Count;
                 elements.Add(new WallPE());
@@ -85,7 +85,7 @@ namespace SpatialGame
                 elements[id].position = new Vector2(PixelColorer.width - 1, y);
                 positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
                 idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }*/
+            }
 
             //DebugSimulation.Init();
 
@@ -236,10 +236,10 @@ namespace SpatialGame
                         int id = elements.Count;
                         if(type)
                         {
-                            elements.Add(new SandPE());
+                            elements.Add(new WaterPE());
                             elements[id].id = id;
                             elements[id].position = pos;
-                            SafePositionCheckSet(ElementType.solid.ToByte(), elements[id].position);
+                            SafePositionCheckSet(ElementType.liquid.ToByte(), elements[id].position);
                             SafeIdCheckSet(id, elements[id].position);
                         }
                     //}
