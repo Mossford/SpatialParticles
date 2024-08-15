@@ -80,61 +80,44 @@ namespace SpatialGame
             ElementSimulation.elements[id].position = newPos;
         }
 
-        public void MoveElement(ElementType type, float deltaTime)
+        public void MoveElement()
         {
             //find new position
-            Vector2 posMove = position + (velocity * deltaTime);
-            //do line algorithim
+            Vector2 posMove = position + velocity;
+            posMove.X = MathF.Floor(posMove.X);
+            posMove.Y = MathF.Floor(posMove.Y);
 
-            Vector2 dir = Vector2.Normalize(posMove - position);
+            Vector2 dir = posMove - position;
+            int step;
 
-            int matrixX1 = (int)position.X;
-            int matrixY1 = (int)position.Y;
-            int matrixX2 = (int)posMove.X;
-            int matrixY2 = (int)posMove.Y;
+            if (Math.Abs(dir.X) > Math.Abs(dir.Y))
+                step = (int)Math.Abs(dir.X);
+            else
+                step = (int)Math.Abs(dir.Y);
 
-            int xDir = matrixX1 - matrixX2;
-            int yDir = matrixY1 + matrixY2;
-            bool xDirIsLarger = Math.Abs(xDir) > Math.Abs(yDir);
+            Vector2 increse = dir / step;
 
-            int xModifier = xDir < 0 ? 1 : -1;
-            int yModifier = yDir < 0 ? -1 : 1;
-
-            int longerSideLength = Math.Max(Math.Abs(xDir), Math.Abs(yDir));
-            int shorterSideLength = Math.Min(Math.Abs(xDir), Math.Abs(yDir));
-            float slope = (shorterSideLength == 0 || longerSideLength == 0) ? 0 : ((float)(shorterSideLength) / (longerSideLength));
-
-            int shorterSideIncrease;
-            for (int i = 1; i <= longerSideLength; i++)
+            for (int i = 0; i < step; i++)
             {
-                shorterSideIncrease = (int)Math.Round(i * slope);
-                int yIncrease, xIncrease;
-                if (xDirIsLarger)
+                Vector2 newPos = position + increse;
+                if (ElementSimulation.SafeIdCheckGet(newPos) == -1)
                 {
-                    xIncrease = i;
-                    yIncrease = shorterSideIncrease;
-                }
-                else
-                {
-                    yIncrease = i;
-                    xIncrease = shorterSideIncrease;
-                }
-                int currentY = matrixY1 + (yIncrease * yModifier);
-                int currentX = matrixX1 + (xIncrease * xModifier);
-
-                Vector2 pos = new Vector2(currentX, currentY);
-
-                int idAfter = ElementSimulation.idCheck[PixelColorer.PosToIndex(pos)];
-                if (idAfter == 0)
-                {
-                    ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = ElementType.empty.ToByte();
-                    ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = 0;
-                    position = pos;
-                    ElementSimulation.positionCheck[PixelColorer.PosToIndex(position)] = type.ToByte();
-                    ElementSimulation.idCheck[PixelColorer.PosToIndex(position)] = id;
+                    if (!BoundsCheck(newPos))
+                    {
+                        velocity = dir;
+                        QueueDelete();
+                        return;
+                    }
                 }
                 else
                     return;
+
+                ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
+                ElementSimulation.SafeIdCheckSet(-1, position);
+                position = newPos;
+                position = new Vector2(MathF.Round(position.X), MathF.Round(position.Y));
+                ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
+                ElementSimulation.SafeIdCheckSet(id, position);
             }
         }
 
@@ -263,7 +246,9 @@ namespace SpatialGame
             bool grounded = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
             if (grounded)
             {
-                MoveElementOne(new Vector2(0, 1));
+                velocity = new Vector2(1, 1);
+                MoveElement();
+                //MoveElementOne(new Vector2(0, 1));
                 return;
             }
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();
