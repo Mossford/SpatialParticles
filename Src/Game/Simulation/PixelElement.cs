@@ -47,6 +47,7 @@ namespace SpatialGame
         /// </summary>
         public abstract void Update();
         public abstract ElementType GetElementType();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool BoundsCheck(Vector2 position)
         {
             if (position.X < 0 || position.X >= PixelColorer.width || position.Y < 0 || position.Y >= PixelColorer.height)
@@ -54,9 +55,9 @@ namespace SpatialGame
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void SwapElement(Vector2 newPos, ElementType type)
         {
-            ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
             //get the id of the element below this current element
             int swapid = ElementSimulation.SafeIdCheckGet(newPos);
 
@@ -67,19 +68,27 @@ namespace SpatialGame
             if (!BoundsCheck(ElementSimulation.elements[swapid].position))
                 return;
 
+            ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
+
+            //------safe to access the arrays directly------
+
+            int index = PixelColorer.PosToIndexUnsafe(position);
+            ElementSimulation.positionCheck[index] = type.ToByte();
             //set the element below the current element to the same position
             ElementSimulation.elements[swapid].position = position;
             //set the id at the current position to the id from the element below
-            ElementSimulation.SafeIdCheckSet(swapid, position);
+            ElementSimulation.idCheck[index] = swapid;
 
             //set the type to the new position to our current element
-            ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
+            ElementSimulation.positionCheck[index] = GetElementType().ToByte();
+            index = PixelColorer.PosToIndexUnsafe(newPos);
             //set the id of our element to the new position
-            ElementSimulation.SafeIdCheckSet(id, newPos);
+            ElementSimulation.idCheck[index] = id;
             //set the new position of the current element
             ElementSimulation.elements[id].position = newPos;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void MoveElement()
         {
             //find new position
@@ -112,12 +121,16 @@ namespace SpatialGame
                 else
                     return;
 
-                ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
-                ElementSimulation.SafeIdCheckSet(-1, position);
+                //------safe to access the arrays directly------
+
+                int index = PixelColorer.PosToIndexUnsafe(position);
+                ElementSimulation.positionCheck[index] = ElementType.empty.ToByte();
+                ElementSimulation.idCheck[index] = -1;
                 position = newPos;
                 position = new Vector2(MathF.Round(position.X), MathF.Round(position.Y));
-                ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
-                ElementSimulation.SafeIdCheckSet(id, position);
+                index = PixelColorer.PosToIndexUnsafe(position);
+                ElementSimulation.positionCheck[index] = GetElementType().ToByte();
+                ElementSimulation.idCheck[index] = id;
             }
         }
 
@@ -142,18 +155,20 @@ namespace SpatialGame
         /// <summary>
         /// Should be used when deletion needs to happen during a particles update loop
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void QueueDelete()
         {
             ElementSimulation.idsToDelete.Add(id);
             toBeDeleted = true;
             deleteIndex = ElementSimulation.idsToDelete.Count - 1;
-            //ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
-            //ElementSimulation.SafeIdCheckSet(-1, position);
+            ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
+            ElementSimulation.SafeIdCheckSet(-1, position);
         }
 
         /// <summary>
         /// Should be used when a deletion is needed right away and outside of a particles update loop
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Delete()
         {
             //set its position to nothing

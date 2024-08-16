@@ -9,6 +9,7 @@ out vec4 out_color;
 in vec2 TexCoords;
 uniform vec2 particleResolution;
 uniform vec2 resolution;
+uniform vec2 lightPos;
 
 void main()
 {
@@ -23,13 +24,15 @@ void main()
     int indexColor = int((x * particleResolution.y) - y + particleResolution.y - 1) % 4;
     //opengl just put the bits into the float and did no conversion
     //so we take the bits and turn them into a int
-    int Color = floatBitsToInt(pixelColors.Colors[index][indexColor]);
+    int ColorBits = floatBitsToInt(pixelColors.Colors[index][indexColor]);
     //seperate values
     //Remove all values except end 2 bits leaving the value
-    float r = (Color & 0xFF) / 255.0;
-    float g = ((Color >> 8) & 0xFF) / 255.0;
-    float b = ((Color >> 16) & 0xFF) / 255.0;
-    float a = ((Color >> 24) & 0xFF) / 255.0;
+    vec4 color = vec4((ColorBits & 0xFF) / 255.0, ((ColorBits >> 8) & 0xFF) / 255.0, ((ColorBits >> 16) & 0xFF) / 255.0, ((ColorBits >> 24) & 0xFF) / 255.0);
 
-    out_color = vec4(r, g, b, 1.0);
+    //float dist = length(lightPos - vec2(x,y));
+    //float attenuation = 1.0 / (1.0 + (0.00005 * dist * dist));
+
+    //color *= vec4(lightPos.x / particleResolution.x * 2 * attenuation, lightPos.y / particleResolution.y * 2 * attenuation, 1 * attenuation, 1.0);
+
+    out_color = color;
 }

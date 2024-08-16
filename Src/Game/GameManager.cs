@@ -26,9 +26,7 @@ namespace SpatialGame
         public static void UpdateGame(float dt)
         {
             GameInput.Update(dt);
-
             PixelColorer.Update();
-            //PixelColorer.ResetBackground();
         }
 
         public static void FixedUpdateGame(float dt)

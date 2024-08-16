@@ -8,19 +8,15 @@
     <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
   <PropertyGroup>
+    <ApplicationIcon>IconSpace.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <PackageIcon>IconSpace.png</PackageIcon>
     <Nullable>disable</Nullable>
     <StartupObject></StartupObject>
     <AssemblyName>SpatialParticles</AssemblyName>
-    <ApplicationIcon>IconSpace.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>true</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="IconSpace.ico" />
