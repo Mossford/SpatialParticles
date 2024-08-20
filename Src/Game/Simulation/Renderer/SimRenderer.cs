@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 using static SpatialEngine.Globals;
 
@@ -20,13 +21,13 @@ namespace SpatialGame
         public static void Init()
         {
             meshes = new List<SimMesh>();
-            shader = new Shader(Globals.gl, "SimDefault.vert", "SimDefault.frag");
+            shader = new Shader(gl, "SimDefault.vert", "SimDefault.frag");
         }
 
         /// <summary>
         /// Creates or overwrites meshes
         /// </summary>
-        public static void Update()
+        public static void UpdateMeshes()
         {
             for (int i = 0; i < meshes.Count; i++)
             {
@@ -34,11 +35,25 @@ namespace SpatialGame
             }
         }
 
-        public static void Render()
+        public static void Update()
         {
             for (int i = 0; i < meshes.Count; i++)
             {
-                gl.UseProgram(shader.shader);
+                meshes[i].Update();
+            }
+        }
+
+        public static void Render()
+        {
+            gl.UseProgram(shader.shader);
+            for (int i = 0; i < meshes.Count; i++)
+            {
+                if (!meshes[i].show)
+                    continue;
+                shader.setMat4("model", meshes[i].model);
+                //maybe correct size for projection?
+                shader.setMat4("proj", Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1));
+                shader.setVec3("color", Vector3.Zero);
                 meshes[i].Draw();
             }
         }

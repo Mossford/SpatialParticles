@@ -21,17 +21,21 @@ namespace SpatialGame
         {
             PixelColorer.Init();
             ElementSimulation.InitPixelSim();
+            SimRenderer.Init();
+            SimInput.Init();
         }
 
         public static void UpdateGame(float dt)
         {
-            GameInput.Update(dt);
             PixelColorer.Update();
+            //SimRenderer.UpdateMeshes();
+            SimRenderer.Update();
         }
 
         public static void FixedUpdateGame(float dt)
         {
             ElementSimulation.RunPixelSim();
+            SimInput.Update();
         }
     }
 }

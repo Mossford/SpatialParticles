@@ -39,6 +39,8 @@ namespace SpatialEngine
         public static IWindow window;
         public const int SCR_WIDTH = 1920;
         public const int SCR_HEIGHT = 1080;
+        public static int MAX_SCR_WIDTH;
+        public static int MAX_SCR_HEIGHT;
         public static string EngVer = "PAR:0.1 | ENG:0.6.8 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";
@@ -151,6 +153,13 @@ namespace SpatialEngine
 
             //init game
             GameManager.InitGame();
+
+            //get the display size
+            window.WindowState = WindowState.Fullscreen;
+            MAX_SCR_WIDTH = window.Size.X;
+            MAX_SCR_HEIGHT = window.Size.Y;
+            window.WindowState = WindowState.Normal;
+            Console.WriteLine(MAX_SCR_WIDTH);
         }
 
         static bool lockMouse = false;
@@ -238,7 +247,7 @@ namespace SpatialEngine
             if(showWireFrame)
                 gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
 
-            UiRenderer.Draw();
+            //UiRenderer.Draw();
 
             //Renderer.Draw(scene, ref shader, player.camera.viewMat, player.camera.projMat, player.camera.position);
 
@@ -252,6 +261,7 @@ namespace SpatialEngine
             }
 
             PixelColorer.Render();
+            SimRenderer.Render();
 
             controller.Render();
         }

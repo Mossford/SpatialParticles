@@ -1,7 +1,9 @@
 ﻿using Silk.NET.OpenGL;
+using SpatialEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,17 +26,44 @@ namespace SpatialGame
         public uint vbo;
         public uint ebo;
 
-        public SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scale)
+        public bool show;
+
+        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices)
+        {
+            this.vPos = vPos;
+            this.indices = indices;
+            position = Vector2.Zero;
+            rotation = 0;
+            scale = 1;
+            show = true;
+
+            id = gl.GenVertexArray();
+            gl.BindVertexArray(id);
+            vbo = gl.GenBuffer();
+            gl.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
+            ebo = gl.GenBuffer();
+            gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, ebo);
+
+            fixed (Vector2* buf = vPos)
+                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vPos.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
+            fixed (uint* buf = indices)
+                gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(indices.Length * sizeof(uint)), buf, BufferUsageARB.StreamDraw);
+
+            gl.EnableVertexAttribArray(0);
+            gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, (void*)0);
+
+            gl.BindVertexArray(0);
+        }
+
+        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scale)
         {
             this.vPos = vPos;
             this.indices = indices;
             this.position = position;
             this.rotation = rotation;
             this.scale = scale;
-        }
+            show = true;
 
-        public unsafe void Bind()
-        {
             id = gl.GenVertexArray();
             gl.BindVertexArray(id);
             vbo = gl.GenBuffer();
@@ -51,6 +80,26 @@ namespace SpatialGame
             gl.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, (uint)sizeof(Vector2), (void*)0);
 
             gl.BindVertexArray(0);
+        }
+
+        public unsafe void Bind()
+        {
+            gl.BindVertexArray(id);
+
+            fixed (Vector2* buf = vPos)
+                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vPos.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
+            fixed (uint* buf = indices)
+                gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(indices.Length * sizeof(uint)), buf, BufferUsageARB.StreamDraw);
+
+            gl.BindVertexArray(0);
+        }
+
+        public void Update()
+        {
+            model = Matrix4x4.Identity;
+            model *= Matrix4x4.CreateScale(scale, scale, 1f);
+            model *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation);
+            model *= Matrix4x4.CreateTranslation(position.X, position.Y, 0f);
         }
 
         public void Unbind()

@@ -38,9 +38,6 @@ namespace SpatialGame
         /// </summary>
         public static Random random;
 
-        static bool mousePressed = false;
-        static bool type = false;
-
         public static void InitPixelSim()
         {
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
@@ -89,9 +86,6 @@ namespace SpatialGame
             }
 
             //DebugSimulation.Init();
-
-            Input.input.Mice[0].MouseUp += MouseUp;
-            Input.input.Mice[0].MouseDown += MouseDown;
         }
 
         public static void RunPixelSim()
@@ -110,8 +104,6 @@ namespace SpatialGame
                         PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
                 }
             }
-
-            CreateSphere();
 
             //DebugSimulation.Update();
         }
@@ -218,86 +210,6 @@ namespace SpatialGame
             if (index == -1)
                 return -1;
             return idCheck[index];
-        }
-
-        public static void MouseDown(IMouse mouse, MouseButton button)
-        {
-            mousePressed = true;
-            if (button == MouseButton.Left)
-                type = true;
-            if (button == MouseButton.Right)
-                type = false;
-            //CreateSphere();
-        }
-
-        public static void MouseUp(IMouse mouse, MouseButton button)
-        {
-            mousePressed = false;
-        }
-
-        public static void CreateSphere()
-        {
-            Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (Input.input.Mice[0].Position / (Vector2)Globals.window.Size);
-            /*for (int x = (int)position.X - 10; x < position.X + 10; x++)
-            {
-                for (int y = (int)position.Y - 10; y < position.Y + 10; y++)
-                {
-                    float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
-                    if (check > 10)
-                        continue;
-                    Vector2 pos = new Vector2(x, y);
-                    int index = PixelColorer.PosToIndex(pos);
-                    if (index == -1)
-                        continue;
-                    PixelColorer.pixelColors[index] = new Vector4Byte(255, 255, 255, 255);
-                }
-            }*/
-
-            if (!mousePressed)
-                return;
-
-            position.X = MathF.Floor(position.X);
-            position.Y = MathF.Floor(position.Y);
-
-            for (int x = (int)position.X - 10; x < position.X + 10; x++)
-            {
-                for (int y = (int)position.Y - 10; y < position.Y + 10; y++)
-                {
-                    if(x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
-                        continue;
-
-                    float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
-                    //if (check < 10)
-                    //{
-                        Vector2 pos = new Vector2(x, y);
-                        int idToCheck = SafeIdCheckGet(pos);
-
-                        if(idToCheck != -1)
-                        {
-                            //Find amount that was deleted before the current element and subtract that from the id used
-                            /*int adder = 0;
-                            int[] keys = indexCountDelete.Keys.ToArray();
-                            for (int i = 0; i < indexCountDelete.Count; i++)
-                            {
-                                if (idToCheck > keys[i])
-                                    adder++;
-                                else
-                                    break;
-                            }
-                            elements[idToCheck - adder].Delete();*/
-                        }
-                        int id = elements.Count;
-                        if(type)
-                        {
-                            elements.Add(new SandPE());
-                            elements[id].id = id;
-                            elements[id].position = pos;
-                            SafePositionCheckSet(ElementType.solid.ToByte(), elements[id].position);
-                            SafeIdCheckSet(id, elements[id].position);
-                        }
-                    //}
-                }
-            }
         }
     }
 }
