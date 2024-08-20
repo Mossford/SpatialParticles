@@ -17,10 +17,16 @@ namespace SpatialGame
         {
             if (!pressed)
             {
-                if(idMesh != -1)
+                if (idMesh == -1)
                 {
-                    SimRenderer.meshes[idMesh].show = false;
+                    idMesh = SimRenderer.meshes.Count;
+                    SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(20, 0.95f));
                 }
+
+                SimRenderer.meshes[idMesh].show = true;
+                SimRenderer.meshes[idMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
+                SimRenderer.meshes[idMesh].position.Y *= -1;
+                SimRenderer.meshes[idMesh].scale = Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * radius;
                 return;
             }
 
@@ -31,7 +37,6 @@ namespace SpatialGame
             }
 
             SimRenderer.meshes[idMesh].show = true;
-
             SimRenderer.meshes[idMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
             SimRenderer.meshes[idMesh].position.Y *= -1;
             SimRenderer.meshes[idMesh].scale = Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * radius;

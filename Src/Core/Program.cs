@@ -159,7 +159,6 @@ namespace SpatialEngine
             MAX_SCR_WIDTH = window.Size.X;
             MAX_SCR_HEIGHT = window.Size.Y;
             window.WindowState = WindowState.Normal;
-            Console.WriteLine(MAX_SCR_WIDTH);
         }
 
         static bool lockMouse = false;
