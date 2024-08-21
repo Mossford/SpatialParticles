@@ -15,7 +15,6 @@ namespace SpatialGame
 
         public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button)
         {
-            float baseScale = Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length();
 
             if (!pressed)
             {
