@@ -23,11 +23,14 @@ namespace SpatialGame
             Input.input.Mice[0].Scroll += MouseScroll;
 
             mouseSpawnRadius = 10;
+
+            MouseInteraction.Init();
         }
 
         public static void Update()
         {
             MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress);
+            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed);
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
         {

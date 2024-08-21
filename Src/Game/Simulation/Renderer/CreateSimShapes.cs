@@ -65,5 +65,32 @@ namespace SpatialGame
 
             return new SimMesh(vertexes, indices);
         }
+
+        public static SimMesh CreateSquare(float thickness)
+        {
+            Vector2[] vertexes = new Vector2[8];
+            vertexes[0] = new Vector2(-0.5f, 0.5f);
+            vertexes[1] = new Vector2(0.5f, 0.5f);
+            vertexes[2] = new Vector2(0.5f, -0.5f);
+            vertexes[3] = new Vector2(-0.5f, -0.5f);
+            vertexes[4] = new Vector2(-0.5f + thickness, 0.5f - thickness);
+            vertexes[5] = new Vector2(0.5f - thickness, 0.5f - thickness);
+            vertexes[6] = new Vector2(0.5f - thickness, -0.5f + thickness);
+            vertexes[7] = new Vector2(-0.5f + thickness, -0.5f + thickness);
+
+            uint[] indices = new uint[]
+            {
+                0,4,5,
+                1,5,6,
+                2,6,7,
+                3,7,4,
+                0,5,1,
+                1,6,2,
+                2,7,3,
+                3,4,0
+            };
+
+            return new SimMesh(vertexes, indices);
+        }
     }
 }

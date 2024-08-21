@@ -22,6 +22,7 @@ namespace SpatialGame
         public float rotation;
         public float scaleX;
         public float scaleY;
+        public Vector3 color;
 
         public uint id;
         public uint vbo;
@@ -37,6 +38,7 @@ namespace SpatialGame
             rotation = 0;
             scaleX = 1;
             scaleY = 1;
+            color = Vector3.Zero;
             show = true;
 
             id = gl.GenVertexArray();
@@ -57,7 +59,7 @@ namespace SpatialGame
             gl.BindVertexArray(0);
         }
 
-        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scaleX, float scaleY)
+        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scaleX, float scaleY, Vector3 color)
         {
             this.vPos = vPos;
             this.indices = indices;
@@ -65,6 +67,7 @@ namespace SpatialGame
             this.rotation = rotation;
             this.scaleX = scaleX;
             this.scaleY = scaleY;
+            this.color = color;
             show = true;
 
             id = gl.GenVertexArray();

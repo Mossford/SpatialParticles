@@ -53,7 +53,7 @@ namespace SpatialGame
                 shader.setMat4("model", meshes[i].model);
                 //maybe correct size for projection?
                 shader.setMat4("proj", Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1));
-                shader.setVec3("color", Vector3.Zero);
+                shader.setVec3("color", meshes[i].color);
                 meshes[i].Draw();
             }
         }
