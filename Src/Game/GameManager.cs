@@ -17,9 +17,20 @@ namespace SpatialGame
 {
     public static class GameManager
     {
+        public static void ReInitGame()
+        {
+            PixelColorer.CleanUp();
+            SimRenderer.CleanUp();
+
+            PixelColorer.Init(960, 540);
+            ElementSimulation.InitPixelSim();
+            SimRenderer.Init();
+            SimInput.Init();
+        }
+
         public static void InitGame()
         {
-            PixelColorer.Init();
+            PixelColorer.Init(960, 540);
             ElementSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();

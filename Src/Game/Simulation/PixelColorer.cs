@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Silk.NET.OpenGL;
+using Silk.NET.Vulkan;
 using SpatialEngine;
 using SpatialEngine.Rendering;
 
@@ -34,15 +35,17 @@ namespace SpatialGame
     public static class PixelColorer
     {
         public static Vector4Byte[] pixelColors;
-        public static int width = 960;
-        public static int height = 540;
+        public static int width;
+        public static int height;
         public static UiQuad quad;
         public static BufferObject<Vector4Byte> pixelBuffer;
         public static Shader shader;
         public static Matrix4x4 mat;
 
-        public static unsafe void Init()
+        public static unsafe void Init(int width, int height)
         {
+            PixelColorer.width = width;
+            PixelColorer.height = height;
             quad = new UiQuad();
             quad.Bind();
             shader = new Shader(Globals.gl, "PixelColorer.vert", "PixelColorer.frag");
@@ -75,6 +78,13 @@ namespace SpatialGame
             shader.setVec2("particleResolution", new Vector2(width, height));
             shader.setVec2("lightPos", new Vector2(MathF.Sin(Globals.GetTime()) * width / 3 + (width / 2), MathF.Cos(Globals.GetTime()) * height / 3 + (height / 2)));
             quad.Draw();
+        }
+
+        public static void CleanUp()
+        {
+            quad.Dispose();
+            pixelBuffer.Dispose();
+            shader.Dispose();
         }
 
         public static void ResetBackground()

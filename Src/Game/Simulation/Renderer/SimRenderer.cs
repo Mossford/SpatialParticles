@@ -57,5 +57,14 @@ namespace SpatialGame
                 meshes[i].Draw();
             }
         }
+
+        public static void CleanUp()
+        {
+            shader.Dispose();
+            for (int i = 0; i < meshes.Count; i++)
+            {
+                meshes[i].Dispose();
+            }
+        }
     }
 }

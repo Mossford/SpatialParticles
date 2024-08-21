@@ -21,7 +21,7 @@ namespace SpatialEngine.Rendering
         }
     }
 
-    public class Shader
+    public class Shader : IDisposable
     {
         uint vertShaderU;
         uint fragShaderU;
@@ -158,6 +158,11 @@ namespace SpatialEngine.Rendering
         {
             int location = GetUniformLocation(name);
             gl.UniformMatrix3x2(location, 1, false, (float*)&mat);
+        }
+
+        public void Dispose()
+        {
+            gl.DeleteProgram(shader);
         }
     }
 }
