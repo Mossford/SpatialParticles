@@ -14,6 +14,7 @@ namespace SpatialGame
         static bool mousePressed;
         static float mouseScrollBefore;
         static int mouseSpawnRadius;
+        static int mouseButtonPress;
 
         public static void Init()
         {
@@ -26,10 +27,11 @@ namespace SpatialGame
 
         public static void Update()
         {
-            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed);
+            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress);
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
         {
+            mouseButtonPress = (int)button;
             mousePressed = true;
         }
 
@@ -43,7 +45,7 @@ namespace SpatialGame
             mouseSpawnRadius += (int)wheel.Y;
             if(mouseSpawnRadius < 1)
                 mouseSpawnRadius = 1;
-            if(Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.X / 3)
+            if(Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.X)
                 mouseSpawnRadius -= 1;
         }
     }

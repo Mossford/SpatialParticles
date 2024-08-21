@@ -13,14 +13,14 @@ namespace SpatialGame
     {
         static int idMesh = -1;
 
-        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed)
+        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button)
         {
             if (!pressed)
             {
                 if (idMesh == -1)
                 {
                     idMesh = SimRenderer.meshes.Count;
-                    SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(20, 0.95f));
+                    SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(60, 0.95f));
                 }
 
                 SimRenderer.meshes[idMesh].show = true;
@@ -57,26 +57,25 @@ namespace SpatialGame
                         Vector2 pos = new Vector2(x, y);
                         int idToCheck = ElementSimulation.SafeIdCheckGet(pos);
 
-                        if (idToCheck != -1)
+                        if(button == 0)
                         {
-                            //Find amount that was deleted before the current element and subtract that from the id used
-                            /*int adder = 0;
-                            int[] keys = indexCountDelete.Keys.ToArray();
-                            for (int i = 0; i < indexCountDelete.Count; i++)
+                            if (idToCheck == -1)
                             {
-                                if (idToCheck > keys[i])
-                                    adder++;
-                                else
-                                    break;
+                                int id = ElementSimulation.elements.Length;
+                                ElementSimulation.AddElement(pos, new SandPE());
                             }
-                            elements[idToCheck - adder].Delete();*/
+                            else if (ElementSimulation.elements[idToCheck].GetElementType() != ElementType.solid)
+                            {
+                                ElementSimulation.elements[idToCheck].QueueDelete();
+                            }
                         }
-                        int id = ElementSimulation.elements.Count;
-                        ElementSimulation.elements.Add(new SandPE());
-                        ElementSimulation.elements[id].id = id;
-                        ElementSimulation.elements[id].position = pos;
-                        ElementSimulation.SafePositionCheckSet(ElementType.solid.ToByte(), ElementSimulation.elements[id].position);
-                        ElementSimulation.SafeIdCheckSet(id, ElementSimulation.elements[id].position);
+                        else
+                        {
+                            if (idToCheck != -1)
+                            {
+                                ElementSimulation.elements[idToCheck].QueueDelete();
+                            }
+                        }
                     }
                 }
             }

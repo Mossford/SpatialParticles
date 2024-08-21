@@ -31,7 +31,7 @@ namespace SpatialGame
     }
     
 
-    public abstract class Element
+    public abstract class Element : IDisposable
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
@@ -41,6 +41,7 @@ namespace SpatialGame
         public Vector2 oldpos { get; set; }
         public bool toBeDeleted {get; set;}
         public int deleteIndex {get; set;}
+        public float timeSpawned { get; set;}
 
         /// <summary>
         /// Position check must be updated when pixel pos changed
@@ -127,7 +128,9 @@ namespace SpatialGame
                 ElementSimulation.positionCheck[index] = ElementType.empty.ToByte();
                 ElementSimulation.idCheck[index] = -1;
                 position = newPos;
-                position = new Vector2(MathF.Round(position.X), MathF.Round(position.Y));
+                //has to be floor other than round because round can go up and move the element
+                //into a position where it is now intersecting another element
+                position = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
                 index = PixelColorer.PosToIndexUnsafe(position);
                 ElementSimulation.positionCheck[index] = GetElementType().ToByte();
                 ElementSimulation.idCheck[index] = id;
@@ -153,16 +156,37 @@ namespace SpatialGame
         }
 
         /// <summary>
+        /// If there are two elements on the same spot one has to be deleted
+        /// the one with the higher time spawned gets deleted
+        /// </summary>
+        public void CheckDoubleOnPosition()
+        {
+            //will check if its position has an id that is not negative one
+            //if it does then there is a element there and check its time spawned
+            //will useally delete itself in most cases since its running on its own
+            //instance and that means that the element was there before it
+            int idCheck = ElementSimulation.SafeIdCheckGet(position);
+            if (idCheck < 0 || idCheck > ElementSimulation.elements.Length)
+                return;
+
+            if (idCheck != -1 && idCheck != id)
+            {
+                if (ElementSimulation.elements[idCheck].timeSpawned <= timeSpawned)
+                    QueueDelete();
+            }
+        }
+
+        /// <summary>
         /// Should be used when deletion needs to happen during a particles update loop
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void QueueDelete()
         {
+            if (toBeDeleted)
+                return;
             ElementSimulation.idsToDelete.Add(id);
             toBeDeleted = true;
             deleteIndex = ElementSimulation.idsToDelete.Count - 1;
-            ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
-            ElementSimulation.SafeIdCheckSet(-1, position);
         }
 
         /// <summary>
@@ -177,37 +201,13 @@ namespace SpatialGame
             ElementSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
+            ElementSimulation.freeElementSpots.Enqueue(id);
+            ElementSimulation.elements[id] = null;
+        }
 
-            //add our index to the dictionary and everything above it will be subtract 1
-            if (ElementSimulation.indexCountDelete.TryAdd(id, 1))
-            {
-
-            }
-            //if we already have that key in the dictionary then add one
-            //and subtract that amount from everything above it
-            else if(ElementSimulation.indexCountDelete.ContainsKey(id))
-            {
-                ElementSimulation.indexCountDelete[id]++;
-            }
-
-            //subtract from ids so that they dont go out of bounds
-            /*Parallel.For(deleteIndex, ElementSimulation.idsToDelete.Count, i =>
-            {
-                ElementSimulation.idsToDelete[i]--;
-            });*/
-
-            //Find amount that was deleted before the current element and subtract that from the id used
-            int adder = 0;
-            int[] keys = ElementSimulation.indexCountDelete.Keys.ToArray();
-            for (int i = 0; i < ElementSimulation.indexCountDelete.Count; i++)
-            {
-                if(id > keys[i])
-                    adder++;
-                else
-                    break;
-            }
-            //delete it from the array
-            ElementSimulation.elements.RemoveAt(id - adder);
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 

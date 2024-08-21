@@ -34,8 +34,8 @@ namespace SpatialGame
     public static class PixelColorer
     {
         public static Vector4Byte[] pixelColors;
-        public static int width = 640;
-        public static int height = 360;
+        public static int width = 960;
+        public static int height = 540;
         public static UiQuad quad;
         public static BufferObject<Vector4Byte> pixelBuffer;
         public static Shader shader;

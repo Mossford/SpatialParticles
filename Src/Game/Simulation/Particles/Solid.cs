@@ -42,7 +42,6 @@ namespace SpatialGame
                 velocity = new Vector2(0, velocity.Y);
                 velocity += new Vector2(0, 0.5f);
                 MoveElement();
-                //MoveElementOne(new Vector2(0, 1));
                 return;
             }
             bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();

@@ -1,4 +1,5 @@
 ﻿using Silk.NET.Input;
+using Silk.NET.Vulkan;
 using SpatialEngine;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,8 @@ namespace SpatialGame
 {
     public static class ElementSimulation
     {
-        public static List<Element> elements = new List<Element>();
+        public static Element[] elements;
+        public static Queue<int> freeElementSpots;
         /// <summary>
         /// the type of the element at its position
         /// 0 is no pixel at position,
@@ -29,83 +31,79 @@ namespace SpatialGame
         /// </summary>
         public static List<int> idsToDelete;
         /// <summary>
-        /// Holds the amount that should be subtracted from the idcheck array
-        /// turns 1/2n^2 to n
-        /// </summary>
-        public static Dictionary<int, int> indexCountDelete;
-        /// <summary>
         /// Random that elements will use
         /// </summary>
         public static Random random;
 
         public static void InitPixelSim()
         {
+            elements = new Element[PixelColorer.width * PixelColorer.height];
+            freeElementSpots = new Queue<int>();
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
             idsToDelete = new List<int>();
-            indexCountDelete = new Dictionary<int, int>();
             random = new Random();
+
+            for (int i = 0; i < elements.Length; i++)
+            {
+                freeElementSpots.Enqueue(i);
+            }
 
             for (int i = 0; i < idCheck.Length; i++)
             {
                 idCheck[i] = -1;
             }
 
-            /*for (int x = 0; x < PixelColorer.width; x++)
+            for (int x = 0; x < PixelColorer.width; x++)
             {
-                int id = elements.Count;
-                elements.Add(new WallPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(x, 0);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-
-                id = elements.Count;
-                elements.Add(new WallPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(x, PixelColorer.height - 1);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-            }*/
+                AddElement(new Vector2(x, 0), new WallPE());
+                AddElement(new Vector2(x, PixelColorer.height - 1), new WallPE());
+            }
 
             for (int y = 0; y < PixelColorer.height; y++)
             {
-                int id = elements.Count;
-                elements.Add(new WallPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(0, y);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
-
-                id = elements.Count;
-                elements.Add(new WallPE());
-                elements[id].id = id;
-                elements[id].position = new Vector2(PixelColorer.width - 1, y);
-                positionCheck[PixelColorer.PosToIndex(elements[id].position)] = 100;
-                idCheck[PixelColorer.PosToIndex(elements[id].position)] = elements[id].id;
+                AddElement(new Vector2(0, y), new WallPE());
+                AddElement(new Vector2(PixelColorer.width - 1, y), new WallPE());
             }
+
+            for (int i = 0; i < elements.Length; i++)
+            {
+                if (elements[i] is null || !elements[i].BoundsCheck(elements[i].position))
+                    continue;
+
+                elements[i].CheckDoubleOnPosition();
+            }
+
+            DeleteElementsOnQueue();
 
             //DebugSimulation.Init();
         }
 
         public static void RunPixelSim()
         {
-            DeleteElementsOnQueue();
+            //DebugSimulation.Update();
 
-            for (int i = 0; i < elements.Count; i++)
+            for (int i = 0; i < elements.Length; i++)
             {
-                //check if pass bounds check and delete if not
+                if (elements[i] is null || !elements[i].BoundsCheck(elements[i].position))
+                    continue;
+
+                PixelColorer.SetColorAtPos(elements[i].position, 102, 178, 204);
+                elements[i].Update();
                 if (elements[i].BoundsCheck(elements[i].position))
-                {
-                    PixelColorer.SetColorAtPos(elements[i].position, 102, 178, 204);
-                    elements[i].Update();
-                    //check if pass bounds check and delete if not
-                    if (elements[i].BoundsCheck(elements[i].position))
-                        PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
-                }
+                    PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
             }
 
-            //DebugSimulation.Update();
+            /*for (int i = 0; i < elements.Length; i++)
+            {
+                if (elements[i] is null || !elements[i].BoundsCheck(elements[i].position))
+                    continue;
+
+                elements[i].CheckDoubleOnPosition();
+            }*/
+
+            DeleteElementsOnQueue();
+
         }
 
         static void DeleteElementsOnQueue()
@@ -116,46 +114,49 @@ namespace SpatialGame
             for (int i = 0; i < idsToDelete.Count; i++)
             {
                 int id = idsToDelete[i];
-                int adder = -0;
-                int[] keys = indexCountDelete.Keys.ToArray();
-                for (int g = 0; g < indexCountDelete.Count; g++)
+                if (elements[id] is null)
+                    continue;
+                if (id >= 0 && id < elements.Length && elements[id].toBeDeleted)
                 {
-                    if (id > keys[g])
-                        adder++;
-                    else
-                        break;
-                }
-                id -= adder;
-                if (id >= 0 && id < elements.Count && elements[id].toBeDeleted)
                     elements[id].Delete();
-            }
-
-            for (int i = 0; i < elements.Count; i++)
-            {
-                elements[i].id = i;
-                SafeIdCheckSet(elements[i].id, elements[i].position);
+                }
             }
 
             idsToDelete.Clear();
-            indexCountDelete.Clear();
+        }
+
+        public static void AddElement(Vector2 pos, Element element)
+        {
+            //we have reached where we dont have any more spots so we skip
+            if (freeElementSpots.Count == 0)
+                return;
+            int id = freeElementSpots.Dequeue();
+            elements[id] = element;
+            elements[id].position = pos;
+            elements[id].id = id;
+            elements[id].timeSpawned = Globals.GetTime();
+            SafePositionCheckSet(element.GetElementType().ToByte(), pos);
+            SafeIdCheckSet(id, pos);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SafePositionCheckSet(byte type, Vector2 position)
+        public static bool SafePositionCheckSet(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
             if(index == -1)
-                return;
+                return false;
             positionCheck[index] = type;
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SafeIdCheckSet(int id, Vector2 position)
+        public static bool SafeIdCheckSet(int id, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
             if (index == -1)
-                return;
+                return false;
             idCheck[index] = id;
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -177,21 +178,23 @@ namespace SpatialGame
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SafePositionCheckSetNoBc(byte type, Vector2 position)
+        public static bool SafePositionCheckSetNoBc(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
             if (index == -1)
-                return;
+                return false;
             positionCheck[index] = type;
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void SafeIdCheckSetNoBc(int id, Vector2 position)
+        public static bool SafeIdCheckSetNoBc(int id, Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
             if (index == -1)
-                return;
+                return false;
             idCheck[index] = id;
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
