@@ -15,6 +15,8 @@ namespace SpatialGame
 
         public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button)
         {
+            float baseScale = Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length();
+
             if (!pressed)
             {
                 if (idMesh == -1)
@@ -26,7 +28,8 @@ namespace SpatialGame
                 SimRenderer.meshes[idMesh].show = true;
                 SimRenderer.meshes[idMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
                 SimRenderer.meshes[idMesh].position.Y *= -1;
-                SimRenderer.meshes[idMesh].scale = Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * radius;
+                SimRenderer.meshes[idMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
+                SimRenderer.meshes[idMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
                 return;
             }
 
@@ -39,7 +42,8 @@ namespace SpatialGame
             SimRenderer.meshes[idMesh].show = true;
             SimRenderer.meshes[idMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
             SimRenderer.meshes[idMesh].position.Y *= -1;
-            SimRenderer.meshes[idMesh].scale = Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * radius;
+            SimRenderer.meshes[idMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
+            SimRenderer.meshes[idMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
             Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
             position.X = MathF.Floor(position.X);
             position.Y = MathF.Floor(position.Y);

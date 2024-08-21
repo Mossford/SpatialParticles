@@ -20,7 +20,8 @@ namespace SpatialGame
 
         public Vector2 position;
         public float rotation;
-        public float scale;
+        public float scaleX;
+        public float scaleY;
 
         public uint id;
         public uint vbo;
@@ -34,7 +35,8 @@ namespace SpatialGame
             this.indices = indices;
             position = Vector2.Zero;
             rotation = 0;
-            scale = 1;
+            scaleX = 1;
+            scaleY = 1;
             show = true;
 
             id = gl.GenVertexArray();
@@ -55,13 +57,14 @@ namespace SpatialGame
             gl.BindVertexArray(0);
         }
 
-        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scale)
+        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scaleX, float scaleY)
         {
             this.vPos = vPos;
             this.indices = indices;
             this.position = position;
             this.rotation = rotation;
-            this.scale = scale;
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
             show = true;
 
             id = gl.GenVertexArray();
@@ -97,7 +100,7 @@ namespace SpatialGame
         public void Update()
         {
             model = Matrix4x4.Identity;
-            model *= Matrix4x4.CreateScale(scale, scale, 1f);
+            model *= Matrix4x4.CreateScale(scaleX, scaleY, 1f);
             model *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation);
             model *= Matrix4x4.CreateTranslation(position.X, position.Y, 0f);
         }
