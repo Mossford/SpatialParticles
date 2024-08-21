@@ -22,7 +22,7 @@ namespace SpatialGame
             PixelColorer.CleanUp();
             SimRenderer.CleanUp();
 
-            PixelColorer.Init(960, 540);
+            PixelColorer.Init();
             ElementSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
@@ -30,7 +30,7 @@ namespace SpatialGame
 
         public static void InitGame()
         {
-            PixelColorer.Init(960, 540);
+            PixelColorer.Init();
             ElementSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
@@ -41,12 +41,12 @@ namespace SpatialGame
             PixelColorer.Update();
             //SimRenderer.UpdateMeshes();
             SimRenderer.Update();
+            SimInput.Update();
         }
 
         public static void FixedUpdateGame(float dt)
         {
             ElementSimulation.RunPixelSim();
-            SimInput.Update();
         }
     }
 }

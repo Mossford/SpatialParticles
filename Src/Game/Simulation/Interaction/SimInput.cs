@@ -16,6 +16,7 @@ namespace SpatialGame
         static int mouseButtonPress;
 
         static bool firstInit;
+        static bool initButton;
 
         public static void Init()
         {
@@ -38,10 +39,16 @@ namespace SpatialGame
         {
             MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress);
             MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed);
-
-            if(Input.keysPressed.Contains((int)Key.R))
+            
+            if(Input.IsKeyDown(Key.R) && !initButton)
             {
                 GameManager.ReInitGame();
+                initButton = true;
+            }
+
+            if(Input.IsKeyUp(Key.R) && initButton)
+            {
+                initButton = false;
             }
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
