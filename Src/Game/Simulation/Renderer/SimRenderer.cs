@@ -58,6 +58,11 @@ namespace SpatialGame
             }
         }
 
+        public static void RenderText()
+        {
+
+        }
+
         public static void CleanUp()
         {
             shader.Dispose();
