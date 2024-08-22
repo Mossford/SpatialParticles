@@ -18,6 +18,8 @@ namespace SpatialGame
         static bool firstInit;
         static bool initButton;
 
+        static byte selectedElement;
+
         public static void Init()
         {
             if(!firstInit)
@@ -31,14 +33,32 @@ namespace SpatialGame
             mousePressed = false;
             mouseButtonPress = 0;
             mouseSpawnRadius = 10;
+            selectedElement = 1;
 
             MouseInteraction.Init();
         }
 
         public static void Update()
         {
-            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress);
-            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed);
+            if(Input.IsKeyDown(Key.Number1))
+            {
+                selectedElement = 1;
+            }
+            if (Input.IsKeyDown(Key.Number2))
+            {
+                selectedElement = 2;
+            }
+            if (Input.IsKeyDown(Key.Number3))
+            {
+                selectedElement = 3;
+            }
+            if (Input.IsKeyDown(Key.Number4))
+            {
+                selectedElement = 100;
+            }
+
+            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, selectedElement);
+            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, selectedElement);
             
             if(Input.IsKeyDown(Key.R) && !initButton)
             {

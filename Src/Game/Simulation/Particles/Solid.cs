@@ -15,20 +15,23 @@ namespace SpatialGame
         public override void Update()
         {
             int num = ElementSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left
-            bool displaceLiq = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.liquid.ToByte();
+            int posCheckBelow = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1));
+            bool displaceLiq = posCheckBelow == ElementType.liquid.ToByte() || posCheckBelow == ElementType.gas.ToByte();
             //swapping down with a liquid
             if (displaceLiq)
             {
                 SwapElement(new Vector2(position.X, position.Y + 1), ElementType.liquid);
                 return;
             }
-            bool displaceLiqLU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.liquid.ToByte();
+            int posCheckLU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1));
+            bool displaceLiqLU = posCheckLU == ElementType.liquid.ToByte() || posCheckLU == ElementType.gas.ToByte() && posCheckBelow == ElementType.empty.ToByte();
             if (displaceLiqLU && num == 0)
             {
                 SwapElement(new Vector2(position.X - 1, position.Y + 1), ElementType.liquid);
                 return;
             }
-            bool displaceLiqRU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.liquid.ToByte();
+            int posCheckRU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1));
+            bool displaceLiqRU = posCheckRU == ElementType.liquid.ToByte() || posCheckRU == ElementType.gas.ToByte() && posCheckBelow == ElementType.empty.ToByte();
             if (displaceLiqRU && num == 1)
             {
                 SwapElement(new Vector2(position.X + 1, position.Y + 1), ElementType.liquid);
@@ -36,7 +39,7 @@ namespace SpatialGame
             }
 
             //if there is air under the solid
-            bool grounded = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
+            bool grounded = posCheckBelow == ElementType.empty.ToByte();
             if (grounded)
             {
                 velocity = new Vector2(0, velocity.Y);
@@ -44,14 +47,14 @@ namespace SpatialGame
                 MoveElement();
                 return;
             }
-            bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte();
+            bool LUnder = posCheckLU == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
                 velocity = new Vector2(-1 - (velocity.Y * 0.07f), 1 - (velocity.Y * 0.07f));
                 MoveElement();
                 return;
             }
-            bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte();
+            bool RUnder = posCheckRU == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
                 velocity = new Vector2(1 + (velocity.Y * 0.07f), 1 - (velocity.Y * 0.07f));

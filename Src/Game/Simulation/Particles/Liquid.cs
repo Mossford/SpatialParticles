@@ -22,8 +22,31 @@ namespace SpatialGame
             oldpos = position;
             //displacement
 
+            int posCheckBelow = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1));
+            bool displaceLiq = posCheckBelow == ElementType.gas.ToByte();
+            //swapping down with a liquid
+            if (displaceLiq)
+            {
+                SwapElement(new Vector2(position.X, position.Y + 1), ElementType.gas);
+                return;
+            }
+            int posCheckLU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1));
+            bool displaceLiqLU = posCheckLU == ElementType.gas.ToByte() && posCheckBelow == ElementType.empty.ToByte();
+            if (displaceLiqLU && num == 0)
+            {
+                SwapElement(new Vector2(position.X - 1, position.Y + 1), ElementType.gas);
+                return;
+            }
+            int posCheckRU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1));
+            bool displaceLiqRU = posCheckRU == ElementType.gas.ToByte() && posCheckBelow == ElementType.empty.ToByte();
+            if (displaceLiqRU && num == 1)
+            {
+                SwapElement(new Vector2(position.X + 1, position.Y + 1), ElementType.gas);
+                return;
+            }
+
             //gravity stuff
-            bool ground = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) == ElementType.empty.ToByte();
+            bool ground = posCheckBelow == ElementType.empty.ToByte();
             if (ground)
             {
                 velocity = new Vector2(0, velocity.Y);
@@ -31,24 +54,23 @@ namespace SpatialGame
                 MoveElement();
                 return;
             }
-            bool LUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) == ElementType.empty.ToByte()
-                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y)) == ElementType.empty.ToByte();
+            int posCheckL = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y));
+            bool LUnder = posCheckLU == ElementType.empty.ToByte() && posCheckL == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
                 velocity = new Vector2(-1 - (velocity.Y * 0.6f), 1 - (velocity.Y * 0.3f));
                 MoveElement();
                 return;
             }
-            bool RUnder = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) == ElementType.empty.ToByte()
-                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y)) == ElementType.empty.ToByte();
+            int posCheckR = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y));
+            bool RUnder = posCheckRU == ElementType.empty.ToByte() && posCheckR == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
                 velocity = new Vector2(1 + (velocity.Y * 0.6f), 1 - (velocity.Y * 0.3f));
                 MoveElement();
                 return;
             }
-            bool left = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) != ElementType.empty.ToByte()
-                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1)) != ElementType.empty.ToByte();
+            bool left = posCheckBelow != ElementType.empty.ToByte() && posCheckLU != ElementType.empty.ToByte();
             if (!ground && left && num == 0)
             {
                 int moveDisp = ElementSimulation.random.Next(0, disp);
@@ -91,8 +113,7 @@ namespace SpatialGame
 
                 return;
             }
-            bool right = ElementSimulation.SafePositionCheckGet(new Vector2(position.X, position.Y + 1)) != ElementType.empty.ToByte()
-                && ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1)) != ElementType.empty.ToByte();
+            bool right = posCheckBelow != ElementType.empty.ToByte() && posCheckRU != ElementType.empty.ToByte();
             if (!ground && right && num == 1)
             {
                 int moveDisp = ElementSimulation.random.Next(0, disp);

@@ -25,7 +25,7 @@ namespace SpatialGame
         /// <summary>
         /// Shows the area elements can be spawned in
         /// </summary>
-        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button)
+        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, byte type)
         {
             if (!pressed)
             {
@@ -76,9 +76,31 @@ namespace SpatialGame
                             if (idToCheck == -1)
                             {
                                 int id = ElementSimulation.elements.Length;
-                                ElementSimulation.AddElement(pos, new SandPE());
+                                switch(type)
+                                {
+                                    case (byte)ElementType.solid:
+                                        {
+                                            ElementSimulation.AddElement(pos, new SandPE());
+                                            break;
+                                        }
+                                    case (byte)ElementType.liquid:
+                                        {
+                                            ElementSimulation.AddElement(pos, new WaterPE());
+                                            break;
+                                        }
+                                    case (byte)ElementType.gas:
+                                        {
+                                            ElementSimulation.AddElement(pos, new CarbonDioxidePE());
+                                            break;
+                                        }
+                                    case (byte)ElementType.wall:
+                                        {
+                                            ElementSimulation.AddElement(pos, new WallPE());
+                                            break;
+                                        }
+                                }
                             }
-                            else if (ElementSimulation.elements[idToCheck].GetElementType() != ElementType.solid)
+                            else if (ElementSimulation.elements[idToCheck].GetElementType().ToByte() != type)
                             {
                                 ElementSimulation.elements[idToCheck].QueueDelete();
                             }
@@ -95,7 +117,7 @@ namespace SpatialGame
             }
         }
 
-        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed)
+        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, byte type)
         {
             float scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
             float scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
@@ -122,7 +144,29 @@ namespace SpatialGame
                 SimRenderer.meshes[idElementSquareMesh].scaleY = scaleY;
 
                 SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
-                SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(255 / 255f, 255 / 255f, 180 / 255f);
+                switch (type)
+                {
+                    case (byte)ElementType.solid:
+                        {
+                            SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(255 / 255f, 255 / 255f, 180 / 255f);
+                            break;
+                        }
+                    case (byte)ElementType.liquid:
+                        {
+                            SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(40 / 255f, 0 / 255f, 2565 / 255f);
+                            break;
+                        }
+                    case (byte)ElementType.gas:
+                        {
+                            SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(60 / 255f, 60 / 255f, 60 / 255f);
+                            break;
+                        }
+                    case (byte)ElementType.wall:
+                        {
+                            SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(40 / 255f, 40 / 255f, 40 / 255f);
+                            break;
+                        }
+                }
                 SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
                 SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
                 SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;
@@ -149,7 +193,29 @@ namespace SpatialGame
             }
 
             SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
-            SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(255 / 255f, 255 / 255f, 180 / 255f);
+            switch (type)
+            {
+                case (byte)ElementType.solid:
+                    {
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(255 / 255f, 255 / 255f, 180 / 255f);
+                        break;
+                    }
+                case (byte)ElementType.liquid:
+                    {
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(40 / 255f, 0 / 255f, 2565 / 255f);
+                        break;
+                    }
+                case (byte)ElementType.gas:
+                    {
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(60 / 255f, 60 / 255f, 60 / 255f);
+                        break;
+                    }
+                case (byte)ElementType.wall:
+                    {
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(40 / 255f, 40 / 255f, 40 / 255f);
+                        break;
+                    }
+            }
             SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
             SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;

@@ -80,9 +80,9 @@ namespace SpatialGame
             //set the id at the current position to the id from the element below
             ElementSimulation.idCheck[index] = swapid;
 
+            index = PixelColorer.PosToIndexUnsafe(newPos);
             //set the type to the new position to our current element
             ElementSimulation.positionCheck[index] = GetElementType().ToByte();
-            index = PixelColorer.PosToIndexUnsafe(newPos);
             //set the id of our element to the new position
             ElementSimulation.idCheck[index] = id;
             //set the new position of the current element
