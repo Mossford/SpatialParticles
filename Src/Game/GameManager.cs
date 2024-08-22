@@ -17,12 +17,15 @@ namespace SpatialGame
 {
     public static class GameManager
     {
+        //move this?
+        public static bool changeResolution;
+
         public static void ReInitGame()
         {
             PixelColorer.CleanUp();
             SimRenderer.CleanUp();
 
-            PixelColorer.Init();
+            PixelColorer.Init(changeResolution);
             ElementSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
@@ -30,7 +33,7 @@ namespace SpatialGame
 
         public static void InitGame()
         {
-            PixelColorer.Init();
+            PixelColorer.Init(false);
             ElementSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();

@@ -42,7 +42,7 @@ namespace SpatialGame
         public static Shader shader;
         public static Matrix4x4 mat;
 
-        public static int resSwitcher = -1;
+        public static int resSwitcher = 0;
         public static Vector2[] resolutions = new Vector2[]
         {
             new Vector2(128, 72),
@@ -54,10 +54,13 @@ namespace SpatialGame
             new Vector2(1920, 1080)
         };
 
-        public static unsafe void Init()
+        public static unsafe void Init(bool resChange)
         {
-            resSwitcher++;
-            resSwitcher %= resolutions.Length - 1;
+            if(resChange)
+            {
+                resSwitcher++;
+                resSwitcher %= resolutions.Length - 1;
+            }
             width = (int)resolutions[resSwitcher].X;
             height = (int)resolutions[resSwitcher].Y;
             quad = new UiQuad();

@@ -59,16 +59,24 @@ namespace SpatialGame
 
             MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, selectedElement);
             MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, selectedElement);
-            
-            if(Input.IsKeyDown(Key.R) && !initButton)
+
+            if (Input.IsKeyDown(Key.T) && !initButton)
             {
+                GameManager.changeResolution = true;
+                GameManager.ReInitGame();
+                initButton = true;
+            }
+            else if (Input.IsKeyDown(Key.R) && !initButton)
+            {
+                GameManager.changeResolution = false;
                 GameManager.ReInitGame();
                 initButton = true;
             }
 
-            if(Input.IsKeyUp(Key.R) && initButton)
+            if (Input.IsKeyUp(Key.T) && Input.IsKeyUp(Key.R) && initButton)
             {
                 initButton = false;
+                GameManager.changeResolution = false;
             }
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
