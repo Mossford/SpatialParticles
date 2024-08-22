@@ -20,6 +20,15 @@ namespace SpatialGame
         wall = 100,
     }
 
+    public enum ElementTypeSpecific : ushort
+    {
+        sand,
+        stone,
+        water,
+        carbonDioxide,
+        wall
+    }
+
     public static class ElementTypeConversion
     {
         //the this keyword allows it cool as hell
@@ -27,6 +36,12 @@ namespace SpatialGame
         public static byte ToByte(this ElementType elementType)
         {
             return (byte)elementType;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ushort ToUshort(this ElementTypeSpecific elementType)
+        {
+            return (ushort)elementType;
         }
     }
     
@@ -48,6 +63,7 @@ namespace SpatialGame
         /// </summary>
         public abstract void Update();
         public abstract ElementType GetElementType();
+        public abstract ElementTypeSpecific GetElementTypeSpecific();
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool BoundsCheck(Vector2 position)
         {
@@ -209,6 +225,39 @@ namespace SpatialGame
         {
             GC.SuppressFinalize(this);
         }
+
+        /// <summary>
+        /// External use outside of a instance
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 GetElementColor(ElementTypeSpecific type)
+        {
+            switch (type)
+            {
+                case ElementTypeSpecific.sand:
+                    {
+                        return new Vector3(255, 255, 180);
+                    }
+                case ElementTypeSpecific.stone:
+                    {
+                        return new Vector3(180, 180, 180);
+                    }
+                case ElementTypeSpecific.water:
+                    {
+                        return new Vector3(40, 0, 255);
+                    }
+                case ElementTypeSpecific.carbonDioxide:
+                    {
+                        return new Vector3(40, 40, 40);
+                    }
+                case ElementTypeSpecific.wall:
+                    {
+                        return new Vector3(60, 60, 60);
+                    }
+            }
+
+            return new Vector3(0, 0, 0);
+        }
     }
 
     //----Elements----
@@ -228,6 +277,11 @@ namespace SpatialGame
             color = new Vector3(255, 255, 180);
             canMove = true;
         }
+
+        public override ElementTypeSpecific GetElementTypeSpecific()
+        {
+            return ElementTypeSpecific.sand;
+        }
     }
 
     public class StonePE : Solid
@@ -236,6 +290,11 @@ namespace SpatialGame
         {
             color = new Vector3(180, 180, 180);
             canMove = true;
+        }
+
+        public override ElementTypeSpecific GetElementTypeSpecific()
+        {
+            return ElementTypeSpecific.stone;
         }
     }
 
@@ -248,6 +307,10 @@ namespace SpatialGame
         {
             canMove = false;
             color = new Vector3(40, 40, 40);
+        }
+        public override ElementTypeSpecific GetElementTypeSpecific()
+        {
+            return ElementTypeSpecific.wall;
         }
     }
 
@@ -263,6 +326,10 @@ namespace SpatialGame
             canMove = true;
             color = new Vector3(40, 0, 255);
         }
+        public override ElementTypeSpecific GetElementTypeSpecific()
+        {
+            return ElementTypeSpecific.water;
+        }
 
     }
 
@@ -276,6 +343,10 @@ namespace SpatialGame
             disp = 10;
             canMove = true;
             color = new Vector3(60, 60, 60);
+        }
+        public override ElementTypeSpecific GetElementTypeSpecific()
+        {
+            return ElementTypeSpecific.carbonDioxide;
         }
 
     }

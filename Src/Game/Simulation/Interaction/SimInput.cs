@@ -18,7 +18,7 @@ namespace SpatialGame
         static bool firstInit;
         static bool initButton;
 
-        static byte selectedElement;
+        static ElementTypeSpecific selectedElement;
 
         public static void Init()
         {
@@ -33,7 +33,7 @@ namespace SpatialGame
             mousePressed = false;
             mouseButtonPress = 0;
             mouseSpawnRadius = 10;
-            selectedElement = 1;
+            selectedElement = ElementTypeSpecific.sand;
 
             MouseInteraction.Init();
         }
@@ -42,19 +42,23 @@ namespace SpatialGame
         {
             if(Input.IsKeyDown(Key.Number1))
             {
-                selectedElement = 1;
+                selectedElement = ElementTypeSpecific.sand;
             }
             if (Input.IsKeyDown(Key.Number2))
             {
-                selectedElement = 2;
+                selectedElement = ElementTypeSpecific.stone;
             }
             if (Input.IsKeyDown(Key.Number3))
             {
-                selectedElement = 3;
+                selectedElement = ElementTypeSpecific.water;
             }
             if (Input.IsKeyDown(Key.Number4))
             {
-                selectedElement = 100;
+                selectedElement = ElementTypeSpecific.carbonDioxide;
+            }
+            if (Input.IsKeyDown(Key.Number5))
+            {
+                selectedElement = ElementTypeSpecific.wall;
             }
 
             MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, selectedElement);

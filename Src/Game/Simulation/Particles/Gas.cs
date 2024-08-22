@@ -12,7 +12,6 @@ namespace SpatialGame
     /// </summary>
     public abstract class Gas : Element
     {
-
         public int disp { get; set; } // viscosity
         public int level { get; set; } // bouyency
 

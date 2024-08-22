@@ -82,7 +82,6 @@ namespace SpatialGame
         public static void RunPixelSim()
         {
             //DebugSimulation.Update();
-
             for (int i = 0; i < elements.Length; i++)
             {
                 if (elements[i] is null || !elements[i].BoundsCheck(elements[i].position))
@@ -103,6 +102,7 @@ namespace SpatialGame
             }*/
 
             DeleteElementsOnQueue();
+
 
         }
 
