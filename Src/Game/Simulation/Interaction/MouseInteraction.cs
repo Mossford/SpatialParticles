@@ -107,7 +107,8 @@ namespace SpatialGame
                             }
                             else if (ElementSimulation.elements[idToCheck].GetElementTypeSpecific() != type)
                             {
-                                ElementSimulation.elements[idToCheck].QueueDelete();
+                                //replaced from queue delete may cause issues
+                                ElementSimulation.elements[idToCheck].Delete();
                             }
                         }
                         else
