@@ -6,9 +6,9 @@ namespace SpatialEngine
 {
     public static class Resources
     {
-        public static string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        //public static string appPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-        public static string resourcePath = appPath + "/res/";
+        public static string resourcePath = "res/";
         public static string ShaderPath = resourcePath + "Shaders/";
         public static string ImagePath = resourcePath + "Images/";
         public static string ModelPath = resourcePath + "Models/";

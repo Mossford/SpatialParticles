@@ -4,8 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <RollForward>Major</RollForward>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <TieredCompilation>false</TieredCompilation>
+	  <PublishSingleFile>true</PublishSingleFile>
+	  <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <PackageIcon>IconSpace.png</PackageIcon>
@@ -20,7 +20,8 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>portable</DebugType>
+	<Optimize>true</Optimize>
+	<DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="IconSpace.ico" />

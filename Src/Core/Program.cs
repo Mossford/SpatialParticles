@@ -233,9 +233,9 @@ namespace SpatialEngine
 
         static unsafe void OnRender(double dt)
         {   
-            controller.Update((float)dt);
+            //controller.Update((float)dt);
 
-            ImGuiMenu((float)dt);
+            //ImGuiMenu((float)dt);
 
             gl.ClearColor(Color.FromArgb(102, 178, 204));
             gl.Viewport(0,0, (uint)window.Size.X, (uint)window.Size.Y);

@@ -20,21 +20,21 @@ namespace SpatialGame
             //swapping down with a liquid
             if (displaceLiq)
             {
-                SwapElement(new Vector2(position.X, position.Y + 1), ElementType.liquid);
+                SwapElement(new Vector2(position.X, position.Y + 1), (ElementType)posCheckBelow);
                 return;
             }
             int posCheckLU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X - 1, position.Y + 1));
             bool displaceLiqLU = posCheckLU == ElementType.liquid.ToByte() || posCheckLU == ElementType.gas.ToByte() && posCheckBelow == ElementType.empty.ToByte();
             if (displaceLiqLU && num == 0)
             {
-                SwapElement(new Vector2(position.X - 1, position.Y + 1), ElementType.liquid);
+                SwapElement(new Vector2(position.X - 1, position.Y + 1), (ElementType)posCheckLU);
                 return;
             }
             int posCheckRU = ElementSimulation.SafePositionCheckGet(new Vector2(position.X + 1, position.Y + 1));
             bool displaceLiqRU = posCheckRU == ElementType.liquid.ToByte() || posCheckRU == ElementType.gas.ToByte() && posCheckBelow == ElementType.empty.ToByte();
             if (displaceLiqRU && num == 1)
             {
-                SwapElement(new Vector2(position.X + 1, position.Y + 1), ElementType.liquid);
+                SwapElement(new Vector2(position.X + 1, position.Y + 1), (ElementType)posCheckRU);
                 return;
             }
 

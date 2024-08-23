@@ -42,7 +42,7 @@ namespace SpatialGame
         public static Shader shader;
         public static Matrix4x4 mat;
 
-        public static int resSwitcher = 0;
+        public static int resSwitcher = 2;
         public static Vector2[] resolutions = new Vector2[]
         {
             new Vector2(128, 72),

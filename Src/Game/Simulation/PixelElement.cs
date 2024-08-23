@@ -248,11 +248,11 @@ namespace SpatialGame
                     }
                 case ElementTypeSpecific.carbonDioxide:
                     {
-                        return new Vector3(40, 40, 40);
+                        return new Vector3(80, 80, 80);
                     }
                 case ElementTypeSpecific.wall:
                     {
-                        return new Vector3(60, 60, 60);
+                        return new Vector3(40, 40, 40);
                     }
             }
 
@@ -342,7 +342,7 @@ namespace SpatialGame
         {
             disp = 10;
             canMove = true;
-            color = new Vector3(60, 60, 60);
+            color = new Vector3(80, 80, 80);
         }
         public override ElementTypeSpecific GetElementTypeSpecific()
         {
