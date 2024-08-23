@@ -89,7 +89,7 @@ namespace SpatialEngine
                 WindowOptions options = WindowOptions.Default with
                 {
                     Size = new Vector2D<int>(SCR_WIDTH, SCR_HEIGHT),
-                    Title = "SpatialParticles",
+                    Title = "SpatialParticles 0.1",
                     VSync = vsync,
                     PreferredDepthBufferBits = 24,
                     API = glApi,
@@ -100,12 +100,12 @@ namespace SpatialEngine
                 window.Render += OnRender;
                 window.Run();
             }
-            else if (args[0] == "server")
+            /*else if (args[0] == "server")
             {
                 //handles all the initilization of scene and physics and netowrking for server
                 //and starts running the update loop
                 HeadlessServer.Init();
-            }
+            }*/
 
             NetworkManager.Cleanup();
         }
@@ -140,13 +140,13 @@ namespace SpatialEngine
             
             //input stuffs
             Input.Init();
-            for (int i = 0; i < input.Keyboards.Count; i++)
-                input.Keyboards[i].KeyDown += KeyDown;
-            for (int i = 0; i < input.Mice.Count; i++)
+            //for (int i = 0; i < input.Keyboards.Count; i++)
+            //    input.Keyboards[i].KeyDown += KeyDown;
+            /*for (int i = 0; i < input.Mice.Count; i++)
             {
                 input.Mice[i].Cursor.CursorMode = CursorMode.Normal;
                 input.Mice[i].MouseMove += OnMouseMove;
-            }
+            }*/
             //imgui control stuff
             controller = new ImGuiController(gl, window, input);
             ImGui.SetWindowSize(new Vector2(850, 500));
@@ -162,7 +162,7 @@ namespace SpatialEngine
         }
 
         static bool lockMouse = false;
-        static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
+        /*static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
         {
             if(!lockMouse && key == Key.Escape)
             {
@@ -174,9 +174,9 @@ namespace SpatialEngine
                 input.Mice.FirstOrDefault().Cursor.CursorMode = CursorMode.Normal;
                 lockMouse = false;
             }
-        }
+        }*/
 
-        static unsafe void OnMouseMove(IMouse mouse, Vector2 position)
+        /*static unsafe void OnMouseMove(IMouse mouse, Vector2 position)
         {
             if(lockMouse)
             {
@@ -184,7 +184,7 @@ namespace SpatialEngine
                 LastMousePosition = position;
                 LastMousePosition = position;
             }
-        }
+        }*/
 
         static float totalTimeUpdate = 0.0f;
         static void OnUpdate(double dt)
