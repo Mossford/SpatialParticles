@@ -30,7 +30,7 @@ namespace SpatialEngine
 
             if(!Directory.Exists(ScenePath))
             {
-                Directory.CreateDirectory(ScenePath);
+                //Directory.CreateDirectory(ScenePath);
             }
         }
     }
