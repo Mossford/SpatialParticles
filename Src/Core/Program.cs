@@ -136,7 +136,7 @@ namespace SpatialEngine
             gl.DebugMessageCallback(DebugProc, null);
             gl.DebugMessageControl(GLEnum.DontCare, GLEnum.DontCare, GLEnum.DebugSeverityNotification, 0, null, false);
 
-            NetworkManager.Init();
+            //NetworkManager.Init();
             UiRenderer.Init();
             
             //input stuffs
@@ -211,7 +211,7 @@ namespace SpatialEngine
         {
             GameManager.FixedUpdateGame(dt);
 
-            if (NetworkManager.didInit)
+            /*if (NetworkManager.didInit)
             {
                 if(NetworkManager.isServer)
                 {
@@ -229,7 +229,7 @@ namespace SpatialEngine
             else
             {
                 //physics.UpdatePhysics(ref scene, dt);
-            }
+            }*/
         }
 
         static unsafe void OnRender(double dt)
@@ -252,13 +252,13 @@ namespace SpatialEngine
             //Renderer.Draw(scene, ref shader, player.camera.viewMat, player.camera.projMat, player.camera.position);
 
             //render players
-            if(NetworkManager.didInit && !NetworkManager.isServer)
+            /*if(NetworkManager.didInit && !NetworkManager.isServer)
             {
                 for (int i = 0; i < NetworkManager.client.playerMeshes.Count; i++)
                 {
 
                 }
-            }
+            }*/
 
             PixelColorer.Render();
             SimRenderer.Render();
