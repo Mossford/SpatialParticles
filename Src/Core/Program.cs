@@ -45,7 +45,7 @@ namespace SpatialEngine
 
         public static Scene scene;
 
-        public static bool showWireFrame = false;
+        public static bool showImguiDebug = false;
         //going to be true because my gpu squeals if vsync is off
         public static bool vsync = false;
         public static uint vertCount;
@@ -139,22 +139,21 @@ namespace SpatialEngine
             MAX_SCR_WIDTH = window.Size.X;
             MAX_SCR_HEIGHT = window.Size.Y;
             window.WindowState = WindowState.Normal;
+
+            input.Keyboards[0].KeyDown += KeyDown;
         }
 
-        static bool lockMouse = false;
-        /*static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
+        static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
         {
-            if(!lockMouse && key == Key.Escape)
+            if(!showImguiDebug && key == Key.Escape)
             {
-                input.Mice.FirstOrDefault().Cursor.CursorMode = CursorMode.Raw;
-                lockMouse = true;
+                showImguiDebug = true;
             }
-            else if(lockMouse && key == Key.Escape)
+            else if(showImguiDebug && key == Key.Escape)
             {
-                input.Mice.FirstOrDefault().Cursor.CursorMode = CursorMode.Normal;
-                lockMouse = false;
+                showImguiDebug = false;
             }
-        }*/
+        }
 
 
         static float totalTimeUpdate = 0.0f;
@@ -184,9 +183,11 @@ namespace SpatialEngine
 
         static unsafe void OnRender(double dt)
         {   
-            //controller.Update((float)dt);
-
-            //ImGuiMenu((float)dt);
+            if(showImguiDebug)
+            {
+                controller.Update((float)dt);
+                ImGuiMenu((float)dt);
+            }
 
             gl.ClearColor(Color.FromArgb(102, 178, 204));
             gl.Viewport(0,0, (uint)window.Size.X, (uint)window.Size.Y);
@@ -194,13 +195,14 @@ namespace SpatialEngine
             gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             gl.DepthFunc(GLEnum.Lequal);
             gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
-            if(showWireFrame)
-                gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
 
             PixelColorer.Render();
             SimRenderer.Render();
 
-            controller.Render();
+            if (showImguiDebug)
+            {
+                controller.Render();
+            }
         }
 
         

@@ -50,14 +50,14 @@ namespace SpatialGame
             bool LUnder = posCheckLU == ElementType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                velocity = new Vector2(-1 - (velocity.Y * 0.07f), 1 - (velocity.Y * 0.07f));
+                velocity = new Vector2(-1 - (velocity.Y * 0.12f), 1 - (velocity.Y * 0.07f));
                 MoveElement();
                 return;
             }
             bool RUnder = posCheckRU == ElementType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                velocity = new Vector2(1 + (velocity.Y * 0.07f), 1 - (velocity.Y * 0.07f));
+                velocity = new Vector2(1 + (velocity.Y * 0.12f), 1 - (velocity.Y * 0.07f));
                 MoveElement();
                 return;
             }

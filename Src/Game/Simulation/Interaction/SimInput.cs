@@ -1,4 +1,5 @@
-﻿using Silk.NET.Input;
+﻿using ImGuiNET;
+using Silk.NET.Input;
 using SpatialEngine;
 using System;
 using System.Collections.Generic;
@@ -85,6 +86,8 @@ namespace SpatialGame
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
         {
+            if (Globals.showImguiDebug && ImGui.GetIO().WantCaptureMouse)
+                return;
             mouseButtonPress = (int)button;
             mousePressed = true;
         }
