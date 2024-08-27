@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using JoltPhysicsSharp;
 
 using SpatialEngine;
 using SpatialEngine.Rendering;

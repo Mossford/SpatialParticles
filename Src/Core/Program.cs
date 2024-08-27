@@ -10,7 +10,6 @@ using System.IO;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Linq;
-using JoltPhysicsSharp;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -45,9 +44,6 @@ namespace SpatialEngine
         public static string Gpu = "";
 
         public static Scene scene;
-        public static Physics physics;
-        public static PhysicsSystem physicsSystem;
-        public static BodyInterface bodyInterface;
 
         public static bool showWireFrame = false;
         //going to be true because my gpu squeals if vsync is off

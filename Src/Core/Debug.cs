@@ -1,4 +1,3 @@
-using JoltPhysicsSharp;
 using Silk.NET.Maths;
 using System.Numerics;
 using Silk.NET.OpenGL;

@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using JoltPhysicsSharp;
 
 //engine stuff
 using static SpatialEngine.Rendering.MeshUtils;

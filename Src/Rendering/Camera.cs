@@ -1,4 +1,3 @@
-using JoltPhysicsSharp;
 using System;
 using System.Numerics;
 

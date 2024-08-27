@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using JoltPhysicsSharp;
 using Silk.NET.OpenGL;
 using Silk.NET.SDL;
 using System;
@@ -9,7 +8,6 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Riptide;
 
 //engine stuff
 using static SpatialEngine.Globals;
@@ -54,7 +52,7 @@ namespace SpatialEngine.Rendering
 
         static ScrollingBuffer frameTimes = new ScrollingBuffer(2000);
         static float HighestFT = 0.0f;
-        static bool ShowSceneViewerMenu, ShowObjectViewerMenu, ShowConsoleViewerMenu;
+        static bool ShowConsoleViewerMenu;
         static int IMM_counter = 0;
         static Vector3 IMM_selposition = new Vector3();
         static Vector3 IMM_selrotation = new Vector3();
@@ -106,58 +104,16 @@ namespace SpatialEngine.Rendering
             {
                 if (ImGui.BeginMenu("Menus"))
                 {
-                    ImGui.MenuItem("Scene Viewer", null, ref ShowSceneViewerMenu);
-                    ImGui.MenuItem("Object Viewer", null, ref ShowObjectViewerMenu);
                     ImGui.MenuItem("Console Viewer", null, ref ShowConsoleViewerMenu);
                     ImGui.EndMenu();
                 }
                 ImGui.EndMenuBar();
             }
 
-            if (ShowSceneViewerMenu)
-            {
-                SceneViewer();
-            }
-
-            if (ShowObjectViewerMenu)
-            {
-                ObjectViewer();
-            }
-
             if (ShowConsoleViewerMenu)
             {
                 ConsoleViewer();
             }
-        }
-
-        static void SceneViewer()
-        {
-            ImGui.SetNextWindowSize(new Vector2(600, 420), ImGuiCond.FirstUseEver);
-            ImGui.Begin("Scene Viewer");
-            /*if(ImGui.TreeNode("Scenes"))
-            {
-                std.vector<std::string> files = GetFiles(sceneLoc);
-                for (unsigned int i = 0; i < files.size(); i++)
-                {
-                    if (ImGui::TreeNode((void*)(intptr_t)i, "Scene: %s", files[i].c_str()))
-                    {
-                        ImGui::SameLine();
-                        if(ImGui::Button("Load"))
-                        {
-                            LoadScene(sceneLoc, files[i], mainScene);
-                        }
-                        ImGui::TreePop();
-                    }
-                }
-                ImGui::TreePop();
-            }*/
-
-            ImGui.End();
-        }
-
-        static void ObjectViewer()
-        {
-            
         }
 
         static void ConsoleViewer()
