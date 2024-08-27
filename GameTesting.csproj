@@ -12,6 +12,10 @@
     <AssemblyName>Spatialparticles</AssemblyName>
     <ApplicationIcon>IconSpace.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SignAssembly>False</SignAssembly>
+    <Title>Spatialparticles</Title>
+    <Authors>Mossfurd</Authors>
+    <Copyright>Mossfurd</Copyright>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<Optimize>true</Optimize>

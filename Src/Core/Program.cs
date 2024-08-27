@@ -20,7 +20,6 @@ using static SpatialEngine.Rendering.MeshUtils;
 using static SpatialEngine.Rendering.MainImGui;
 using static SpatialEngine.Resources;
 using static SpatialEngine.Globals;
-using SpatialEngine.Networking;
 using SpatialEngine.Rendering;
 //silk net has its own shader for some reason
 using Shader = SpatialEngine.Rendering.Shader;
@@ -100,14 +99,6 @@ namespace SpatialEngine
                 window.Render += OnRender;
                 window.Run();
             }
-            /*else if (args[0] == "server")
-            {
-                //handles all the initilization of scene and physics and netowrking for server
-                //and starts running the update loop
-                HeadlessServer.Init();
-            }*/
-
-            NetworkManager.Cleanup();
         }
 
         static unsafe void OnLoad() 
@@ -136,18 +127,10 @@ namespace SpatialEngine
             gl.DebugMessageCallback(DebugProc, null);
             gl.DebugMessageControl(GLEnum.DontCare, GLEnum.DontCare, GLEnum.DebugSeverityNotification, 0, null, false);
 
-            //NetworkManager.Init();
             UiRenderer.Init();
             
             //input stuffs
             Input.Init();
-            //for (int i = 0; i < input.Keyboards.Count; i++)
-            //    input.Keyboards[i].KeyDown += KeyDown;
-            /*for (int i = 0; i < input.Mice.Count; i++)
-            {
-                input.Mice[i].Cursor.CursorMode = CursorMode.Normal;
-                input.Mice[i].MouseMove += OnMouseMove;
-            }*/
             //imgui control stuff
             controller = new ImGuiController(gl, window, input);
             ImGui.SetWindowSize(new Vector2(850, 500));
@@ -177,15 +160,6 @@ namespace SpatialEngine
             }
         }*/
 
-        /*static unsafe void OnMouseMove(IMouse mouse, Vector2 position)
-        {
-            if(lockMouse)
-            {
-                Vector2 mousePosMoved = position - LastMousePosition;
-                LastMousePosition = position;
-                LastMousePosition = position;
-            }
-        }*/
 
         static float totalTimeUpdate = 0.0f;
         static void OnUpdate(double dt)
@@ -210,26 +184,6 @@ namespace SpatialEngine
         static void FixedUpdate(float dt)
         {
             GameManager.FixedUpdateGame(dt);
-
-            /*if (NetworkManager.didInit)
-            {
-                if(NetworkManager.isServer)
-                {
-                    NetworkManager.server.Update(dt);
-                }
-                else
-                {
-                    if(!NetworkManager.client.IsConnected())
-                    {
-                        //physics.UpdatePhysics(ref scene, dt);
-                    }
-                    NetworkManager.client.Update(dt);
-                }
-            }
-            else
-            {
-                //physics.UpdatePhysics(ref scene, dt);
-            }*/
         }
 
         static unsafe void OnRender(double dt)
@@ -246,19 +200,6 @@ namespace SpatialEngine
             gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
             if(showWireFrame)
                 gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
-
-            //UiRenderer.Draw();
-
-            //Renderer.Draw(scene, ref shader, player.camera.viewMat, player.camera.projMat, player.camera.position);
-
-            //render players
-            /*if(NetworkManager.didInit && !NetworkManager.isServer)
-            {
-                for (int i = 0; i < NetworkManager.client.playerMeshes.Count; i++)
-                {
-
-                }
-            }*/
 
             PixelColorer.Render();
             SimRenderer.Render();
