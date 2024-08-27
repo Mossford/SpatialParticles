@@ -9,7 +9,7 @@
     <PackageIcon>IconSpace.png</PackageIcon>
     <Nullable>disable</Nullable>
     <StartupObject></StartupObject>
-    <AssemblyName>SpatialParticles</AssemblyName>
+    <AssemblyName>Spatialparticles</AssemblyName>
     <ApplicationIcon>IconSpace.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
