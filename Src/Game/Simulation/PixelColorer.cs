@@ -116,7 +116,9 @@ namespace SpatialGame
             }
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int PosToIndex(Vector2 pos)
         {
             if (!BoundCheck(pos))
@@ -127,7 +129,9 @@ namespace SpatialGame
             return -1;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int PosToIndexNoBC(Vector2 pos)
         {
             int index = (int)((height * pos.X) + pos.Y);
@@ -136,27 +140,35 @@ namespace SpatialGame
             return -1;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int PosToIndexUnsafe(Vector2 pos)
         {
             int index = (int)((height * pos.X) + pos.Y);
             return index;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void SetColorAtPos(Vector2 pos, byte r, byte g, byte b)
         {
             int index = PosToIndex(pos);
             pixelColors[index] = new Vector4Byte(r,g,b,255);
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static Vector2 IndexToPos(int index)
         {
             return new Vector2((float)Math.Floor((double)(index % height)), (float)Math.Floor((double)(index / height)));
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static bool IndexCheck(int index)
         {
             if(index < 0 && index >= height * width)
@@ -164,7 +176,9 @@ namespace SpatialGame
             return true;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static bool BoundCheck(Vector2 pos)
         {
             if(pos.X < 0 || pos.X >= width || pos.Y < 0 || pos.Y >= height)

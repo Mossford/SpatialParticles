@@ -75,7 +75,6 @@ namespace SpatialGame
                         {
                             if (idToCheck == -1)
                             {
-                                int id = ElementSimulation.elements.Length;
                                 switch(type)
                                 {
                                     case ElementTypeSpecific.sand:

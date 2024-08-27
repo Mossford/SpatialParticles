@@ -64,7 +64,9 @@ namespace SpatialGame
         public abstract void Update();
         public abstract ElementType GetElementType();
         public abstract ElementTypeSpecific GetElementTypeSpecific();
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public bool BoundsCheck(Vector2 position)
         {
             if (position.X < 0 || position.X >= PixelColorer.width || position.Y < 0 || position.Y >= PixelColorer.height)
@@ -72,7 +74,9 @@ namespace SpatialGame
             return true;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void SwapElement(Vector2 newPos, ElementType type)
         {
             //get the id of the element below this current element
@@ -105,7 +109,9 @@ namespace SpatialGame
             ElementSimulation.elements[id].position = newPos;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void MoveElement()
         {
             //find new position
@@ -126,6 +132,7 @@ namespace SpatialGame
             for (int i = 0; i < step; i++)
             {
                 Vector2 newPos = position + increse;
+                newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
                 if (ElementSimulation.SafeIdCheckGet(newPos) == -1)
                 {
                     if (!BoundsCheck(newPos))
@@ -146,13 +153,15 @@ namespace SpatialGame
                 position = newPos;
                 //has to be floor other than round because round can go up and move the element
                 //into a position where it is now intersecting another element
-                position = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
                 index = PixelColorer.PosToIndexUnsafe(position);
                 ElementSimulation.positionCheck[index] = GetElementType().ToByte();
                 ElementSimulation.idCheck[index] = id;
             }
         }
 
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void MoveElementOne(Vector2 dir)
         {
             //push to simulation to be deleted
@@ -195,7 +204,9 @@ namespace SpatialGame
         /// <summary>
         /// Should be used when deletion needs to happen during a particles update loop
         /// </summary>
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void QueueDelete()
         {
             if (toBeDeleted)
@@ -208,7 +219,9 @@ namespace SpatialGame
         /// <summary>
         /// Should be used when a deletion is needed right away and outside of a particles update loop
         /// </summary>
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void Delete()
         {
             //set its position to nothing
@@ -229,7 +242,9 @@ namespace SpatialGame
         /// <summary>
         /// External use outside of a instance
         /// </summary>
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static Vector3 GetElementColor(ElementTypeSpecific type)
         {
             switch (type)

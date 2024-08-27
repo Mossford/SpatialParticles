@@ -37,6 +37,7 @@ namespace SpatialGame
 
         public static void InitPixelSim()
         {
+
             elements = new Element[PixelColorer.width * PixelColorer.height];
             freeElementSpots = new Queue<int>();
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
@@ -139,7 +140,9 @@ namespace SpatialGame
             SafeIdCheckSet(id, pos);
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static bool SafePositionCheckSet(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
@@ -149,7 +152,9 @@ namespace SpatialGame
             return true;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static bool SafeIdCheckSet(int id, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
@@ -159,7 +164,9 @@ namespace SpatialGame
             return true;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static byte SafePositionCheckGet(Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
@@ -168,7 +175,9 @@ namespace SpatialGame
             return positionCheck[index];
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int SafeIdCheckGet(Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
@@ -177,7 +186,9 @@ namespace SpatialGame
             return idCheck[index];
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static bool SafePositionCheckSetNoBc(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
@@ -187,7 +198,9 @@ namespace SpatialGame
             return true;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static bool SafeIdCheckSetNoBc(int id, Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
@@ -197,7 +210,9 @@ namespace SpatialGame
             return true;
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static byte SafePositionCheckGetNoBc(Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
@@ -206,7 +221,9 @@ namespace SpatialGame
             return positionCheck[index];
         }
 
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int SafeIdCheckGetNoBc(Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
