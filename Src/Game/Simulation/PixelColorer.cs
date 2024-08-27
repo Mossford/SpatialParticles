@@ -93,7 +93,6 @@ namespace SpatialGame
             shader.setMat4("model", mat);
             shader.setVec2("resolution", (Vector2)Globals.window.Size);
             shader.setVec2("particleResolution", new Vector2(width, height));
-            shader.setVec2("lightPos", new Vector2(MathF.Sin(Globals.GetTime()) * width / 3 + (width / 2), MathF.Cos(Globals.GetTime()) * height / 3 + (height / 2)));
             quad.Draw();
         }
 

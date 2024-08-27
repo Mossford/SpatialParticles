@@ -9,7 +9,6 @@ out vec4 out_color;
 in vec2 TexCoords;
 uniform vec2 particleResolution;
 uniform vec2 resolution;
-uniform vec2 lightPos;
 
 void main()
 {
@@ -28,11 +27,6 @@ void main()
     //seperate values
     //Remove all values except end 2 bits leaving the value
     vec4 color = vec4((ColorBits & 0xFF) / 255.0, ((ColorBits >> 8) & 0xFF) / 255.0, ((ColorBits >> 16) & 0xFF) / 255.0, ((ColorBits >> 24) & 0xFF) / 255.0);
-
-    //float dist = length(lightPos - vec2(x,y));
-    //float attenuation = 1.0 / (1.0 + (0.00005 * dist * dist));
-
-    //color *= vec4(lightPos.x / particleResolution.x * 2 * attenuation, lightPos.y / particleResolution.y * 2 * attenuation, 1 * attenuation, 1.0);
 
     out_color = color;
 }
