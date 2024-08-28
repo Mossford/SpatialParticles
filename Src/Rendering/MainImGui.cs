@@ -49,11 +49,11 @@ namespace SpatialEngine.Rendering
             float mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSim();
             if (mem < 1f)
             {
-                ImGui.Text(String.Format("Particle Simulation has {0:N2}KB of particles loaded", mem * 1024f));
+                ImGui.Text(String.Format("Particle Simulation has {0:N2}KB of particles pooled", mem * 1024f));
             }
             else
             {
-                ImGui.Text(String.Format("Particle Simulation has {0:N2}MB of particles loaded", mem));
+                ImGui.Text(String.Format("Particle Simulation has {0:N2}MB of particles pooled", mem));
             }
             ImGui.Text(String.Format("Current resolution {0}, {1}", SpatialGame.PixelColorer.width, SpatialGame.PixelColorer.height));
 
@@ -76,12 +76,21 @@ namespace SpatialEngine.Rendering
             {
                 ConsoleViewer();
             }
+            ImGui.ShowDemoWindow();
         }
 
         static void ConsoleViewer()
         {
             ImGui.SetNextWindowSize(new Vector2(600, 420), ImGuiCond.FirstUseEver);
             ImGui.Begin("Console Viewer");
+            ImGui.BeginChild("Output", new Vector2(0, ImGui.GetWindowSize().Y * 0.9f), true, ImGuiWindowFlags.NoResize);
+            for (int i = Debugging.consoleText.Length - 1; i >= 0; i--)
+            {
+                if (Debugging.consoleText[i] == null)
+                    continue;
+                ImGui.Text(Debugging.consoleText[i]);
+            }
+            ImGui.EndChild();
             ImGui.End();
         }
     }

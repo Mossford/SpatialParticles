@@ -5,6 +5,7 @@ using static SpatialEngine.Globals;
 using static SpatialEngine.Resources;
 using Shader = SpatialEngine.Rendering.Shader;
 using System.Collections.Generic;
+using SpatialEngine.Rendering;
 
 namespace SpatialEngine
 {
@@ -18,6 +19,20 @@ namespace SpatialEngine
         static List<uint> drawSizes = new List<uint>();
 
         static Shader lineShader = new Shader(gl, "DebugDrawing.vert", "DebugDrawing.frag");
+
+        public static string[] consoleText = new string[500];
+        /// <summary>
+        /// index of the current text line to add
+        /// </summary>
+        public static int currentStringCounter = -1;
+
+        public static void LogConsole(string msg)
+        {
+            currentStringCounter++;
+            if (currentStringCounter >= consoleText.Length)
+                currentStringCounter = 0;
+            consoleText[currentStringCounter] = msg;
+        }
 
 
         enum DebugTypes

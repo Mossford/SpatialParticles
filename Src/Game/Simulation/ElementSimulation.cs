@@ -77,6 +77,8 @@ namespace SpatialGame
 
             DeleteElementsOnQueue();
 
+            Debugging.LogConsole("test");
+
             //DebugSimulation.Init();
         }
 
