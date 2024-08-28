@@ -14,6 +14,7 @@ namespace SpatialGame
         public float yBounce; // 4 bytes
         public bool canMove; // 1 byte
         public float temperature; // 4 byte
+        public float autoIgnite; // 4 byte
 
         public ElementProperties()
         {
@@ -27,7 +28,7 @@ namespace SpatialGame
 
         public static int GetSize()
         {
-            return 19;
+            return 23;
         }
     }
 }
