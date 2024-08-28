@@ -74,7 +74,6 @@ namespace SpatialEngine.Rendering
             {
                 ConsoleViewer();
             }
-            ImGui.ShowDemoWindow();
         }
 
         static void ConsoleViewer()
