@@ -19,17 +19,15 @@ namespace SpatialEngine.Rendering
 {
     public static class MainImGui
     {
-        static float HighestFT = 0.0f;
         static bool ShowConsoleViewerMenu;
-        static int IMM_counter = 0;
-        static Vector3 IMM_selposition = new Vector3();
-        static Vector3 IMM_selrotation = new Vector3();
-        static Vector3 IMM_selvelocity = new Vector3();
-        static Vector3 IMM_selvelocityrot = new Vector3();
-        static int IMM_IcoSphereSub = 0;
-        static float IMM_SpikerSphereSize = 0;
-        static string IMM_input = "";
-        static bool IMM_static = false;
+        static ImFontPtr font;
+
+        public static void Init()
+        {
+            font = ImGui.GetFont();
+            font.Scale = 1.35f;
+        }
+
         public static void ImGuiMenu(float deltaTime)
         {
             ImGuiWindowFlags window_flags = 0;

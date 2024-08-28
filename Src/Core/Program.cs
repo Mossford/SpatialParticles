@@ -133,6 +133,7 @@ namespace SpatialEngine
 
             //init game
             GameManager.InitGame();
+            MainImGui.Init();
 
             //get the display size
             window.WindowState = WindowState.Fullscreen;
