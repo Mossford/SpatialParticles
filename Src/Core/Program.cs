@@ -145,11 +145,11 @@ namespace SpatialEngine
 
         static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
         {
-            if(!showImguiDebug && key == Key.Escape)
+            if(!showImguiDebug && key == Key.F1)
             {
                 showImguiDebug = true;
             }
-            else if(showImguiDebug && key == Key.Escape)
+            else if(showImguiDebug && key == Key.F1)
             {
                 showImguiDebug = false;
             }

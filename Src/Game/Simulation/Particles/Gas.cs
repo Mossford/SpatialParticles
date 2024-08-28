@@ -12,8 +12,6 @@ namespace SpatialGame
     /// </summary>
     public abstract class Gas : Element
     {
-        public int disp { get; set; } // viscosity
-        public int level { get; set; } // bouyency
 
         public override void Update()
         {
@@ -53,7 +51,7 @@ namespace SpatialGame
             bool Left = posCheckL == ElementType.empty.ToByte();
             if (!ground && Left && num == 0)
             {
-                for (int i = 0; i < disp; i++)
+                for (int i = 0; i < properties.viscosity; i++)
                 {
                     if (!BoundsCheck(new Vector2(position.X - (i + 1), position.Y)))
                         return;
@@ -74,7 +72,7 @@ namespace SpatialGame
             bool Right = posCheckR == ElementType.empty.ToByte();
             if (!ground && Right && num == 1)
             {
-                for (int i = 0; i < disp; i++)
+                for (int i = 0; i < properties.viscosity; i++)
                 {
                     if (!BoundsCheck(new Vector2(position.X + (i + 1), position.Y)))
                         return;

@@ -91,7 +91,7 @@ namespace SpatialGame
                 PixelColorer.SetColorAtPos(elements[i].position, 102, 178, 204);
                 elements[i].Update();
                 if (elements[i].BoundsCheck(elements[i].position))
-                    PixelColorer.SetColorAtPos(elements[i].position, (byte)elements[i].color.X, (byte)elements[i].color.Y, (byte)elements[i].color.Z);
+                    PixelColorer.SetColorAtPos(elements[i].position, elements[i].properties.color.x, elements[i].properties.color.y, elements[i].properties.color.z);
             }
 
             /*for (int i = 0; i < elements.Length; i++)

@@ -51,7 +51,8 @@ namespace SpatialGame
             new Vector2(640, 360),
             new Vector2(960, 540),
             new Vector2(1280, 720),
-            new Vector2(1920, 1080)
+            new Vector2(1920, 1080),
+            new Vector2(2560, 1440)
         };
 
         public static unsafe void Init(bool resChange)
@@ -59,7 +60,7 @@ namespace SpatialGame
             if(resChange)
             {
                 resSwitcher++;
-                resSwitcher %= resolutions.Length - 1;
+                resSwitcher %= resolutions.Length;
             }
             width = (int)resolutions[resSwitcher].X;
             height = (int)resolutions[resSwitcher].Y;

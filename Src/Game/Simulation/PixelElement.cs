@@ -3,6 +3,7 @@ using SpatialEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -50,13 +51,13 @@ namespace SpatialGame
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
-        public Vector3 color { get; set; }
-        public bool canMove { get; set; }
         public int id { get; set; }
         public Vector2 oldpos { get; set; }
         public bool toBeDeleted {get; set;}
         public int deleteIndex {get; set;}
         public float timeSpawned { get; set;}
+
+        public ElementProperties properties;
 
         /// <summary>
         /// Position check must be updated when pixel pos changed
@@ -273,6 +274,11 @@ namespace SpatialGame
 
             return new Vector3(0, 0, 0);
         }
+
+        public static int GetSize()
+        {
+            return 37 + ElementProperties.GetSize();
+        }
     }
 
     //----Elements----
@@ -289,8 +295,8 @@ namespace SpatialGame
     {
         public SandPE()
         {
-            color = new Vector3(255, 255, 180);
-            canMove = true;
+            properties.color = new Vector4Byte(255, 255, 180, 255);
+            properties.canMove = true;
         }
 
         public override ElementTypeSpecific GetElementTypeSpecific()
@@ -303,8 +309,8 @@ namespace SpatialGame
     {
         public StonePE()
         {
-            color = new Vector3(180, 180, 180);
-            canMove = true;
+            properties.color = new Vector4Byte(180, 180, 180, 255);
+            properties.canMove = true;
         }
 
         public override ElementTypeSpecific GetElementTypeSpecific()
@@ -320,8 +326,8 @@ namespace SpatialGame
     {
         public WallPE()
         {
-            canMove = false;
-            color = new Vector3(40, 40, 40);
+            properties.color = new Vector4Byte(40, 40, 40, 255);
+            properties.canMove = false;
         }
         public override ElementTypeSpecific GetElementTypeSpecific()
         {
@@ -337,9 +343,9 @@ namespace SpatialGame
 
         public WaterPE()
         {
-            disp = 50;
-            canMove = true;
-            color = new Vector3(40, 0, 255);
+            properties.color = new Vector4Byte(40, 0, 255, 255);
+            properties.canMove = true;
+            properties.viscosity = 50;
         }
         public override ElementTypeSpecific GetElementTypeSpecific()
         {
@@ -355,9 +361,9 @@ namespace SpatialGame
     {
         public CarbonDioxidePE()
         {
-            disp = 10;
-            canMove = true;
-            color = new Vector3(80, 80, 80);
+            properties.color = new Vector4Byte(80, 80, 80, 255);
+            properties.canMove = true;
+            properties.viscosity = 100;
         }
         public override ElementTypeSpecific GetElementTypeSpecific()
         {

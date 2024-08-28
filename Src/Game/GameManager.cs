@@ -28,6 +28,7 @@ namespace SpatialGame
             ElementSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
+
         }
 
         public static void InitGame()

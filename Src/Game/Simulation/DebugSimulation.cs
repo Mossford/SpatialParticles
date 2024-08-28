@@ -20,6 +20,17 @@ namespace SpatialGame
             CheckLostElements();
         }
 
+        /// <summary>
+        /// in mb
+        /// </summary>
+        /// <returns></returns>
+        public static float GetCurrentMemoryOfSim()
+        {
+            int size = ElementSimulation.elements.Length;
+            size *= Element.GetSize();
+            return size / 1024f / 1024f;
+        }
+
 
         /// <summary>
         /// Check if any pixel elements got deleted from some behavior for when it should have not been deleted

@@ -13,44 +13,12 @@ using System.Threading.Tasks;
 using static SpatialEngine.Globals;
 using static SpatialEngine.Rendering.MeshUtils;
 using static SpatialEngine.Resources;
-using System.Net;
+using SpatialGame;
 
 namespace SpatialEngine.Rendering
 {
     public static class MainImGui
     {
-        class ScrollingBuffer
-        {
-            int MaxSize;
-            int Offset;
-            List<Vector2> Data;
-            public ScrollingBuffer(int max_size = 2000)
-            {
-                MaxSize = max_size;
-                Offset = 0;
-                Data = new List<Vector2>(MaxSize);
-            }
-            public void AddPoint(float x, float y)
-            {
-                if (Data.Count < MaxSize)
-                    Data.Add(new Vector2(x, y));
-                else
-                {
-                    Data[Offset] = new Vector2(x, y);
-                    Offset = (Offset + 1) % MaxSize;
-                }
-            }
-            public void Erase()
-            {
-                if (Data.Count() > 0)
-                {
-                    Data.Clear();
-                    Offset = 0;
-                }
-            }
-        }
-
-        static ScrollingBuffer frameTimes = new ScrollingBuffer(2000);
         static float HighestFT = 0.0f;
         static bool ShowConsoleViewerMenu;
         static int IMM_counter = 0;
@@ -64,10 +32,6 @@ namespace SpatialEngine.Rendering
         static bool IMM_static = false;
         public static void ImGuiMenu(float deltaTime)
         {
-            if (deltaTime > HighestFT)
-                HighestFT = (float)deltaTime;
-            frameTimes.AddPoint(totalTime, deltaTime);
-
             ImGuiWindowFlags window_flags = 0;
             window_flags |= ImGuiWindowFlags.NoTitleBar;
             window_flags |= ImGuiWindowFlags.MenuBar;
@@ -80,21 +44,19 @@ namespace SpatialEngine.Rendering
             ImGui.Text("OpenGl " + OpenGlVersion);
             ImGui.Text("Gpu: " + Gpu);
             ImGui.Text(String.Format("{0:N3} ms/frame ({1:N1} FPS)", 1.0f / ImGui.GetIO().Framerate * 1000.0f, ImGui.GetIO().Framerate));
-            ImGui.Text(String.Format("{0} verts, {1} indices ({2} tris)", vertCount, indCount, indCount / 3));
             ImGui.Text(String.Format("DrawCall Avg: ({0:N1}) DC/frame, DrawCall Total ({1})", MathF.Round(drawCallCount / (totalTime / deltaTime)), drawCallCount));
             ImGui.Text(String.Format("Time Open {0:N1} minutes", totalTime / 60.0f));
-
-            //float frameTimeHistory = 2.75f;
-            /*ImGui.SliderFloat("FrameTimeHistory", ref frameTimeHistory, 0.1f, 10.0f);
-            if (ImPlot.BeginPlot("##Scrolling", ImVec2(ImGui::GetContentRegionAvail().x,100))) 
+            float mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSim();
+            if (mem < 1f)
             {
-                ImPlot.SetupAxes(nullptr, nullptr, ImPlotAxisFlags_NoTickLabels, ImPlotAxisFlags_AutoFit);
-                ImPlot.SetupAxisLimits(ImAxis_X1,GetTime() - frameTimeHistory, GetTime(), ImGuiCond_Always);
-                ImPlot.SetupAxisLimits(ImAxis_Y1,0,HighestFT + (HighestFT * 0.25f), ImGuiCond_Always);
-                ImPlot.SetNextFillStyle(ImVec4(0,0.5,0.5,1),1.0f);
-                ImPlot.PlotShaded("FrameTime", &frameTimes.Data[0].x, &frameTimes.Data[0].y, frameTimes.Data.size(), -INFINITY, 0, frameTimes.Offset, 2 * sizeof(float));
-                ImPlot.EndPlot();
-            }*/
+                ImGui.Text(String.Format("Particle Simulation has {0:N2}KB of particles loaded", mem * 1024f));
+            }
+            else
+            {
+                ImGui.Text(String.Format("Particle Simulation has {0:N2}MB of particles loaded", mem));
+            }
+            ImGui.Text(String.Format("Current resolution {0}, {1}", SpatialGame.PixelColorer.width, SpatialGame.PixelColorer.height));
+
             if (ImGui.Checkbox("Vsync", ref vsync))
             {
                 window.VSync = vsync;

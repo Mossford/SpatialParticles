@@ -12,8 +12,6 @@ namespace SpatialGame
     /// </summary>
     public abstract class Liquid : Element
     {
-        public int disp { get; set; } // viscosity
-        public int level { get; set; } // bouyency
 
         public override void Update()
         {
@@ -73,7 +71,7 @@ namespace SpatialGame
             bool left = posCheckBelow != ElementType.empty.ToByte() && posCheckLU != ElementType.empty.ToByte();
             if (!ground && left && num == 0)
             {
-                int moveDisp = ElementSimulation.random.Next(0, disp);
+                int moveDisp = ElementSimulation.random.Next(0, properties.viscosity);
                 for (int i = 0; i < moveDisp; i++)
                 {
                     if (i < 5)
@@ -116,7 +114,7 @@ namespace SpatialGame
             bool right = posCheckBelow != ElementType.empty.ToByte() && posCheckRU != ElementType.empty.ToByte();
             if (!ground && right && num == 1)
             {
-                int moveDisp = ElementSimulation.random.Next(0, disp);
+                int moveDisp = ElementSimulation.random.Next(0, properties.viscosity);
                 for (int i = 0; i < moveDisp; i++)
                 {
                     if (i < 5)
