@@ -23,15 +23,6 @@ namespace SpatialGame
             canMove = false;
         }
 
-        public ElementProperties(Vector4Byte color, ushort viscosity, float xBounce, float yBounce, bool canMove)
-        {
-            this.color = color;
-            this.viscosity = viscosity;
-            this.xBounce = xBounce;
-            this.yBounce = yBounce;
-            this.canMove = canMove;
-        }
-
         public static int GetSize()
         {
             return 15;
