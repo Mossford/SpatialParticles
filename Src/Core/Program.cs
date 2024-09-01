@@ -137,8 +137,8 @@ namespace SpatialEngine
 
             //get the display size
             window.WindowState = WindowState.Fullscreen;
-            MAX_SCR_WIDTH = window.Size.X;
-            MAX_SCR_HEIGHT = window.Size.Y;
+            MAX_SCR_WIDTH = window.GetFullSize().X;
+            MAX_SCR_HEIGHT = window.GetFullSize().Y;
             window.WindowState = WindowState.Normal;
 
             input.Keyboards[0].KeyDown += KeyDown;

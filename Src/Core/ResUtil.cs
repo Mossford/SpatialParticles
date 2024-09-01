@@ -12,7 +12,7 @@ namespace SpatialEngine
         public static string ShaderPath = resourcePath + "Shaders/";
         public static string ImagePath = resourcePath + "Images/";
         public static string ModelPath = resourcePath + "Models/";
-        public static string ScenePath = resourcePath + "Scenes/";
+        public static string SimPath = resourcePath + "Sim/";
 
         //IMPORTANT
         //IF PUBLISHED IN SINGLE FILE DOTNET CANNOT FIND THE PATH OF EXECUTION AS REFLECTION DOES NOT WORK FOR SINGLE FILE PUBLISHING
@@ -28,9 +28,15 @@ namespace SpatialEngine
                 ScenePath = resourcePath + "Scenes/";
             }*/
 
-            if(!Directory.Exists(ScenePath))
+            //check if the resource path is there and throw an error if not
+            if(!Directory.Exists(resourcePath))
             {
-                //Directory.CreateDirectory(ScenePath);
+                throw new Exception("Could not find resource directory. Make sure to run with the directory in the same location as the game");
+            }
+
+            if(!Directory.Exists(SimPath))
+            {
+                Directory.CreateDirectory(SimPath);
             }
         }
     }
