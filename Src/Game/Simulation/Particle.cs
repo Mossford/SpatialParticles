@@ -12,28 +12,6 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
-    public enum ParticleType : byte
-    {
-        empty = 0,
-        solid = 1, //moveable
-        liquid = 2,
-        gas = 3,
-        unmovable = 100,
-    }
-
-    public static class ParticleTypeConversion
-    {
-        //the this keyword allows it cool as hell
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public static byte ToByte(this ParticleType elementType)
-        {
-            return (byte)elementType;
-        }
-    }
-    
-
     public abstract class Particle : IDisposable
     {
         public Vector2 position { get; set; }
@@ -42,6 +20,7 @@ namespace SpatialGame
         public Vector2 oldpos { get; set; }
         public bool toBeDeleted {get; set;}
         public int deleteIndex {get; set;}
+        public int addIndex { get; set;}
         public float timeSpawned { get; set;}
 
         public int propertyIndex;
@@ -52,6 +31,47 @@ namespace SpatialGame
         /// </summary>
         public abstract void Update();
         public abstract ParticleType GetElementType();
+
+        /// <summary>
+        /// All particles have this behavior and first pass for any precalculations
+        /// Heat simulation requires two passes for storing calculated temperatures and then applying
+        /// </summary>
+        public void UpdateGeneralFirst()
+        {
+            //get all particles around the current particle
+            List<int> ids = new List<int>();
+            for (int i = 0; i < 8; i++)
+            {
+                int idCheck = ParticleSimulation.SafeIdCheckGet(position + ParticleHelpers.surroundingPos[i]);
+                if (idCheck != -1)
+                {
+                    ids.Add(idCheck);
+                }
+            }
+
+            //temperature transfers
+            for (int i = 0; i < ids.Count; i++)
+            {
+                float tempMod = state.temperature * ParticleSimulation.particles[ids[i]].GetParticleProperties().heatTransferRate / ids.Count;
+                //heat transfer is current temp * transfer rate to get the temp modify
+                state.temperatureTemp -= tempMod;
+                ParticleSimulation.particles[ids[i]].state.temperatureTemp += tempMod;
+            }
+        }
+
+        public void UpdateGeneralSecond()
+        {
+            //temperature transfers
+            state.temperature += state.temperatureTemp;
+            state.temperatureTemp = 0;
+
+            float tempColor = state.temperature / 100f * 255;
+            if (tempColor > 255)
+                tempColor = 255;
+            state.color.x = (byte)tempColor;
+        }
+
+
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -219,6 +239,7 @@ namespace SpatialGame
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
             ParticleSimulation.freeParticleSpots.Enqueue(id);
+            ParticleSimulation.takenParticleSpots.Remove(addIndex);
             ParticleSimulation.particles[id] = null;
         }
 
@@ -248,7 +269,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 41 + ParticleState.GetSize();
+            return 45 + ParticleState.GetSize();
         }
 
 #if RELEASE

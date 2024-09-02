@@ -61,6 +61,10 @@ namespace SpatialGame
             {
                 selectedElement = "Wall";
             }
+            if (Input.IsKeyDown(Key.Number6))
+            {
+                selectedElement = "Fire";
+            }
 
             MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, selectedElement);
             MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, selectedElement);

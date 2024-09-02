@@ -14,6 +14,7 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
+    "heatTransferRate": 0.6, // (60 percent of heat transfers)
   },
   {
     "name": "Stone",
@@ -30,6 +31,7 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
+    "heatTransferRate": 0.4, // (40 percent of heat transfers)
   },
   {
     "name": "Wall",
@@ -46,6 +48,7 @@
     "canMove": false,
     "temperature": 0.0,
     "autoIgnite": 0.0,
+    "heatTransferRate": 0.0, // (0 percent of heat transfers)
   },
   {
     "name": "Water",
@@ -62,6 +65,7 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
+    "heatTransferRate": 0.2, // (20 percent of heat transfers)
   },
   {
     "name": "CarbonDioxide",
@@ -78,5 +82,23 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
+    "heatTransferRate": 0.7, // (70 percent of heat transfers)
+  },
+  {
+    "name": "Fire",
+    "type": 4,  // Fire
+    "color": {
+      "x": 240,
+      "y": 80,
+      "z": 20,
+      "w": 255
+    },
+    "viscosity": 10,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "temperature": 1000.0,
+    "autoIgnite": 0.0,
+    "heatTransferRate": 1.0, // (100 percent of heat transfers)
   }
 ]

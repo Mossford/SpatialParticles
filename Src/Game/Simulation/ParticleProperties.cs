@@ -23,6 +23,7 @@ namespace SpatialGame
         public bool canMove { get; set; }
         public float temperature { get; set; }
         public float autoIgnite { get; set; }
+        public float heatTransferRate { get; set; }
 
         public ParticleProperties()
         {
@@ -35,6 +36,7 @@ namespace SpatialGame
             canMove = false;
             temperature = 0;
             autoIgnite = 0;
+            heatTransferRate = 0;
         }
     }
 
@@ -49,6 +51,7 @@ namespace SpatialGame
         public float yBounce; // 4 bytes
         public bool canMove; // 1 byte
         public float temperature; // 4 bytes
+        public float temperatureTemp; // 4 bytes
 
         public ParticleState()
         {
@@ -78,7 +81,29 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 19;
+            return 23;
+        }
+    }
+
+    public enum ParticleType : byte
+    {
+        empty = 0,
+        solid = 1, //moveable
+        liquid = 2,
+        gas = 3,
+        fire = 4,
+        unmovable = 100,
+    }
+
+    public static class ParticleTypeConversion
+    {
+        //the this keyword allows it cool as hell
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte ToByte(this ParticleType elementType)
+        {
+            return (byte)elementType;
         }
     }
 }
