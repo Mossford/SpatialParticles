@@ -33,11 +33,6 @@ namespace SpatialEngine
             {
                 throw new Exception("Could not find resource directory. Make sure to run with the directory in the same location as the game");
             }
-
-            if(!Directory.Exists(SimPath))
-            {
-                Directory.CreateDirectory(SimPath);
-            }
         }
     }
 }

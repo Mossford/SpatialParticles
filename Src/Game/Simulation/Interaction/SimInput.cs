@@ -19,7 +19,7 @@ namespace SpatialGame
         static bool firstInit;
         static bool initButton;
 
-        static ElementTypeSpecific selectedElement;
+        static string selectedElement;
 
         public static void Init()
         {
@@ -34,7 +34,7 @@ namespace SpatialGame
             mousePressed = false;
             mouseButtonPress = 0;
             mouseSpawnRadius = 10;
-            selectedElement = ElementTypeSpecific.sand;
+            selectedElement = "Sand";
 
             MouseInteraction.Init();
         }
@@ -43,23 +43,23 @@ namespace SpatialGame
         {
             if(Input.IsKeyDown(Key.Number1))
             {
-                selectedElement = ElementTypeSpecific.sand;
+                selectedElement = "Sand";
             }
             if (Input.IsKeyDown(Key.Number2))
             {
-                selectedElement = ElementTypeSpecific.stone;
+                selectedElement = "Stone";
             }
             if (Input.IsKeyDown(Key.Number3))
             {
-                selectedElement = ElementTypeSpecific.water;
+                selectedElement = "Water";
             }
             if (Input.IsKeyDown(Key.Number4))
             {
-                selectedElement = ElementTypeSpecific.carbonDioxide;
+                selectedElement = "CarbonDioxide";
             }
             if (Input.IsKeyDown(Key.Number5))
             {
-                selectedElement = ElementTypeSpecific.wall;
+                selectedElement = "Wall";
             }
 
             MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, selectedElement);
@@ -102,7 +102,7 @@ namespace SpatialGame
             mouseSpawnRadius += (int)wheel.Y;
             if(mouseSpawnRadius < 1)
                 mouseSpawnRadius = 1;
-            if(Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.X)
+            if(Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.Y / 2)
                 mouseSpawnRadius -= 1;
         }
     }

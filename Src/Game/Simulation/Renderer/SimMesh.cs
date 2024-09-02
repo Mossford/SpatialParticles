@@ -117,6 +117,7 @@ namespace SpatialGame
         {
             gl.BindVertexArray(id);
             gl.DrawElements(GLEnum.Triangles, (uint)indices.Length, GLEnum.UnsignedInt, (void*)0);
+            Globals.drawCallCount++;
             Unbind();
         }
 

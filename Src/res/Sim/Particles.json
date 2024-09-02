@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Sand",
+    "type": 1,  // Solid
+    "color": {
+      "x": 255,
+      "y": 255,
+      "z": 180,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+  },
+  {
+    "name": "Stone",
+    "type": 1,  // Solid
+    "color": {
+      "x": 180,
+      "y": 180,
+      "z": 180,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+  },
+  {
+    "name": "Wall",
+    "type": 100,  // Unmoveable
+    "color": {
+      "x": 40,
+      "y": 40,
+      "z": 40,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": false,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+  },
+  {
+    "name": "Water",
+    "type": 2,  // Liquid
+    "color": {
+      "x": 40,
+      "y": 0,
+      "z": 255,
+      "w": 255
+    },
+    "viscosity": 50,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+  },
+  {
+    "name": "CarbonDioxide",
+    "type": 3,  // Gas
+    "color": {
+      "x": 80,
+      "y": 80,
+      "z": 80,
+      "w": 255
+    },
+    "viscosity": 10,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+  }
+]

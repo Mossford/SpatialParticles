@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -25,7 +26,7 @@ namespace SpatialGame
         /// <summary>
         /// Shows the area elements can be spawned in
         /// </summary>
-        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, ElementTypeSpecific type)
+        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, string name)
         {
             if (!pressed)
             {
@@ -69,52 +70,25 @@ namespace SpatialGame
                     if (check < radius)
                     {
                         Vector2 pos = new Vector2(x, y);
-                        int idToCheck = ElementSimulation.SafeIdCheckGet(pos);
+                        int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
                         if(button == 0)
                         {
                             if (idToCheck == -1)
                             {
-                                switch(type)
-                                {
-                                    case ElementTypeSpecific.sand:
-                                        {
-                                            ElementSimulation.AddElement(pos, new SandPE());
-                                            break;
-                                        }
-                                    case ElementTypeSpecific.stone:
-                                        {
-                                            ElementSimulation.AddElement(pos, new StonePE());
-                                            break;
-                                        }
-                                    case ElementTypeSpecific.water:
-                                        {
-                                            ElementSimulation.AddElement(pos, new WaterPE());
-                                            break;
-                                        }
-                                    case ElementTypeSpecific.carbonDioxide:
-                                        {
-                                            ElementSimulation.AddElement(pos, new CarbonDioxidePE());
-                                            break;
-                                        }
-                                    case ElementTypeSpecific.wall:
-                                        {
-                                            ElementSimulation.AddElement(pos, new WallPE());
-                                            break;
-                                        }
-                                }
+                                ParticleSimulation.AddParticle(pos, name);
                             }
-                            else if (ElementSimulation.elements[idToCheck].GetElementTypeSpecific() != type)
+                            else if (ParticleSimulation.particles[idToCheck].GetElementType() != ParticleSimulation.GetPropertiesFromName(name).type)
                             {
                                 //replaced from queue delete may cause issues
-                                ElementSimulation.elements[idToCheck].Delete();
+                                ParticleSimulation.particles[idToCheck].Delete();
                             }
                         }
                         else
                         {
                             if (idToCheck != -1)
                             {
-                                ElementSimulation.elements[idToCheck].QueueDelete();
+                                ParticleSimulation.particles[idToCheck].QueueDelete();
                             }
                         }
                     }
@@ -122,7 +96,7 @@ namespace SpatialGame
             }
         }
 
-        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, ElementTypeSpecific type)
+        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, string name)
         {
             float scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
             float scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
@@ -149,7 +123,7 @@ namespace SpatialGame
                 SimRenderer.meshes[idElementSquareMesh].scaleY = scaleY;
 
                 SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
-                SimRenderer.meshes[idElementSqaureInnerMesh].color = Element.GetElementColor(type) / 255f;
+                SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
                 SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
                 SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
                 SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;
@@ -176,7 +150,7 @@ namespace SpatialGame
             }
 
             SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
-            SimRenderer.meshes[idElementSqaureInnerMesh].color = Element.GetElementColor(type) / 255f;
+            SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
             SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
             SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;

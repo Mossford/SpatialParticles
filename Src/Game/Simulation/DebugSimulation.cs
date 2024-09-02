@@ -17,7 +17,7 @@ namespace SpatialGame
 
         public static void Update()
         {
-            CheckLostElements();
+            CheckLostParticles();
         }
 
         /// <summary>
@@ -26,8 +26,8 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSim()
         {
-            int size = ElementSimulation.elements.Length;
-            size *= Element.GetSize();
+            int size = ParticleSimulation.particles.Length;
+            size *= Particle.GetSize();
             return size / 1024f / 1024f;
         }
 
@@ -35,31 +35,31 @@ namespace SpatialGame
         /// <summary>
         /// Check if any pixel elements got deleted from some behavior for when it should have not been deleted
         /// </summary>
-        static void CheckLostElements()
+        static void CheckLostParticles()
         {
 
             int count = 0;
 
-            for (int i = 0; i < ElementSimulation.elements.Length; i++)
+            for (int i = 0; i < ParticleSimulation.particles.Length; i++)
             {
-                if (ElementSimulation.elements[i] is null)
+                if (ParticleSimulation.particles[i] is null)
                     continue;
 
                 count++;
             }
 
             int totalElementCount = 0;
-            for (int i = 0; i < ElementSimulation.positionCheck.Length; i++)
+            for (int i = 0; i < ParticleSimulation.positionCheck.Length; i++)
             {
-                int type = ElementSimulation.positionCheck[i];
+                int type = ParticleSimulation.positionCheck[i];
                 if (type == 0)
                     continue;
                 totalElementCount++;
             }
 
-            if (ElementSimulation.elements.Length - ElementSimulation.freeElementSpots.Count != totalElementCount)
+            if (ParticleSimulation.particles.Length - ParticleSimulation.freeParticleSpots.Count != totalElementCount)
             {
-                Console.WriteLine(totalElementCount + " vis " + count + " nn " + (ElementSimulation.elements.Length - ElementSimulation.freeElementSpots.Count) + " qd");
+                Console.WriteLine(totalElementCount + " vis " + count + " nn " + (ParticleSimulation.particles.Length - ParticleSimulation.freeParticleSpots.Count) + " qd");
                 //throw new Exception("Weird bullshit has happened there are more elements than on screen");
             }
         }

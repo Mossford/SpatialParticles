@@ -24,8 +24,9 @@ namespace SpatialGame
             PixelColorer.CleanUp();
             SimRenderer.CleanUp();
 
+            ParticleResourceHandler.Init();
             PixelColorer.Init(changeResolution);
-            ElementSimulation.InitPixelSim();
+            ParticleSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
 
@@ -33,8 +34,9 @@ namespace SpatialGame
 
         public static void InitGame()
         {
+            ParticleResourceHandler.Init();
             PixelColorer.Init(false);
-            ElementSimulation.InitPixelSim();
+            ParticleSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
         }
@@ -49,7 +51,7 @@ namespace SpatialGame
 
         public static void FixedUpdateGame(float dt)
         {
-            ElementSimulation.RunPixelSim();
+            ParticleSimulation.RunPixelSim();
         }
     }
 }

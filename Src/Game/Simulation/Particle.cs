@@ -12,42 +12,29 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
-    public enum ElementType : byte
+    public enum ParticleType : byte
     {
         empty = 0,
         solid = 1, //moveable
         liquid = 2,
         gas = 3,
-        wall = 100,
+        unmovable = 100,
     }
 
-    public enum ElementTypeSpecific : ushort
-    {
-        sand,
-        stone,
-        water,
-        carbonDioxide,
-        wall
-    }
-
-    public static class ElementTypeConversion
+    public static class ParticleTypeConversion
     {
         //the this keyword allows it cool as hell
+#if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte ToByte(this ElementType elementType)
+#endif
+        public static byte ToByte(this ParticleType elementType)
         {
             return (byte)elementType;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ushort ToUshort(this ElementTypeSpecific elementType)
-        {
-            return (ushort)elementType;
         }
     }
     
 
-    public abstract class Element : IDisposable
+    public abstract class Particle : IDisposable
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
@@ -57,14 +44,14 @@ namespace SpatialGame
         public int deleteIndex {get; set;}
         public float timeSpawned { get; set;}
 
-        public ElementProperties properties;
+        public int propertyIndex;
+        public ParticleState state;
 
         /// <summary>
         /// Position check must be updated when pixel pos changed
         /// </summary>
         public abstract void Update();
-        public abstract ElementType GetElementType();
-        public abstract ElementTypeSpecific GetElementTypeSpecific();
+        public abstract ParticleType GetElementType();
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -78,42 +65,42 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public void SwapElement(Vector2 newPos, ElementType type)
+        public void SwapParticle(Vector2 newPos, ParticleType type)
         {
             //get the id of the element below this current element
-            int swapid = ElementSimulation.SafeIdCheckGet(newPos);
+            int swapid = ParticleSimulation.SafeIdCheckGet(newPos);
 
             if (swapid == -1)
                 return;
 
             //check position of swap element beacuse it has a possibility to be out of bounds somehow
-            if (!BoundsCheck(ElementSimulation.elements[swapid].position))
+            if (!BoundsCheck(ParticleSimulation.particles[swapid].position))
                 return;
 
-            ElementSimulation.SafePositionCheckSet(type.ToByte(), position);
+            ParticleSimulation.SafePositionCheckSet(type.ToByte(), position);
 
             //------safe to access the arrays directly------
 
             int index = PixelColorer.PosToIndexUnsafe(position);
-            ElementSimulation.positionCheck[index] = type.ToByte();
+            ParticleSimulation.positionCheck[index] = type.ToByte();
             //set the element below the current element to the same position
-            ElementSimulation.elements[swapid].position = position;
+            ParticleSimulation.particles[swapid].position = position;
             //set the id at the current position to the id from the element below
-            ElementSimulation.idCheck[index] = swapid;
+            ParticleSimulation.idCheck[index] = swapid;
 
             index = PixelColorer.PosToIndexUnsafe(newPos);
             //set the type to the new position to our current element
-            ElementSimulation.positionCheck[index] = GetElementType().ToByte();
+            ParticleSimulation.positionCheck[index] = GetElementType().ToByte();
             //set the id of our element to the new position
-            ElementSimulation.idCheck[index] = id;
+            ParticleSimulation.idCheck[index] = id;
             //set the new position of the current element
-            ElementSimulation.elements[id].position = newPos;
+            ParticleSimulation.particles[id].position = newPos;
         }
 
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public void MoveElement()
+        public void MoveParticle()
         {
             //find new position
             Vector2 posMove = position + velocity;
@@ -134,7 +121,7 @@ namespace SpatialGame
             {
                 Vector2 newPos = position + increse;
                 newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
-                if (ElementSimulation.SafeIdCheckGet(newPos) == -1)
+                if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
                 {
                     if (!BoundsCheck(newPos))
                     {
@@ -149,21 +136,21 @@ namespace SpatialGame
                 //------safe to access the arrays directly------
 
                 int index = PixelColorer.PosToIndexUnsafe(position);
-                ElementSimulation.positionCheck[index] = ElementType.empty.ToByte();
-                ElementSimulation.idCheck[index] = -1;
+                ParticleSimulation.positionCheck[index] = ParticleType.empty.ToByte();
+                ParticleSimulation.idCheck[index] = -1;
                 position = newPos;
                 //has to be floor other than round because round can go up and move the element
                 //into a position where it is now intersecting another element
                 index = PixelColorer.PosToIndexUnsafe(position);
-                ElementSimulation.positionCheck[index] = GetElementType().ToByte();
-                ElementSimulation.idCheck[index] = id;
+                ParticleSimulation.positionCheck[index] = GetElementType().ToByte();
+                ParticleSimulation.idCheck[index] = id;
             }
         }
 
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public void MoveElementOne(Vector2 dir)
+        public void MoveParticleOne(Vector2 dir)
         {
             //push to simulation to be deleted
             if(!BoundsCheck(position + dir))
@@ -173,12 +160,12 @@ namespace SpatialGame
                 return;
             }
 
-            ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
-            ElementSimulation.SafeIdCheckSet(-1, position);
+            ParticleSimulation.SafePositionCheckSet(ParticleType.empty.ToByte(), position);
+            ParticleSimulation.SafeIdCheckSet(-1, position);
             position += dir;
             velocity = dir;
-            ElementSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
-            ElementSimulation.SafeIdCheckSet(id, position);
+            ParticleSimulation.SafePositionCheckSet(GetElementType().ToByte(), position);
+            ParticleSimulation.SafeIdCheckSet(id, position);
         }
 
         /// <summary>
@@ -191,13 +178,13 @@ namespace SpatialGame
             //if it does then there is a element there and check its time spawned
             //will useally delete itself in most cases since its running on its own
             //instance and that means that the element was there before it
-            int idCheck = ElementSimulation.SafeIdCheckGet(position);
-            if (idCheck < 0 || idCheck > ElementSimulation.elements.Length)
+            int idCheck = ParticleSimulation.SafeIdCheckGet(position);
+            if (idCheck < 0 || idCheck > ParticleSimulation.particles.Length)
                 return;
 
             if (idCheck != -1 && idCheck != id)
             {
-                if (ElementSimulation.elements[idCheck].timeSpawned <= timeSpawned)
+                if (ParticleSimulation.particles[idCheck].timeSpawned <= timeSpawned)
                     QueueDelete();
             }
         }
@@ -212,9 +199,9 @@ namespace SpatialGame
         {
             if (toBeDeleted)
                 return;
-            ElementSimulation.idsToDelete.Add(id);
+            ParticleSimulation.idsToDelete.Add(id);
             toBeDeleted = true;
-            deleteIndex = ElementSimulation.idsToDelete.Count - 1;
+            deleteIndex = ParticleSimulation.idsToDelete.Count - 1;
         }
 
         /// <summary>
@@ -226,13 +213,13 @@ namespace SpatialGame
         public void Delete()
         {
             //set its position to nothing
-            ElementSimulation.SafePositionCheckSet(ElementType.empty.ToByte(), position);
+            ParticleSimulation.SafePositionCheckSet(ParticleType.empty.ToByte(), position);
             //set its id at its position to nothing
-            ElementSimulation.SafeIdCheckSet(-1, position);
+            ParticleSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
-            ElementSimulation.freeElementSpots.Enqueue(id);
-            ElementSimulation.elements[id] = null;
+            ParticleSimulation.freeParticleSpots.Enqueue(id);
+            ParticleSimulation.particles[id] = null;
         }
 
         public void Dispose()
@@ -246,129 +233,30 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static Vector3 GetElementColor(ElementTypeSpecific type)
+        public static Vector4Byte GetParticleColor(string name)
         {
-            switch (type)
+            if(ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out var index))
             {
-                case ElementTypeSpecific.sand:
-                    {
-                        return new Vector3(255, 255, 180);
-                    }
-                case ElementTypeSpecific.stone:
-                    {
-                        return new Vector3(180, 180, 180);
-                    }
-                case ElementTypeSpecific.water:
-                    {
-                        return new Vector3(40, 0, 255);
-                    }
-                case ElementTypeSpecific.carbonDioxide:
-                    {
-                        return new Vector3(80, 80, 80);
-                    }
-                case ElementTypeSpecific.wall:
-                    {
-                        return new Vector3(40, 40, 40);
-                    }
+                return ParticleResourceHandler.loadedParticles[index].color;
             }
 
-            return new Vector3(0, 0, 0);
+            return new Vector4Byte(0, 0, 0, 0);
         }
 
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static int GetSize()
         {
-            return 37 + ElementProperties.GetSize();
+            return 41 + ParticleState.GetSize();
         }
-    }
 
-    //----Elements----
-    //Can only run things using stuff from element
-    //----------------
-
-
-    //more specific implements
-
-    /// <summary>
-    /// Reacts to gravity
-    /// </summary>
-    public class SandPE : Solid
-    {
-        public SandPE()
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public ParticleProperties GetParticleProperties()
         {
-            properties.color = new Vector4Byte(255, 255, 180, 255);
-            properties.canMove = true;
+            return ParticleResourceHandler.loadedParticles[propertyIndex];
         }
-
-        public override ElementTypeSpecific GetElementTypeSpecific()
-        {
-            return ElementTypeSpecific.sand;
-        }
-    }
-
-    public class StonePE : Solid
-    {
-        public StonePE()
-        {
-            properties.color = new Vector4Byte(180, 180, 180, 255);
-            properties.canMove = true;
-        }
-
-        public override ElementTypeSpecific GetElementTypeSpecific()
-        {
-            return ElementTypeSpecific.stone;
-        }
-    }
-
-    /// <summary>
-    /// Unmoveable pixel
-    /// </summary>
-    public class WallPE : Unmoveable
-    {
-        public WallPE()
-        {
-            properties.color = new Vector4Byte(40, 40, 40, 255);
-            properties.canMove = false;
-        }
-        public override ElementTypeSpecific GetElementTypeSpecific()
-        {
-            return ElementTypeSpecific.wall;
-        }
-    }
-
-    /// <summary>
-    /// Reacts to gravity and solids
-    /// </summary>
-    public class WaterPE : Liquid
-    {
-
-        public WaterPE()
-        {
-            properties.color = new Vector4Byte(40, 0, 255, 255);
-            properties.canMove = true;
-            properties.viscosity = 50;
-        }
-        public override ElementTypeSpecific GetElementTypeSpecific()
-        {
-            return ElementTypeSpecific.water;
-        }
-
-    }
-
-    /// <summary>
-    /// Reacts to gravity and solids
-    /// </summary>
-    public class CarbonDioxidePE : Gas
-    {
-        public CarbonDioxidePE()
-        {
-            properties.color = new Vector4Byte(80, 80, 80, 255);
-            properties.canMove = true;
-            properties.viscosity = 100;
-        }
-        public override ElementTypeSpecific GetElementTypeSpecific()
-        {
-            return ElementTypeSpecific.carbonDioxide;
-        }
-
     }
 }
