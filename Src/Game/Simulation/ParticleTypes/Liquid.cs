@@ -56,7 +56,7 @@ namespace SpatialGame
             bool LUnder = posCheckLU == ParticleType.empty.ToByte() && posCheckL == ParticleType.empty.ToByte();
             if (LUnder && num == 0)
             {
-                velocity = new Vector2(-1 - (velocity.Y * 0.6f), 1 - (velocity.Y * 0.3f));
+                velocity = new Vector2(-1 - (velocity.Y * state.xBounce), 1 - (velocity.Y * state.yBounce));
                 MoveParticle();
                 return;
             }
@@ -64,7 +64,7 @@ namespace SpatialGame
             bool RUnder = posCheckRU == ParticleType.empty.ToByte() && posCheckR == ParticleType.empty.ToByte();
             if (RUnder && num == 1)
             {
-                velocity = new Vector2(1 + (velocity.Y * 0.6f), 1 - (velocity.Y * 0.3f));
+                velocity = new Vector2(1 + (velocity.Y * state.xBounce), 1 - (velocity.Y * state.yBounce));
                 MoveParticle();
                 return;
             }

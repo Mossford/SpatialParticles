@@ -35,12 +35,15 @@ namespace SpatialGame
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 AllowTrailingCommas = true,
             };
-            string text = File.ReadAllText(SpatialEngine.Resources.SimPath + "Particles.json");
-            loadedParticles = JsonSerializer.Deserialize<ParticleProperties[]>(text, options);
-
-            for (int i = 0; i < loadedParticles.Length; i++)
+            if (File.Exists(SpatialEngine.Resources.SimPath + "Particles.json"))
             {
-                particleNameIndexes.TryAdd(loadedParticles[i].name, i);
+                string text = File.ReadAllText(SpatialEngine.Resources.SimPath + "Particles.json");
+                loadedParticles = JsonSerializer.Deserialize<ParticleProperties[]>(text, options);
+
+                for (int i = 0; i < loadedParticles.Length; i++)
+                {
+                    particleNameIndexes.TryAdd(loadedParticles[i].name, i);
+                }
             }
         }
     }
