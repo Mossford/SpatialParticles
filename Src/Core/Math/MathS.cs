@@ -38,6 +38,24 @@ namespace SpatialEngine.SpatialMath
             return value;
         }
 
+        public static Vector3 ClampVector3(Vector3 value, float min, float max)
+        {
+            Vector3 temp = value;
+            if (value.X < min)
+                temp.X = min;
+            if (value.Y < min)
+                temp.Y = min;
+            if (value.Z < min)
+                temp.Z = min;
+            if (value.X > max)
+                temp.X = max;
+            if (value.Y > max)
+                temp.Y = max;
+            if (value.Z > max)
+                temp.Z = max;
+            return temp;
+        }
+
         public static float Vector3Angle(Vector3 a, Vector3 b)
         {
             float denominator = MathF.Sqrt(Vector3.Dot(a, a) * Vector3.Dot(b, b));
