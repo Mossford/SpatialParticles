@@ -20,11 +20,12 @@ namespace SpatialGame
         public Vector2 oldpos { get; set; }
         public bool toBeDeleted {get; set;}
         public int deleteIndex {get; set;}
-        public int addIndex { get; set;}
         public float timeSpawned { get; set;}
 
         public int propertyIndex;
         public ParticleState state;
+
+        int[] idsSurrounding = new int[8];
 
         /// <summary>
         /// Position check must be updated when pixel pos changed
@@ -75,54 +76,64 @@ namespace SpatialGame
         /// </summary>
         public void UpdateGeneralFirst()
         {
-            //get all particles around the current particle
-            List<int> ids = new List<int>();
-            for (int i = 0; i < 8; i++)
-            {
-                int idCheck = ParticleSimulation.SafeIdCheckGet(position + ParticleHelpers.surroundingPos[i]);
-                if (idCheck != -1)
-                {
-                    ids.Add(idCheck);
-                }
-            }
+            //Heat simulation
 
-            //temperature transfers
-            for (int i = 0; i < ids.Count; i++)
+            if(Settings.SimulationSettings.EnableHeatSimulation)
             {
-                float tempMod = state.temperature * ParticleSimulation.particles[ids[i]].GetParticleProperties().heatTransferRate / ids.Count;
-                //heat transfer is current temp * transfer rate to get the temp modify
-                state.temperatureTemp -= tempMod;
-                ParticleSimulation.particles[ids[i]].state.temperatureTemp += tempMod;
+                int idsSurroundCount = 0;
+                //get all particles around the current particle
+                for (int i = 0; i < 8; i++)
+                {
+                    idsSurrounding[i] = ParticleSimulation.SafeIdCheckGet(position + ParticleHelpers.surroundingPos[i]);
+                    if (idsSurrounding[i] != -1)
+                    {
+                        idsSurroundCount++;
+                    }
+                }
+
+                //temperature transfers
+                for (int i = 0; i < 8; i++)
+                {
+                    if (idsSurrounding[i] == -1)
+                        continue;
+                    float tempMod = state.temperature * ParticleSimulation.particles[idsSurrounding[i]].GetParticleProperties().heatTransferRate / idsSurroundCount;
+                    //heat transfer is current temp * transfer rate to get the temp modify
+                    state.temperatureTemp -= tempMod;
+                    ParticleSimulation.particles[idsSurrounding[i]].state.temperatureTemp += tempMod;
+                }
             }
         }
 
         public void UpdateGeneralSecond()
         {
-            //temperature transfers
-            state.temperature += state.temperatureTemp;
-            state.temperatureTemp = 0;
-
-            //only do coloring on solids
-            ParticleType type = GetParticleProperties().type;
-            if (type == ParticleType.solid || type == ParticleType.unmovable)
+            if (Settings.SimulationSettings.EnableHeatSimulation)
             {
-                float temp = MathF.Max(state.temperature, 0.0f);
+                //temperature transfers
+                state.temperature += state.temperatureTemp;
+                state.temperatureTemp = 0;
 
-                Vector3 color = new Vector3(255f, 255f, 255f);
-                color.X = 56100000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 148.0f;
-                color.Y = 100.04f * MathF.Log(temp) - 623.6f;
-                if (temp > 6500.0f)
-                    color.Y = 35200000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 184.0f;
-                color.Z = 194.18f * MathF.Log(temp) - 1448.6f;
-                color = SpatialEngine.SpatialMath.MathS.ClampVector3(color, 0.0f, 255.0f) / 255.0f;
-                if (temp < 1000.0f)
-                    color *= temp / 1000.0f;
+                //only do coloring on solids
+                ParticleType type = GetParticleProperties().type;
+                if (type == ParticleType.solid || type == ParticleType.unmovable)
+                {
+                    float temp = MathF.Max(state.temperature, 0.0f);
 
-                Vector3 baseColor = (Vector3)GetParticleProperties().color / 255f;
-                Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
-                lerpedColor *= 255f;
-                lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
-                state.color = lerpedColor;
+                    Vector3 color = new Vector3(255f, 255f, 255f);
+                    color.X = 56100000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 148.0f;
+                    color.Y = 100.04f * MathF.Log(temp) - 623.6f;
+                    if (temp > 6500.0f)
+                        color.Y = 35200000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 184.0f;
+                    color.Z = 194.18f * MathF.Log(temp) - 1448.6f;
+                    color = SpatialEngine.SpatialMath.MathS.ClampVector3(color, 0.0f, 255.0f) / 255.0f;
+                    if (temp < 1000.0f)
+                        color *= temp / 1000.0f;
+
+                    Vector3 baseColor = (Vector3)GetParticleProperties().color / 255f;
+                    Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
+                    lerpedColor *= 255f;
+                    lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
+                    state.color = lerpedColor;
+                }
             }
         }
 
@@ -294,7 +305,6 @@ namespace SpatialGame
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
             ParticleSimulation.freeParticleSpots.Enqueue(id);
-            ParticleSimulation.takenParticleSpots.Remove(addIndex);
             ParticleSimulation.particles[id] = null;
         }
 
@@ -319,7 +329,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 45 + ParticleState.GetSize();
+            return 73 + ParticleState.GetSize();
         }
 
 #if RELEASE

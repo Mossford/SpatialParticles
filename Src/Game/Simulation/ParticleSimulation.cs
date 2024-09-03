@@ -15,10 +15,6 @@ namespace SpatialGame
         public static Particle[] particles;
         public static Queue<int> freeParticleSpots;
         /// <summary>
-        /// Stores the taken spots of particles in the main pool
-        /// </summary>
-        public static Dictionary<int, int> takenParticleSpots;
-        /// <summary>
         /// the type of the particle at its position
         /// 0 is no pixel at position,
         /// 1 is movable solid at position,
@@ -46,7 +42,6 @@ namespace SpatialGame
 
             particles = new Particle[PixelColorer.width * PixelColorer.height];
             freeParticleSpots = new Queue<int>();
-            takenParticleSpots = new Dictionary<int, int>();
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
             idsToDelete = new List<int>();
@@ -77,10 +72,12 @@ namespace SpatialGame
                 AddParticle(new Vector2(PixelColorer.width - 1, y), "Wall");
             }
 
-            int[] indexes = takenParticleSpots.Values.ToArray();
-            for (int i = 0; i < takenParticleSpots.Count; i++)
+            for (int i = 0; i < particles.Length; i++)
             {
-                particles[indexes[i]].CheckDoubleOnPosition();
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                    continue;
+
+                particles[i].CheckDoubleOnPosition();
             }
 
             DeleteElementsOnQueue();
@@ -94,28 +91,25 @@ namespace SpatialGame
         {
             //DebugSimulation.Update();
             //First pass calculations
-            int[] indexes = takenParticleSpots.Values.ToArray();
-            for (int i = 0; i < indexes.Length; i++)
+            for (int i = 0; i < particles.Length; i++)
             {
-                int index = indexes[i];
-                if (particles[index] is null && !particles[index].BoundsCheck(particles[index].position))
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
-                particles[index].UpdateGeneralFirst();
+                particles[i].UpdateGeneralFirst();
                 particleCount++;
             }
 
-            for (int i = 0; i < indexes.Length; i++)
+            for (int i = 0; i < particles.Length; i++)
             {
-                int index = indexes[i];
-                if (!particles[index].BoundsCheck(particles[index].position))
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
-                PixelColorer.SetColorAtPos(particles[index].position, 102, 178, 204);
-                particles[index].UpdateGeneralSecond();
-                particles[index].Update();
-                if (particles[index] is not null && particles[index].BoundsCheck(particles[index].position))
+                PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
+                particles[i].UpdateGeneralSecond();
+                particles[i].Update();
+                if (particles[i] is not null || particles[i].BoundsCheck(particles[i].position))
                 {
-                    PixelColorer.SetColorAtPos(particles[index].position, particles[index].state.color.x, particles[index].state.color.y, particles[index].state.color.z);
+                    PixelColorer.SetColorAtPos(particles[i].position, particles[i].state.color.x, particles[i].state.color.y, particles[i].state.color.z);
                 }
             }
 
@@ -163,8 +157,6 @@ namespace SpatialGame
             if (freeParticleSpots.Count == 0)
                 return;
             int id = freeParticleSpots.Dequeue();
-            if (!takenParticleSpots.TryAdd(id, id))
-                return;
             ParticleType type = ParticleResourceHandler.loadedParticles[index].type;
             particles[id] = new Particle()
             {
@@ -173,7 +165,6 @@ namespace SpatialGame
                 timeSpawned = Globals.GetTime(),
                 propertyIndex = index,
                 state = ParticleResourceHandler.loadedParticles[index],
-                addIndex = id,
             };
             SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
             SafeIdCheckSet(id, pos);

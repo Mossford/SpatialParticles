@@ -20,5 +20,14 @@ namespace SpatialEngine
             /// </summary>
             public static ushort OptimizeUpdatingBuffers = 1;
         }
+
+        public static class SimulationSettings
+        {
+            /// <summary>
+            /// true = Enables the heat simulation
+            /// false = Disables the heat simulation
+            /// </summary>
+            public static bool EnableHeatSimulation = true;
+        }
     }
 }
