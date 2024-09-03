@@ -12,6 +12,10 @@ namespace SpatialGame
     /// </summary>
     public static class LiquidDefines
     {
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void Update(in Particle particle)
         {
             if(particle.state.temperature >= 100)
@@ -31,21 +35,21 @@ namespace SpatialGame
             //swapping down with a liquid
             if (displaceLiq)
             {
-                particle.SwapParticle(new Vector2(particle.position.X, particle.position.Y + 1), ParticleType.gas);
+                particle.SwapParticle(new Vector2(particle.position.X, particle.position.Y + 1), (ParticleType)posCheckBelow);
                 return;
             }
             int posCheckLU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y + 1));
             bool displaceLiqLU = posCheckLU == ParticleType.gas.ToByte() && posCheckBelow == ParticleType.empty.ToByte();
             if (displaceLiqLU && num == 0)
             {
-                particle.SwapParticle(new Vector2(particle.position.X - 1, particle.position.Y + 1), ParticleType.gas);
+                particle.SwapParticle(new Vector2(particle.position.X - 1, particle.position.Y + 1), (ParticleType)posCheckLU);
                 return;
             }
             int posCheckRU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y + 1));
             bool displaceLiqRU = posCheckRU == ParticleType.gas.ToByte() && posCheckBelow == ParticleType.empty.ToByte();
             if (displaceLiqRU && num == 1)
             {
-                particle.SwapParticle(new Vector2(particle.position.X + 1, particle.position.Y + 1), ParticleType.gas);
+                particle.SwapParticle(new Vector2(particle.position.X + 1, particle.position.Y + 1), (ParticleType)posCheckRU);
                 return;
             }
 

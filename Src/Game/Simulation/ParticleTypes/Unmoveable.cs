@@ -8,6 +8,10 @@ namespace SpatialGame
 {
     public static class UnmoveableDefines
     {
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void Update(in Particle particle)
         {
             ParticleSimulation.SafePositionCheckSet(ParticleType.unmovable.ToByte(), particle.position);

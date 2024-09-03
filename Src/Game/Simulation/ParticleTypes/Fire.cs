@@ -12,9 +12,12 @@ namespace SpatialGame
     public static class FireDefines
     {
 
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void Update(in Particle particle)
         {
-            if(ParticleHelpers.RandomChance(50f))
+            if(ParticleHelpers.RandomChance(20f))
             {
                 particle.QueueDelete();
                 return;

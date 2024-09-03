@@ -116,6 +116,23 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 0.8 // (70 percent of heat transfers)
-  }
+    "heatTransferRate": 0.8 // (80 percent of heat transfers)
+  },
+  {
+    "name": "WallHeatable",
+    "type": 100, // Unmoveable
+    "color": {
+      "x": 100,
+      "y": 70,
+      "z": 100,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": false,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+    "heatTransferRate": 1.0 // (100 percent of heat transfers)
+  },
 ]

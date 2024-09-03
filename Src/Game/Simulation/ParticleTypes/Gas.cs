@@ -13,6 +13,9 @@ namespace SpatialGame
     public static class GasDefines
     {
 
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void Update(in Particle particle)
         {
             int num = ParticleSimulation.random.Next(0, 3); // choose random size to pick to favor instead of always left

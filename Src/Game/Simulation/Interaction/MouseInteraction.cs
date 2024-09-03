@@ -78,7 +78,7 @@ namespace SpatialGame
                             {
                                 ParticleSimulation.AddParticle(pos, name);
                             }
-                            else if (ParticleSimulation.particles[idToCheck].GetElementType() != ParticleSimulation.GetPropertiesFromName(name).type)
+                            else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
                             {
                                 //replaced from queue delete may cause issues
                                 ParticleSimulation.particles[idToCheck].Delete();
@@ -88,7 +88,7 @@ namespace SpatialGame
                         {
                             if (idToCheck != -1)
                             {
-                                ParticleSimulation.particles[idToCheck].QueueDelete();
+                                ParticleSimulation.particles[idToCheck].Delete();
                             }
                         }
                     }

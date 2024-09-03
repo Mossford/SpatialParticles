@@ -103,9 +103,10 @@ namespace SpatialGame
             state.temperatureTemp = 0;
 
             //only do coloring on solids
-            if(GetParticleProperties().type == ParticleType.solid)
+            ParticleType type = GetParticleProperties().type;
+            if (type == ParticleType.solid || type == ParticleType.unmovable)
             {
-                float temp = state.temperature;
+                float temp = MathF.Max(state.temperature, 0.0f);
 
                 Vector3 color = new Vector3(255f, 255f, 255f);
                 color.X = 56100000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 148.0f;
@@ -120,7 +121,7 @@ namespace SpatialGame
                 Vector3 baseColor = (Vector3)GetParticleProperties().color / 255f;
                 Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
                 lerpedColor *= 255f;
-                lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0f, 255f);
+                lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
                 state.color = lerpedColor;
             }
         }
@@ -329,10 +330,14 @@ namespace SpatialGame
             return ParticleResourceHandler.loadedParticles[propertyIndex];
         }
 
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public void ReplaceWithParticle(string particle)
         {
             propertyIndex = ParticleResourceHandler.particleNameIndexes[particle];
             state = GetParticleProperties();
+            ParticleSimulation.SafePositionCheckSet((byte)GetParticleProperties().type, position);
         }
 
 
