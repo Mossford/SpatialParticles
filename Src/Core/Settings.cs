@@ -27,7 +27,11 @@ namespace SpatialEngine
             /// true = Enables the heat simulation
             /// false = Disables the heat simulation
             /// </summary>
-            public static bool EnableHeatSimulation = true;
+            public static bool EnableHeatSimulation = false;
+            /// <summary>
+            /// Fills with sand
+            /// </summary>
+            public static bool EnablePerfTestMode = true;
         }
     }
 }

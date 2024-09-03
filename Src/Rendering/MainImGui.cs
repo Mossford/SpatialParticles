@@ -21,6 +21,7 @@ namespace SpatialEngine.Rendering
     {
         static bool ShowConsoleViewerMenu;
         static ImFontPtr font;
+        static float fpsCount;
 
         public static void Init()
         {
@@ -41,18 +42,29 @@ namespace SpatialEngine.Rendering
             ImGui.Text("Version " + EngVer);
             ImGui.Text("OpenGl " + OpenGlVersion);
             ImGui.Text("Gpu: " + Gpu);
+            ImGui.Text(String.Format("FPS Avg: ({0:N1})", MathF.Round(fpsCount / (totalTime / deltaTime))));
             ImGui.Text(String.Format("{0:N3} ms/frame ({1:N1} FPS)", 1.0f / ImGui.GetIO().Framerate * 1000.0f, ImGui.GetIO().Framerate));
-            ImGui.Text(String.Format("DrawCall Avg: ({0:N1}) DC/frame, DrawCall Total ({1})", MathF.Round(drawCallCount / (totalTime / deltaTime)), drawCallCount));
+            fpsCount += ImGui.GetIO().Framerate;
+            ImGui.Text(String.Format("DrawCall Avg: ({0:N1}) DC/frame", MathF.Round(drawCallCount / (totalTime / deltaTime))));
+
+            //reset counters
+            if(totalTime % 5 == 0)
+            {
+                drawCallCount = 0;
+                fpsCount = 0;
+            }
+
             ImGui.Text(String.Format("Time Open {0:N1} minutes", totalTime / 60.0f));
             float mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSim();
             if (mem < 1f)
             {
-                ImGui.Text(String.Format("Particle Simulation has {0:N2}KB of particles pooled", mem * 1024f));
+                ImGui.Text(String.Format("Simulation has {0:N2}KB of particles pooled", mem * 1024f));
             }
             else
             {
-                ImGui.Text(String.Format("Particle Simulation has {0:N2}MB of particles pooled", mem));
+                ImGui.Text(String.Format("Simulation has {0:N2}MB of particles pooled", mem));
             }
+            ImGui.Text(String.Format("Simulation has {0} of particles Spawned", SpatialGame.ParticleSimulation.particleCount));
             ImGui.Text(String.Format("Current resolution {0}, {1}", SpatialGame.PixelColorer.width, SpatialGame.PixelColorer.height));
 
             if (ImGui.Checkbox("Vsync", ref vsync))

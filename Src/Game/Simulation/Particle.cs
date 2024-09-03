@@ -118,6 +118,7 @@ namespace SpatialGame
                 {
                     float temp = MathF.Max(state.temperature, 0.0f);
 
+                    //swap this out as unity code can be fucky
                     Vector3 color = new Vector3(255f, 255f, 255f);
                     color.X = 56100000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 148.0f;
                     color.Y = 100.04f * MathF.Log(temp) - 623.6f;

@@ -97,6 +97,7 @@ namespace SpatialGame
         {
             new Vector2(128, 72),
             new Vector2(256, 144),
+            new Vector2(384, 216),
             new Vector2(512, 288),
             new Vector2(640, 360),
             new Vector2(960, 540),

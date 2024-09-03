@@ -72,6 +72,17 @@ namespace SpatialGame
                 AddParticle(new Vector2(PixelColorer.width - 1, y), "Wall");
             }
 
+            if(Settings.SimulationSettings.EnablePerfTestMode)
+            {
+                for (int x = 1; x < PixelColorer.width - 1; x++)
+                {
+                    for (int y = 1; y < PixelColorer.height - 1; y++)
+                    {
+                        AddParticle(new Vector2(x, y), "Sand");
+                    }
+                }
+            }
+
             for (int i = 0; i < particles.Length; i++)
             {
                 if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
@@ -91,6 +102,7 @@ namespace SpatialGame
         {
             //DebugSimulation.Update();
             //First pass calculations
+            particleCount = 0;
             for (int i = 0; i < particles.Length; i++)
             {
                 if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
