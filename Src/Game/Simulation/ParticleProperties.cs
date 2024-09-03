@@ -45,13 +45,13 @@ namespace SpatialGame
     /// </summary>
     public struct ParticleState
     {
-        public Vector4Byte color; // 4 bytes
-        public ushort viscosity; // 2 bytes
-        public float xBounce; // 4 bytes
-        public float yBounce; // 4 bytes
-        public bool canMove; // 1 byte
-        public float temperature; // 4 bytes
-        public float temperatureTemp; // 4 bytes
+        public Vector4Byte color { get; set; } // 4 bytes
+        public ushort viscosity { get; set; } // 2 bytes
+        public float xBounce { get; set; } // 4 bytes
+        public float yBounce { get; set; } // 4 bytes
+        public bool canMove { get; set; } // 1 byte
+        public float temperature { get; set; } // 4 bytes
+        public float temperatureTemp { get; set; } // 4 bytes
 
         public ParticleState()
         {

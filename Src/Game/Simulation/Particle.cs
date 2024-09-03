@@ -133,7 +133,7 @@ namespace SpatialGame
                     Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
                     lerpedColor *= 255f;
                     lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
-                    state.color = lerpedColor;
+                    state.color = new Vector4Byte(lerpedColor, state.color.w);
                 }
             }
         }

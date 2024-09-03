@@ -121,7 +121,11 @@ namespace SpatialGame
                 particles[i].Update();
                 if (particles[i] is not null || particles[i].BoundsCheck(particles[i].position))
                 {
-                    PixelColorer.SetColorAtPos(particles[i].position, particles[i].state.color.x, particles[i].state.color.y, particles[i].state.color.z);
+                    //apply transparencys to particle
+                    //blend with background by the alpha
+                    float alphaScale = 1f - (particles[i].state.color.w / 255f);
+                    Vector3 color = Vector3.Lerp((Vector3)particles[i].state.color / 255f, new Vector3(102 / 255f, 178 / 255f, 204 / 255f), alphaScale) * 255f;
+                    PixelColorer.SetColorAtPos(particles[i].position, (byte)color.X, (byte)color.Y, (byte)color.Z);
                 }
             }
 

@@ -31,6 +31,14 @@ namespace SpatialGame
             this.w = w;
         }
 
+        public Vector4Byte(Vector3 vector, byte w)
+        {
+            this.x = (byte)vector.X;
+            this.y = (byte)vector.Y;
+            this.z = (byte)vector.Z;
+            this.w = w;
+        }
+
         public static implicit operator Vector4(Vector4Byte v)
         {
             return new Vector4(v.x, v.y, v.z, v.w);
@@ -78,6 +86,26 @@ namespace SpatialGame
                 (byte)(v.y / scalar),
                 (byte)(v.z / scalar),
                 (byte)(v.w / scalar)
+            );
+        }
+
+        public static Vector4Byte operator *(Vector4Byte v, Vector4Byte b)
+        {
+            return new Vector4Byte(
+                (byte)(v.x * b.x),
+                (byte)(v.y * b.y),
+                (byte)(v.z * b.z),
+                (byte)(v.w * b.w)
+            );
+        }
+
+        public static Vector4Byte operator /(Vector4Byte v, Vector4Byte b)
+        {
+            return new Vector4Byte(
+                (byte)(v.x / b.x),
+                (byte)(v.y / b.y),
+                (byte)(v.z / b.z),
+                (byte)(v.w / b.w)
             );
         }
     }
