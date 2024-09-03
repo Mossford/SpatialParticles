@@ -21,7 +21,9 @@ namespace SpatialGame
             }
             if (ParticleHelpers.RandomChance(3f))
             {
-                ParticleSimulation.ReplaceParticle(particle.id, "Smoke");
+                float temp = particle.state.temperature;
+                particle.ReplaceWithParticle("Smoke");
+                particle.state.temperature = temp;
                 return;
             }
 

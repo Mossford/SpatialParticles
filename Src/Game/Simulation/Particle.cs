@@ -297,11 +297,6 @@ namespace SpatialGame
             ParticleSimulation.particles[id] = null;
         }
 
-        public void Dispose()
-        {
-            GC.SuppressFinalize(this);
-        }
-
         /// <summary>
         /// External use outside of a instance
         /// </summary>
@@ -332,6 +327,18 @@ namespace SpatialGame
         public ParticleProperties GetParticleProperties()
         {
             return ParticleResourceHandler.loadedParticles[propertyIndex];
+        }
+
+        public void ReplaceWithParticle(string particle)
+        {
+            propertyIndex = ParticleResourceHandler.particleNameIndexes[particle];
+            state = GetParticleProperties();
+        }
+
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

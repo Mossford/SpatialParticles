@@ -179,13 +179,6 @@ namespace SpatialGame
             SafeIdCheckSet(id, pos);
         }
 
-        public static void ReplaceParticle(int id, string name)
-        {
-            Vector2 pos = particles[id].position;
-            particles[id].Delete();
-            AddParticle(pos, name);
-        }
-
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
