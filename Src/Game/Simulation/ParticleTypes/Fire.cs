@@ -14,10 +14,14 @@ namespace SpatialGame
 
         public override void Update()
         {
-            int randDel = ParticleSimulation.random.Next(0, 10);
-            if(randDel == 0)
+            if(ParticleHelpers.RandomChance(50f))
             {
                 QueueDelete();
+                return;
+            }
+            if (ParticleHelpers.RandomChance(3f))
+            {
+                ParticleSimulation.ReplaceParticle(id, "CarbonDioxide");
                 return;
             }
 

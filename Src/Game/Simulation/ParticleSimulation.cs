@@ -112,7 +112,7 @@ namespace SpatialGame
                 PixelColorer.SetColorAtPos(particles[index].position, 102, 178, 204);
                 particles[index].UpdateGeneralSecond();
                 particles[index].Update();
-                if (particles[index].BoundsCheck(particles[index].position))
+                if (particles[index] is not null && particles[index].BoundsCheck(particles[index].position))
                 {
                     PixelColorer.SetColorAtPos(particles[index].position, particles[index].state.color.x, particles[index].state.color.y, particles[index].state.color.z);
                 }
@@ -243,6 +243,13 @@ namespace SpatialGame
                         break;
                     }
             }
+        }
+
+        public static void ReplaceParticle(int id, string name)
+        {
+            Vector2 pos = particles[id].position;
+            particles[id].Delete();
+            AddParticle(pos, name);
         }
 
 #if RELEASE
