@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
-    public abstract class Particle : IDisposable
+    public class Particle : IDisposable
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
@@ -29,8 +29,45 @@ namespace SpatialGame
         /// <summary>
         /// Position check must be updated when pixel pos changed
         /// </summary>
-        public abstract void Update();
-        public abstract ParticleType GetElementType();
+        public void Update()
+        {
+            switch(GetElementType())
+            {
+                case ParticleType.solid:
+                    {
+                        SolidDefines.Update(this);
+                        break;
+                    }
+                case ParticleType.liquid:
+                    {
+                        LiquidDefines.Update(this);
+                        break;
+                    }
+                case ParticleType.unmovable:
+                    {
+                        UnmoveableDefines.Update(this);
+                        break;
+                    }
+                case ParticleType.gas:
+                    {
+                        GasDefines.Update(this);
+                        break;
+                    }
+                case ParticleType.fire:
+                    {
+                        FireDefines.Update(this);
+                        break;
+                    }
+            }
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public ParticleType GetElementType()
+        {
+            return GetParticleProperties().type;
+        }
 
         /// <summary>
         /// All particles have this behavior and first pass for any precalculations

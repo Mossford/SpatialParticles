@@ -55,7 +55,7 @@ namespace SpatialGame
             }
             if (Input.IsKeyDown(Key.Number4))
             {
-                selectedElement = "CarbonDioxide";
+                selectedElement = "Smoke";
             }
             if (Input.IsKeyDown(Key.Number5))
             {

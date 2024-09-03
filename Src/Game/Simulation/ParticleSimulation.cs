@@ -97,9 +97,10 @@ namespace SpatialGame
             int[] indexes = takenParticleSpots.Values.ToArray();
             for (int i = 0; i < indexes.Length; i++)
             {
-                if (!particles[indexes[i]].BoundsCheck(particles[indexes[i]].position))
+                int index = indexes[i];
+                if (particles[index] is null && !particles[index].BoundsCheck(particles[index].position))
                     continue;
-                particles[indexes[i]].UpdateGeneralFirst();
+                particles[index].UpdateGeneralFirst();
                 particleCount++;
             }
 
@@ -165,84 +166,17 @@ namespace SpatialGame
             if (!takenParticleSpots.TryAdd(id, id))
                 return;
             ParticleType type = ParticleResourceHandler.loadedParticles[index].type;
-            switch(type)
+            particles[id] = new Particle()
             {
-                case ParticleType.solid:
-                    {
-                        particles[id] = new Solid()
-                        {
-                            id = id,
-                            position = pos,
-                            timeSpawned = Globals.GetTime(),
-                            propertyIndex = index,
-                            state = ParticleResourceHandler.loadedParticles[index],
-                            addIndex = id,
-                        };
-                        SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
-                        SafeIdCheckSet(id, pos);
-                        break;
-                    }
-                case ParticleType.liquid:
-                    {
-                        particles[id] = new Liquid()
-                        {
-                            id = id,
-                            position = pos,
-                            timeSpawned = Globals.GetTime(),
-                            propertyIndex = index,
-                            state = ParticleResourceHandler.loadedParticles[index],
-                            addIndex = id,
-                        };
-                        SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
-                        SafeIdCheckSet(id, pos);
-                        break;
-                    }
-                case ParticleType.gas:
-                    {
-                        particles[id] = new Gas()
-                        {
-                            id = id,
-                            position = pos,
-                            timeSpawned = Globals.GetTime(),
-                            propertyIndex = index,
-                            state = ParticleResourceHandler.loadedParticles[index],
-                            addIndex = id,
-                        };
-                        SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
-                        SafeIdCheckSet(id, pos);
-                        break;
-                    }
-                case ParticleType.unmovable:
-                    {
-                        particles[id] = new Unmoveable()
-                        {
-                            id = id,
-                            position = pos,
-                            timeSpawned = Globals.GetTime(),
-                            propertyIndex = index,
-                            state = ParticleResourceHandler.loadedParticles[index],
-                            addIndex = id,
-                        };
-                        SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
-                        SafeIdCheckSet(id, pos);
-                        break;
-                    }
-                case ParticleType.fire:
-                    {
-                        particles[id] = new Fire()
-                        {
-                            id = id,
-                            position = pos,
-                            timeSpawned = Globals.GetTime(),
-                            propertyIndex = index,
-                            state = ParticleResourceHandler.loadedParticles[index],
-                            addIndex = id,
-                        };
-                        SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
-                        SafeIdCheckSet(id, pos);
-                        break;
-                    }
-            }
+                id = id,
+                position = pos,
+                timeSpawned = Globals.GetTime(),
+                propertyIndex = index,
+                state = ParticleResourceHandler.loadedParticles[index],
+                addIndex = id,
+            };
+            SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
+            SafeIdCheckSet(id, pos);
         }
 
         public static void ReplaceParticle(int id, string name)

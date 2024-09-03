@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
-    public class Unmoveable : Particle
+    public static class UnmoveableDefines
     {
-        public override void Update()
+        public static void Update(in Particle particle)
         {
-            ParticleSimulation.SafePositionCheckSet(ParticleType.unmovable.ToByte(), position);
-            ParticleSimulation.SafeIdCheckSet(id, position);
-        }
-
-        public override ParticleType GetElementType()
-        {
-            return ParticleType.unmovable;
+            ParticleSimulation.SafePositionCheckSet(ParticleType.unmovable.ToByte(), particle.position);
+            ParticleSimulation.SafeIdCheckSet(particle.id, particle.position);
         }
     }
 }

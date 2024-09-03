@@ -1,7 +1,7 @@
 [
   {
     "name": "Sand",
-    "type": 1,  // Solid
+    "type": 1, // Solid
     "color": {
       "x": 255,
       "y": 255,
@@ -14,11 +14,11 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 0.6, // (60 percent of heat transfers)
+    "heatTransferRate": 0.6 // (60 percent of heat transfers)
   },
   {
     "name": "Stone",
-    "type": 1,  // Solid
+    "type": 1, // Solid
     "color": {
       "x": 180,
       "y": 180,
@@ -31,11 +31,11 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 0.4, // (40 percent of heat transfers)
+    "heatTransferRate": 0.4 // (40 percent of heat transfers)
   },
   {
     "name": "Wall",
-    "type": 100,  // Unmoveable
+    "type": 100, // Unmoveable
     "color": {
       "x": 40,
       "y": 40,
@@ -48,11 +48,11 @@
     "canMove": false,
     "temperature": 0.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 0.0, // (0 percent of heat transfers)
+    "heatTransferRate": 0.0 // (0 percent of heat transfers)
   },
   {
     "name": "Water",
-    "type": 2,  // Liquid
+    "type": 2, // Liquid
     "color": {
       "x": 40,
       "y": 0,
@@ -65,11 +65,11 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 0.2, // (20 percent of heat transfers)
+    "heatTransferRate": 0.2 // (20 percent of heat transfers)
   },
   {
-    "name": "CarbonDioxide",
-    "type": 3,  // Gas
+    "name": "Smoke",
+    "type": 3, // Gas
     "color": {
       "x": 80,
       "y": 80,
@@ -82,11 +82,11 @@
     "canMove": true,
     "temperature": 0.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 0.7, // (70 percent of heat transfers)
+    "heatTransferRate": 0.7 // (70 percent of heat transfers)
   },
   {
     "name": "Fire",
-    "type": 4,  // Fire
+    "type": 4, // Fire
     "color": {
       "x": 240,
       "y": 80,
@@ -99,6 +99,23 @@
     "canMove": true,
     "temperature": 1000.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 1.0, // (100 percent of heat transfers)
+    "heatTransferRate": 1.0 // (100 percent of heat transfers)
+  },
+  {
+    "name": "Steam",
+    "type": 3, // Gas
+    "color": {
+      "x": 230,
+      "y": 230,
+      "z": 230,
+      "w": 255
+    },
+    "viscosity": 10,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "temperature": 0.0,
+    "autoIgnite": 0.0,
+    "heatTransferRate": 0.8 // (70 percent of heat transfers)
   }
 ]
