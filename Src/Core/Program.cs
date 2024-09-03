@@ -114,7 +114,6 @@ namespace SpatialEngine
                 textLength++;
             textArray = new byte[textLength];
             Marshal.Copy((IntPtr)text, textArray, 0, textLength);
-            Marshal.FreeHGlobal(*text);
             OpenGlVersion = System.Text.Encoding.Default.GetString(textArray);
             gl.Enable(GLEnum.DepthTest);
             gl.Enable(GLEnum.Texture2D);
