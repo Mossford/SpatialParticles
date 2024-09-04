@@ -19,12 +19,12 @@ namespace SpatialGame
     public static class PixelColorer
     {
         public static Vector4Byte[] pixelColors;
-        public static SimLight[] simLights;
+        public static ParticleLight[] particleLights;
         public static int width;
         public static int height;
         public static UiQuad quad;
         public static BufferObject<Vector4Byte> pixelBuffer;
-        public static BufferObject<SimLight> lightBuffer;
+        public static BufferObject<ParticleLight> lightBuffer;
         public static Shader shader;
         public static Matrix4x4 mat;
 
@@ -55,7 +55,7 @@ namespace SpatialGame
             quad.Bind();
             shader = new Shader(Globals.gl, "PixelColorer.vert", "PixelColorer.frag");
             pixelColors = new Vector4Byte[width * height];
-            simLights = new SimLight[width * height];
+            particleLights = new ParticleLight[width * height];
             mat = Matrix4x4.Identity;
             mat *= Matrix4x4.CreateScale(width, height, 1f);
             mat *= Matrix4x4.CreateOrthographic(width, height, -1, 1);
@@ -65,18 +65,18 @@ namespace SpatialGame
                 {
                     int index = (y * width) + x;
                     pixelColors[index] = new Vector4Byte(102, 178, 204, 255);
-                    simLights[index] = new SimLight();
+                    particleLights[index] = new ParticleLight();
                 }
             }
 
             pixelBuffer = new BufferObject<Vector4Byte>(pixelColors, 4, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
-            lightBuffer = new BufferObject<SimLight>(simLights, 5, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
+            lightBuffer = new BufferObject<ParticleLight>(particleLights, 5, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
         }
 
         public static unsafe void Update()
         {
             pixelBuffer.Update(pixelColors);
-            lightBuffer.Update(simLights);
+            lightBuffer.Update(particleLights);
         }
 
         public static void Render()

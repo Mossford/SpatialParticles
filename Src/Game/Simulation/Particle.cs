@@ -1,4 +1,5 @@
-﻿using Silk.NET.GLFW;
+﻿using Silk.NET.Core;
+using Silk.NET.GLFW;
 using SpatialEngine;
 using System;
 using System.Collections.Generic;
@@ -114,7 +115,7 @@ namespace SpatialGame
 
                 //only do coloring on solids
                 ParticleType type = GetParticleProperties().type;
-                if (type == ParticleType.solid || type == ParticleType.unmovable)
+                if ((type == ParticleType.solid || type == ParticleType.unmovable) && state.temperature > 0f)
                 {
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
@@ -137,7 +138,10 @@ namespace SpatialGame
                     lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
                     lerpedColorLight = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColorLight, 0.0f, 255.0f);
                     state.color = new Vector4Byte(lerpedColor, state.color.w);
-                    PixelColorer.simLights[id].color = new Vector4Byte(lerpedColorLight, 255);
+                    int index = PixelColorer.PosToIndex(position);
+                    PixelColorer.particleLights[index].index = index;
+                    PixelColorer.particleLights[index].intensity = color.Length() + 1f;
+                    PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
                 }
             }
 
@@ -311,6 +315,10 @@ namespace SpatialGame
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
             ParticleSimulation.freeParticleSpots.Enqueue(id);
+            int positionIndex = PixelColorer.PosToIndexUnsafe(position);
+            PixelColorer.particleLights[positionIndex].index = -1;
+            PixelColorer.particleLights[positionIndex].intensity = 1f;
+            PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
             ParticleSimulation.particles[id] = null;
         }
 

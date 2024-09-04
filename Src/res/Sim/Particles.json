@@ -93,7 +93,7 @@
       "z": 20,
       "w": 255
     },
-    "viscosity": 10,
+    "viscosity": 3,
     "xBounce": 0.0,
     "yBounce": 0.0,
     "canMove": true,

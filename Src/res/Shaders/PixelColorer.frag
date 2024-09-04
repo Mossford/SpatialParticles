@@ -12,7 +12,7 @@ layout (std430, binding = 5) restrict buffer lights
     //z is the intensity 
     //w is the range
     vec4 Lights[];
-} Lights;
+} particleLights;
 
 out vec4 out_color;
 in vec2 TexCoords;
@@ -23,6 +23,54 @@ vec4 UnpackFloat(float data)
 {
     int ColorBits = floatBitsToInt(data);
     return vec4((ColorBits & 0xFF) / 255.0, ((ColorBits >> 8) & 0xFF) / 255.0, ((ColorBits >> 16) & 0xFF) / 255.0, ((ColorBits >> 24) & 0xFF) / 255.0);
+}
+
+vec4 CalculateLighting(vec2 particlePos, int index)
+{
+    //check if there is a particle at this position
+    if(floatBitsToInt(particleLights.Lights[index].x) == -1)
+        return vec4(1.0);
+
+    vec4 totalAccumLight = vec4(1);
+    int totalAccumLightCount = 0;
+    for(int xL = -2; xL < 2; xL++)
+    {
+        for(int yL = -2; yL < 2; yL++)
+        {
+            if(xL == 0 && yL == 0)
+                continue;
+
+            vec2 lightPos = vec2(particlePos.x + xL, particlePos.y + yL);
+
+            int indexLight = int((lightPos.x * particleResolution.y) - lightPos.y + particleResolution.y - 1);
+
+            if(indexLight < 0 || indexLight >= particleResolution.x * particleResolution.y)
+                continue;
+
+            //handle bleed over. X pos is handled by bounds checking
+            if(lightPos.y > particleResolution.y || lightPos.y < 0)
+                continue;
+
+            totalAccumLightCount++;
+
+            vec4 lightColor = UnpackFloat(particleLights.Lights[indexLight].y);
+            float intensity = round(particleLights.Lights[indexLight].z);
+            float range = particleLights.Lights[indexLight].w;
+
+            float dist = length(lightPos - particlePos);
+            float attenuation = 1.0 / (1.0 + (0.00005 * dist * dist));
+
+            totalAccumLight += lightColor * intensity * attenuation;
+
+        }
+    }
+
+    if (totalAccumLightCount > 0) 
+    {
+        totalAccumLight /= float(totalAccumLightCount);
+    }
+
+    return totalAccumLight;
 }
 
 void main()
@@ -38,40 +86,5 @@ void main()
     int indexColor = int((x * particleResolution.y) - y + particleResolution.y - 1) % 4;
     vec4 color = UnpackFloat(pixelColors.Colors[indexQuart][indexColor]);
 
-    //horrible but dont know how to do it any other way
-    vec4 totalAccumLight = vec4(1);
-    int totalAccumLightCount = 0;
-    for(int xL = -5; xL < 5; xL++)
-    {
-        for(int yL = -5; yL < 5; yL++)
-        {
-            if(xL == 0 && yL == 0)
-                continue;
-
-            vec2 lightPos = vec2(xL + x, yL + y);
-            int indexLight = int((lightPos.x * particleResolution.y) - lightPos.y + particleResolution.y - 1);
-
-            if(indexLight < 0 || indexLight > particleResolution.x * particleResolution.y)
-                continue;
-
-            totalAccumLightCount++;
-
-            vec4 lightColor = UnpackFloat(Lights.Lights[indexLight].y);
-            float intensity = Lights.Lights[indexLight].z;
-            float range = Lights.Lights[indexLight].w;
-
-            float dist = length(lightPos - vec2(x,y));
-            float attenuation = 1.0 / (1.0 + (0.00005 * dist * dist));
-
-            totalAccumLight += lightColor * attenuation;
-
-        }
-    }
-
-    if (totalAccumLightCount > 0) 
-    {
-        totalAccumLight /= float(totalAccumLightCount);
-    }
-
-    out_color = color * totalAccumLight;
+    out_color = color * CalculateLighting(vec2(x,y), index);
 }

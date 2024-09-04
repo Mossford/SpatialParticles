@@ -105,8 +105,16 @@ namespace SpatialGame
             particleCount = 0;
             for (int i = 0; i < particles.Length; i++)
             {
+                //reset all lights
+                PixelColorer.particleLights[i].index = 0;
+                PixelColorer.particleLights[i].intensity = 1;
+                PixelColorer.particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
+
                 if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
+
+                //reset its light color before it moves
+
                 particles[i].UpdateGeneralFirst();
                 particleCount++;
             }
@@ -116,9 +124,10 @@ namespace SpatialGame
                 if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
+                //reset its color before it moves
                 PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
-                particles[i].UpdateGeneralSecond();
                 particles[i].Update();
+                particles[i].UpdateGeneralSecond();
                 if (particles[i] is not null || particles[i].BoundsCheck(particles[i].position))
                 {
                     //apply transparencys to particle
@@ -126,6 +135,7 @@ namespace SpatialGame
                     float alphaScale = 1f - (particles[i].state.color.w / 255f);
                     Vector3 color = Vector3.Lerp((Vector3)particles[i].state.color / 255f, new Vector3(102 / 255f, 178 / 255f, 204 / 255f), alphaScale) * 255f;
                     PixelColorer.SetColorAtPos(particles[i].position, (byte)color.X, (byte)color.Y, (byte)color.Z);
+
                 }
             }
 
