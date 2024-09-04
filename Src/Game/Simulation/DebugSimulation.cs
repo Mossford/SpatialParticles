@@ -31,6 +31,17 @@ namespace SpatialGame
             return size / 1024f / 1024f;
         }
 
+        /// <summary>
+        /// in mb
+        /// </summary>
+        /// <returns></returns>
+        public static float GetCurrentMemoryOfSimGPU()
+        {
+            int size = ParticleSimulation.particles.Length;
+            size *= 4;
+            return size / 1024f / 1024f;
+        }
+
 
         /// <summary>
         /// Check if any pixel elements got deleted from some behavior for when it should have not been deleted

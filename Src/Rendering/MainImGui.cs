@@ -64,6 +64,15 @@ namespace SpatialEngine.Rendering
             {
                 ImGui.Text(String.Format("Simulation has {0:N2}MB of particles pooled", mem));
             }
+            mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSimGPU();
+            if (mem < 1f)
+            {
+                ImGui.Text(String.Format("Simulation has {0:N2}KB of buffers", mem * 1024f));
+            }
+            else
+            {
+                ImGui.Text(String.Format("Simulation has {0:N2}MB of buffers", mem));
+            }
             ImGui.Text(String.Format("Simulation has {0} of particles Spawned", SpatialGame.ParticleSimulation.particleCount));
             ImGui.Text(String.Format("Current resolution {0}, {1}", SpatialGame.PixelColorer.width, SpatialGame.PixelColorer.height));
 

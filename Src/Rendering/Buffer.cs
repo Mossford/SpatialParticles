@@ -18,7 +18,7 @@ namespace SpatialEngine.Rendering
         public BufferUsageARB bufAccess;
         public uint index;
 
-        public BufferObject(Span<TDataType> data, uint index, BufferTargetARB bufferType, BufferUsageARB bufferAccess)
+        public BufferObject(in Span<TDataType> data, uint index, BufferTargetARB bufferType, BufferUsageARB bufferAccess)
         {
             this.bufType = bufferType;
             this.bufAccess = bufferAccess;

@@ -18,9 +18,9 @@ namespace SpatialGame
         public Vector2 velocity { get; set; }
         public int id { get; set; }
         public Vector2 oldpos { get; set; }
-        public bool toBeDeleted {get; set;}
-        public int deleteIndex {get; set;}
-        public float timeSpawned { get; set;}
+        public bool toBeDeleted { get; set; }
+        public int deleteIndex { get; set; }
+        public float timeSpawned { get; set; }
 
         public int propertyIndex;
         public ParticleState state;
@@ -116,7 +116,7 @@ namespace SpatialGame
                 ParticleType type = GetParticleProperties().type;
                 if (type == ParticleType.solid || type == ParticleType.unmovable)
                 {
-                    float temp = MathF.Max(state.temperature, 0.0f);
+                    float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
                     //swap this out as unity code can be fucky
                     Vector3 color = new Vector3(255f, 255f, 255f);
@@ -131,11 +131,16 @@ namespace SpatialGame
 
                     Vector3 baseColor = (Vector3)GetParticleProperties().color / 255f;
                     Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
+                    Vector3 lerpedColorLight = Vector3.Lerp(Vector3.One, color, color.Length());
                     lerpedColor *= 255f;
+                    lerpedColorLight *= 255f;
                     lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
+                    lerpedColorLight = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColorLight, 0.0f, 255.0f);
                     state.color = new Vector4Byte(lerpedColor, state.color.w);
+                    PixelColorer.simLights[id].color = new Vector4Byte(lerpedColorLight, 255);
                 }
             }
+
         }
 
 

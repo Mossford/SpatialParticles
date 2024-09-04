@@ -23,13 +23,6 @@ namespace SpatialGame
                 particle.QueueDelete();
                 return;
             }
-            if (ParticleHelpers.RandomChance(3f))
-            {
-                float temp = particle.state.temperature;
-                particle.ReplaceWithParticle("Smoke");
-                particle.state.temperature = temp;
-                return;
-            }
 
             int num = ParticleSimulation.random.Next(0, 3); // choose random size to pick to favor instead of always left
 
