@@ -130,8 +130,10 @@ namespace SpatialEngine
             controller = new ImGuiController(gl, window, input);
             ImGui.SetWindowSize(new Vector2(850, 500));
 
+            Tests.RunTestMain();
+
             //init game
-            GameManager.InitGame();
+            //GameManager.ReInitGame();
             MainImGui.Init();
 
             //get the display size

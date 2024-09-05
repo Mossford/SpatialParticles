@@ -33,6 +33,9 @@ namespace SpatialGame
         /// </summary>
         public void Update()
         {
+            if (!state.canMove)
+                return;
+
             switch(GetElementType())
             {
                 case ParticleType.solid:
@@ -366,6 +369,13 @@ namespace SpatialGame
             propertyIndex = ParticleResourceHandler.particleNameIndexes[particle];
             state = GetParticleProperties();
             ParticleSimulation.SafePositionCheckSet((byte)GetParticleProperties().type, position);
+        }
+
+
+        public override string ToString()
+        {
+            return position + " Position\n" + velocity + " Velocity\n" + id + " Id\n" + oldpos + " OldPos\n" + toBeDeleted + " ToBeDeleted\n" + deleteIndex + " DeleteIndex\n" + timeSpawned + " TimeSpawned\n" + propertyIndex +
+                " PropertyIndex\n" + state.ToString();
         }
 
 

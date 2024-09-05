@@ -76,6 +76,11 @@ namespace SpatialGame
             };
         }
 
+        public override string ToString()
+        {
+            return color.ToString() + " Color\n" + viscosity + " Viscosity\n" + xBounce + " XBounce\n" + yBounce + " YBounce\n" + canMove + " CanMove\n" + temperature + " Temperature\n" + temperatureTemp + " TemperatureTemp";
+        }
+
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif

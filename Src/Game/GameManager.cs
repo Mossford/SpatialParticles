@@ -18,11 +18,15 @@ namespace SpatialGame
     {
         //move this?
         public static bool changeResolution;
+        public static bool started;
 
         public static void ReInitGame()
         {
-            PixelColorer.CleanUp();
-            SimRenderer.CleanUp();
+            if(started)
+            {
+                PixelColorer.CleanUp();
+                SimRenderer.CleanUp();
+            }
 
             ParticleResourceHandler.Init();
             PixelColorer.Init(changeResolution);
@@ -39,6 +43,8 @@ namespace SpatialGame
             ParticleSimulation.InitPixelSim();
             SimRenderer.Init();
             SimInput.Init();
+
+            started = true;
         }
 
         public static void UpdateGame(float dt)
