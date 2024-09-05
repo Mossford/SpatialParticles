@@ -106,9 +106,13 @@ namespace SpatialGame
             for (int i = 0; i < particles.Length; i++)
             {
                 //reset all lights
-                PixelColorer.particleLights[i].index = 0;
-                PixelColorer.particleLights[i].intensity = 1;
-                PixelColorer.particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
+                if (Settings.SimulationSettings.EnableParticleLighting)
+                {
+                    PixelColorer.particleLights[i].index = 0;
+                    PixelColorer.particleLights[i].intensity = 1;
+                    PixelColorer.particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
+                    PixelColorer.particleLights[i].range = 2;
+                }
 
                 if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;

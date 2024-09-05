@@ -11,7 +11,10 @@ namespace SpatialGame
         public int index {  get; set; } // Position of the light decoded in shader (4 bytes)
         public Vector4Byte color { get; set; } // Color of the light decoded in shader (4 bytes)
         public float intensity { get; set; } // Intensity of the light (4 bytes)
-        public float range { get; set; } // Range of the light (4 bytes)
+        /// <summary>
+        /// cant see any difference above 3
+        /// </summary>
+        public int range { get; set; } // Range of the light (4 bytes)
 
         public ParticleLight()
         {

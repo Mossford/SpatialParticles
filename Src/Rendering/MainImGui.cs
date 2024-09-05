@@ -42,17 +42,10 @@ namespace SpatialEngine.Rendering
             ImGui.Text("Version " + EngVer);
             ImGui.Text("OpenGl " + OpenGlVersion);
             ImGui.Text("Gpu: " + Gpu);
-            ImGui.Text(String.Format("FPS Avg: ({0:N1})", MathF.Round(fpsCount / (totalTime / deltaTime))));
             ImGui.Text(String.Format("{0:N3} ms/frame ({1:N1} FPS)", 1.0f / ImGui.GetIO().Framerate * 1000.0f, ImGui.GetIO().Framerate));
-            fpsCount += ImGui.GetIO().Framerate;
-            ImGui.Text(String.Format("DrawCall Avg: ({0:N1}) DC/frame", MathF.Round(drawCallCount / (totalTime / deltaTime))));
+            ImGui.Text(String.Format("DrawCall per frame: ({0:N1})", MathF.Round(drawCallCount)));
 
-            //reset counters
-            if(totalTime % 5 == 0)
-            {
-                drawCallCount = 0;
-                fpsCount = 0;
-            }
+            drawCallCount = 0;
 
             ImGui.Text(String.Format("Time Open {0:N1} minutes", totalTime / 60.0f));
             float mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSim();
@@ -80,6 +73,7 @@ namespace SpatialEngine.Rendering
             {
                 window.VSync = vsync;
             }
+            ImGui.Checkbox("EnableParticleLighting", ref Settings.SimulationSettings.EnableParticleLighting);
 
             if (ImGui.BeginMenuBar())
             {

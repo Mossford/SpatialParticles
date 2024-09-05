@@ -115,7 +115,7 @@ namespace SpatialGame
 
                 //only do coloring on solids
                 ParticleType type = GetParticleProperties().type;
-                if ((type == ParticleType.solid || type == ParticleType.unmovable) && state.temperature > 0f)
+                if (state.temperature > 0f && (type == ParticleType.solid || type == ParticleType.unmovable || type == ParticleType.fire))
                 {
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
@@ -138,10 +138,14 @@ namespace SpatialGame
                     lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
                     lerpedColorLight = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColorLight, 0.0f, 255.0f);
                     state.color = new Vector4Byte(lerpedColor, state.color.w);
-                    int index = PixelColorer.PosToIndex(position);
-                    PixelColorer.particleLights[index].index = index;
-                    PixelColorer.particleLights[index].intensity = color.Length() + 1f;
-                    PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
+                    if (Settings.SimulationSettings.EnableParticleLighting)
+                    {
+                        int index = PixelColorer.PosToIndex(position);
+                        PixelColorer.particleLights[index].index = index;
+                        PixelColorer.particleLights[index].intensity = color.Length() + 1f;
+                        PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
+                        PixelColorer.particleLights[index].range = 3;
+                    }
                 }
             }
 

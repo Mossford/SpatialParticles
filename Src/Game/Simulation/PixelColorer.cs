@@ -76,7 +76,8 @@ namespace SpatialGame
         public static unsafe void Update()
         {
             pixelBuffer.Update(pixelColors);
-            lightBuffer.Update(particleLights);
+            if(Settings.SimulationSettings.EnableParticleLighting)
+                lightBuffer.Update(particleLights);
         }
 
         public static void Render()
@@ -85,6 +86,7 @@ namespace SpatialGame
             shader.setMat4("model", mat);
             shader.setVec2("resolution", (Vector2)Globals.window.Size);
             shader.setVec2("particleResolution", new Vector2(width, height));
+            shader.setBool("enableParticleLighting", Settings.SimulationSettings.EnableParticleLighting);
             quad.Draw();
         }
 
