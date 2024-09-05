@@ -19,7 +19,7 @@ namespace SpatialGame
         static bool firstInit;
         static bool initButton;
 
-        static string selectedElement;
+        static int selectedElement;
 
         public static void Init()
         {
@@ -34,40 +34,17 @@ namespace SpatialGame
             mousePressed = false;
             mouseButtonPress = 0;
             mouseSpawnRadius = 10;
-            selectedElement = "Sand";
+            ParticleResourceHandler.particleNameIndexes.TryGetValue("Sand", out int index);
+            selectedElement = index;
 
             MouseInteraction.Init();
         }
 
         public static void Update()
         {
-            if(Input.IsKeyDown(Key.Number1))
-            {
-                selectedElement = "Sand";
-            }
-            if (Input.IsKeyDown(Key.Number2))
-            {
-                selectedElement = "Stone";
-            }
-            if (Input.IsKeyDown(Key.Number3))
-            {
-                selectedElement = "Water";
-            }
-            if (Input.IsKeyDown(Key.Number4))
-            {
-                selectedElement = "WallHeatable";
-            }
-            if (Input.IsKeyDown(Key.Number5))
-            {
-                selectedElement = "Wall";
-            }
-            if (Input.IsKeyDown(Key.Number6))
-            {
-                selectedElement = "Fire";
-            }
-
-            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, selectedElement);
-            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, selectedElement);
+            string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[selectedElement]].name;
+            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, name);
+            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, name);
 
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
@@ -103,11 +80,20 @@ namespace SpatialGame
 
         public static void MouseScroll(IMouse mouse, ScrollWheel wheel)
         {
-            mouseSpawnRadius += (int)wheel.Y;
-            if(mouseSpawnRadius < 1)
-                mouseSpawnRadius = 1;
-            if(Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.Y / 2)
-                mouseSpawnRadius -= 1;
+            if (Input.IsKeyDown(Key.ShiftLeft))
+            {
+                selectedElement = (selectedElement + (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
+                if(selectedElement < 0)
+                    selectedElement = ParticleResourceHandler.particleIndexes.Length - 1;
+            }
+            else
+            {
+                mouseSpawnRadius += (int)wheel.Y;
+                if (mouseSpawnRadius < 1)
+                    mouseSpawnRadius = 1;
+                if (Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.Y / 2)
+                    mouseSpawnRadius -= 1;
+            }
         }
     }
 }

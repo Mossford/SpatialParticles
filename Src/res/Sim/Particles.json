@@ -99,7 +99,7 @@
     "canMove": true,
     "temperature": 1000.0,
     "autoIgnite": 0.0,
-    "heatTransferRate": 1.0 // (100 percent of heat transfers)
+    "heatTransferRate": 0.9 // (90 percent of heat transfers)
   },
   {
     "name": "Steam",

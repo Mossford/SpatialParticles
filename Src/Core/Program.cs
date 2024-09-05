@@ -130,10 +130,10 @@ namespace SpatialEngine
             controller = new ImGuiController(gl, window, input);
             ImGui.SetWindowSize(new Vector2(850, 500));
 
-            Tests.RunTestMain();
+            //Tests.RunTestMain();
 
             //init game
-            //GameManager.ReInitGame();
+            GameManager.InitGame();
             MainImGui.Init();
 
             //get the display size
@@ -164,6 +164,8 @@ namespace SpatialEngine
             totalTime += (float)dt;
             deltaTime = (float)dt;
 
+            //clear first as any keys pressed can not be dectected by the order of input silk net does
+            Input.Clear();
             Input.Update();
             
             GameManager.UpdateGame((float)dt);
@@ -175,7 +177,6 @@ namespace SpatialEngine
                 FixedUpdate(fixedUpdateTime);
             }
         
-            Input.Clear();
         }
 
         static void FixedUpdate(float dt)

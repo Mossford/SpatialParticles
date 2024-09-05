@@ -12,6 +12,7 @@ namespace SpatialGame
     {
         public static ParticleProperties[] loadedParticles;
         public static Dictionary<string, int> particleNameIndexes;
+        public static int[] particleIndexes;
 
         public static void Init()
         {
@@ -39,10 +40,12 @@ namespace SpatialGame
             {
                 string text = File.ReadAllText(SpatialEngine.Resources.SimPath + "Particles.json");
                 loadedParticles = JsonSerializer.Deserialize<ParticleProperties[]>(text, options);
+                particleIndexes = new int[loadedParticles.Length];
 
                 for (int i = 0; i < loadedParticles.Length; i++)
                 {
                     particleNameIndexes.TryAdd(loadedParticles[i].name, i);
+                    particleIndexes[i] = i;
                 }
             }
         }
