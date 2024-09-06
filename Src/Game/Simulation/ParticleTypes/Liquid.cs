@@ -19,12 +19,6 @@ namespace SpatialGame
 #endif
         public static void Update(in Particle particle)
         {
-            if(particle.state.temperature >= 100)
-            {
-                float temp = particle.state.temperature;
-                particle.ReplaceWithParticle("Steam");
-                particle.state.temperature = temp;
-            }
 
             int num = ParticleSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left
 

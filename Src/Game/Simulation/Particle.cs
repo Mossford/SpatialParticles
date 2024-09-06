@@ -71,7 +71,7 @@ namespace SpatialGame
 #endif
         public ParticleType GetElementType()
         {
-            return GetParticleProperties().type;
+            return state.type;
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace SpatialGame
                 state.temperatureTemp = 0;
 
                 //only do coloring on solids
-                ParticleType type = GetParticleProperties().type;
+                ParticleType type = state.type;
                 if (state.temperature > 0f && (type == ParticleType.solid || type == ParticleType.unmovable || type == ParticleType.fire))
                 {
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
@@ -150,6 +150,11 @@ namespace SpatialGame
                         PixelColorer.particleLights[index].range = 3;
                     }
                 }
+
+                /*if(state.type == ParticleType.solid && state.temperature > 1000f)
+                {
+                    state.type = ParticleType.liquid;
+                }*/
             }
 
         }

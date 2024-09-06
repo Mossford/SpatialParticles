@@ -187,7 +187,6 @@ namespace SpatialGame
             if (freeParticleSpots.Count == 0)
                 return;
             int id = freeParticleSpots.Dequeue();
-            ParticleType type = ParticleResourceHandler.loadedParticles[index].type;
             particles[id] = new Particle()
             {
                 id = id,

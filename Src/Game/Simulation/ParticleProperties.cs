@@ -21,9 +21,7 @@ namespace SpatialGame
         public float xBounce { get; set; }
         public float yBounce { get; set; }
         public bool canMove { get; set; }
-        public float temperature { get; set; }
-        public float autoIgnite { get; set; }
-        public float heatTransferRate { get; set; }
+        public ParticleHeatingProperties heatingProperties { get; set; }
 
         public ParticleProperties()
         {
@@ -34,10 +32,29 @@ namespace SpatialGame
             xBounce = 0;
             yBounce = 0;
             canMove = false;
+            heatingProperties = new ParticleHeatingProperties();
+        }
+    }
+
+    public struct ParticleHeatingProperties
+    {
+        public float temperature { get; set; }
+        public float autoIgnite { get; set; }
+        public float heatTransferRate { get; set; }
+        public bool canStateChange { get; set; }
+        public float[] stateChangeTemps { get; set; }
+        public Vector4Byte[] stateChangeColors { get; set; }
+
+        public ParticleHeatingProperties()
+        {
             temperature = 0;
             autoIgnite = 0;
             heatTransferRate = 0;
+            canStateChange = false;
+            stateChangeTemps = new float[2];
+            stateChangeColors = new Vector4Byte[2];
         }
+
     }
 
     /// <summary>
@@ -45,6 +62,7 @@ namespace SpatialGame
     /// </summary>
     public struct ParticleState
     {
+        public ParticleType type { get; set; } // 1 bytes
         public Vector4Byte color { get; set; } // 4 bytes
         public ushort viscosity { get; set; } // 2 bytes
         public float xBounce { get; set; } // 4 bytes
@@ -55,6 +73,7 @@ namespace SpatialGame
 
         public ParticleState()
         {
+            type = ParticleType.empty;
             color = new Vector4Byte(0, 0, 0, 0);
             viscosity = 0;
             xBounce = 0;
@@ -67,6 +86,7 @@ namespace SpatialGame
         {
             return new ParticleState
             {
+                type = properties.type,
                 color = properties.color,
                 viscosity = properties.viscosity,
                 xBounce = properties.xBounce,
@@ -78,7 +98,8 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return color.ToString() + " Color\n" + viscosity + " Viscosity\n" + xBounce + " XBounce\n" + yBounce + " YBounce\n" + canMove + " CanMove\n" + temperature + " Temperature\n" + temperatureTemp + " TemperatureTemp";
+            return type.ToString() + "\n" + color.ToString() + " Color\n" + viscosity + " Viscosity\n" + xBounce + " XBounce\n" + yBounce + " YBounce\n" + canMove + " CanMove\n" + temperature
+                + " Temperature\n" + temperatureTemp + " TemperatureTemp";
         }
 
 #if RELEASE
@@ -86,7 +107,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 23;
+            return 24;
         }
     }
 

@@ -12,9 +12,30 @@
     "xBounce": 0.12,
     "yBounce": 0.07,
     "canMove": true,
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.6 // (60 percent of heat transfers)
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.6, // (60 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        1500.0, //glass melting temp
+        3500.0 //kind of guess based on silicon temps
+      ],
+      "stateChangeColors": [
+        {
+          "x": 255,
+          "y": 255,
+          "z": 180,
+          "w": 255
+        },
+        {
+          "x": 255,
+          "y": 255,
+          "z": 180,
+          "w": 255
+        }
+      ]
+    }
   },
   {
     "name": "Stone",
@@ -29,9 +50,16 @@
     "xBounce": 0.05,
     "yBounce": 0.01,
     "canMove": true,
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.4 // (40 percent of heat transfers)
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.4, // (40 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        1200.0, //granite melting temp
+        3100.0 //random guess
+      ]
+    },
   },
   {
     "name": "Wall",
@@ -46,9 +74,16 @@
     "xBounce": 0.0,
     "yBounce": 0.0,
     "canMove": false,
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.0 // (0 percent of heat transfers)
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.0, // (0 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ]
+    },
   },
   {
     "name": "Water",
@@ -63,9 +98,16 @@
     "xBounce": 0.6,
     "yBounce": 0.3,
     "canMove": true,
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.2 // (20 percent of heat transfers)
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.2, // (20 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        0.0, //water liquid temp
+        100.0 //water boiling point
+      ]
+    },
   },
   {
     "name": "Smoke",
@@ -80,6 +122,16 @@
     "xBounce": 0.0,
     "yBounce": 0.0,
     "canMove": true,
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.7, // (70 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        -78.5, //turns solid below this
+        -78.5 //will be gas above the same temp
+      ]
+    },
     "temperature": 0.0,
     "autoIgnite": 0.0,
     "heatTransferRate": 0.7 // (70 percent of heat transfers)
@@ -97,26 +149,16 @@
     "xBounce": 0.0,
     "yBounce": 0.0,
     "canMove": true,
-    "temperature": 1000.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.9 // (90 percent of heat transfers)
-  },
-  {
-    "name": "Steam",
-    "type": 3, // Gas
-    "color": {
-      "x": 230,
-      "y": 230,
-      "z": 230,
-      "w": 140
+    "heatingProperties": {
+      "temperature": 1000.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.9, // (90 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ]
     },
-    "viscosity": 10,
-    "xBounce": 0.0,
-    "yBounce": 0.0,
-    "canMove": true,
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.8 // (80 percent of heat transfers)
   },
   {
     "name": "WallHeatable",
@@ -131,8 +173,15 @@
     "xBounce": 0.0,
     "yBounce": 0.0,
     "canMove": false,
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 1.0 // (100 percent of heat transfers)
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ]
+    },
   },
 ]
