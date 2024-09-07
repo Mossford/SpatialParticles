@@ -19,7 +19,7 @@ namespace SpatialGame
         static bool firstInit;
         static bool initButton;
 
-        static int selectedElement;
+        public static int selectedElement;
 
         public static void Init()
         {

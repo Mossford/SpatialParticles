@@ -43,6 +43,7 @@ namespace SpatialGame
         public float heatTransferRate { get; set; }
         public bool canStateChange { get; set; }
         public float[] stateChangeTemps { get; set; }
+        public ushort[] stateChangeViscosity { get; set; }
         public Vector4Byte[] stateChangeColors { get; set; }
 
         public ParticleHeatingProperties()
@@ -52,7 +53,8 @@ namespace SpatialGame
             heatTransferRate = 0;
             canStateChange = false;
             stateChangeTemps = new float[2];
-            stateChangeColors = new Vector4Byte[2];
+            stateChangeViscosity = new ushort[2];
+            stateChangeColors = new Vector4Byte[3];
         }
 
     }
@@ -92,7 +94,7 @@ namespace SpatialGame
                 xBounce = properties.xBounce,
                 yBounce = properties.yBounce,
                 canMove = properties.canMove,
-                temperature = properties.temperature,
+                temperature = properties.heatingProperties.temperature,
             };
         }
 

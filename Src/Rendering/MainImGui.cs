@@ -68,6 +68,7 @@ namespace SpatialEngine.Rendering
             }
             ImGui.Text(String.Format("Simulation has {0} of particles Spawned", SpatialGame.ParticleSimulation.particleCount));
             ImGui.Text(String.Format("Current resolution {0}, {1}", SpatialGame.PixelColorer.width, SpatialGame.PixelColorer.height));
+            ImGui.Text(String.Format("Selected Particle {0}", ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[SpatialGame.SimInput.selectedElement]].name));
 
             if (ImGui.Checkbox("Vsync", ref vsync))
             {

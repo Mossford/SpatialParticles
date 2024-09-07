@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,7 +101,7 @@ namespace SpatialGame
                 {
                     if (idsSurrounding[i] == -1)
                         continue;
-                    float tempMod = state.temperature * ParticleSimulation.particles[idsSurrounding[i]].GetParticleProperties().heatTransferRate / idsSurroundCount;
+                    float tempMod = state.temperature * ParticleSimulation.particles[idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
                     //heat transfer is current temp * transfer rate to get the temp modify
                     state.temperatureTemp -= tempMod;
                     ParticleSimulation.particles[idsSurrounding[i]].state.temperatureTemp += tempMod;
@@ -116,9 +117,98 @@ namespace SpatialGame
                 state.temperature += state.temperatureTemp;
                 state.temperatureTemp = 0;
 
-                //only do coloring on solids
-                ParticleType type = state.type;
-                if (state.temperature > 0f && (type == ParticleType.solid || type == ParticleType.unmovable || type == ParticleType.fire))
+                ParticleProperties properties = GetParticleProperties();
+                if (properties.heatingProperties.canStateChange)
+                {
+                    //There is cases where solids can just turn straight into gases bypassing liquids
+                    //but it will still occur with the temps needed it should not be visable as the sim
+                    //should visually not show the transition that slow
+
+                    //need to handle cases where the base state is between or after the temp changes
+                    switch (properties.type)
+                    {
+                        //the lower bound is solid and the base state is between the two temps
+                        case ParticleType.liquid:
+                            {
+                                //lower bound of liquid base types to turn into a solid
+                                if (state.temperature < properties.heatingProperties.stateChangeTemps[0])
+                                {
+                                    state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
+                                    state.type = ParticleType.solid;
+                                    state.color = properties.heatingProperties.stateChangeColors[0];
+                                }
+                                //middle bound transition where a liquid base type stays what it is
+                                if (state.temperature > properties.heatingProperties.stateChangeTemps[0] && state.temperature < properties.heatingProperties.stateChangeTemps[1])
+                                {
+                                    state.viscosity = properties.viscosity;
+                                    state.type = properties.type;
+                                    state.color = properties.color;
+                                }
+                                //upper bound gas transition where liquid turns to gas
+                                if (state.temperature > properties.heatingProperties.stateChangeTemps[1])
+                                {
+                                    state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
+                                    state.type = ParticleType.gas;
+                                    state.color = properties.heatingProperties.stateChangeColors[1];
+                                }
+                                break;
+                            }
+                        //the lower bound is solid and the base state is between the two temps
+                        case ParticleType.gas:
+                            {
+                                //lower bound of gas base types to turn into a solid
+                                if (state.temperature < properties.heatingProperties.stateChangeTemps[0])
+                                {
+                                    state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
+                                    state.type = ParticleType.solid;
+                                    state.color = properties.heatingProperties.stateChangeColors[0];
+                                }
+                                //middle bound transition where a gas base type turns to liquid
+                                if (state.temperature > properties.heatingProperties.stateChangeTemps[0] && state.temperature < properties.heatingProperties.stateChangeTemps[1])
+                                {
+                                    state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
+                                    state.type = ParticleType.liquid;
+                                    state.color = properties.heatingProperties.stateChangeColors[1];
+                                }
+                                //upper bound gas transition where a gas base stays a gas
+                                if (state.temperature > properties.heatingProperties.stateChangeTemps[1])
+                                {
+                                    state.viscosity = properties.viscosity;
+                                    state.type = properties.type;
+                                    state.color = properties.color;
+                                }
+                                break;
+                            }
+
+                        default:
+                            {
+                                //base type is a solid or some other type that does not need special handeling
+                                if (state.temperature < properties.heatingProperties.stateChangeTemps[0])
+                                {
+                                    state.viscosity = properties.viscosity;
+                                    state.type = properties.type;
+                                    state.color = properties.color;
+                                }
+                                //middle bound transition where base type turns to liquid
+                                if (state.temperature > properties.heatingProperties.stateChangeTemps[0])
+                                {
+                                    state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
+                                    state.type = ParticleType.liquid;
+                                    state.color = properties.heatingProperties.stateChangeColors[0];
+                                }
+                                //upper bound gas transition where liquid turns to gas
+                                if (state.type == ParticleType.liquid && state.temperature > properties.heatingProperties.stateChangeTemps[1])
+                                {
+                                    state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
+                                    state.type = ParticleType.gas;
+                                    state.color = properties.heatingProperties.stateChangeColors[1];
+                                }
+                                break;
+                            }
+                    }
+                }
+
+                if (state.temperature > 0f)
                 {
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
@@ -133,7 +223,21 @@ namespace SpatialGame
                     if (temp < 1000.0f)
                         color *= temp / 1000.0f;
 
-                    Vector3 baseColor = (Vector3)GetParticleProperties().color / 255f;
+                    Vector3 baseColor = (Vector3)properties.color / 255f;
+
+                    switch (state.type)
+                    {
+                        case ParticleType.solid:
+                            baseColor = (Vector3)properties.heatingProperties.stateChangeColors[0] / 255f;
+                            break;
+                        case ParticleType.liquid:
+                            baseColor = (Vector3)properties.heatingProperties.stateChangeColors[1] / 255f;
+                            break;
+                        case ParticleType.gas:
+                            baseColor = (Vector3)properties.heatingProperties.stateChangeColors[2] / 255f;
+                            break;
+                    }
+
                     Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
                     Vector3 lerpedColorLight = Vector3.Lerp(Vector3.One, color, color.Length());
                     lerpedColor *= 255f;
@@ -151,10 +255,7 @@ namespace SpatialGame
                     }
                 }
 
-                /*if(state.type == ParticleType.solid && state.temperature > 1000f)
-                {
-                    state.type = ParticleType.liquid;
-                }*/
+              
             }
 
         }

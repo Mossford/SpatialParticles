@@ -21,6 +21,10 @@
         1500.0, //glass melting temp
         3500.0 //kind of guess based on silicon temps
       ],
+      "stateChangeViscosity": [
+        3,
+        10
+      ],
       "stateChangeColors": [
         {
           "x": 255,
@@ -32,7 +36,13 @@
           "x": 255,
           "y": 255,
           "z": 180,
-          "w": 255
+          "w": 220
+        },
+        {
+          "x": 255,
+          "y": 255,
+          "z": 180,
+          "w": 100
         }
       ]
     }
@@ -58,8 +68,32 @@
       "stateChangeTemps": [
         1200.0, //granite melting temp
         3100.0 //random guess
+      ],
+      "stateChangeViscosity": [
+        2,
+        10
+      ],
+      "stateChangeColors": [
+        {
+          "x": 180,
+          "y": 180,
+          "z": 180,
+          "w": 255
+        },
+        {
+          "x": 180,
+          "y": 180,
+          "z": 180,
+          "w": 225
+        },
+        {
+          "x": 130,
+          "y": 130,
+          "z": 130,
+          "w": 180
+        }
       ]
-    },
+    }
   },
   {
     "name": "Wall",
@@ -82,8 +116,32 @@
       "stateChangeTemps": [
         0.0,
         0.0
+      ],
+      "stateChangeViscosity": [
+        0,
+        0
+      ],
+      "stateChangeColors": [
+        {
+          "x": 40,
+          "y": 40,
+          "z": 40,
+          "w": 255
+        },
+        {
+          "x": 40,
+          "y": 40,
+          "z": 40,
+          "w": 255
+        },
+        {
+          "x": 40,
+          "y": 40,
+          "z": 40,
+          "w": 255
+        }
       ]
-    },
+    }
   },
   {
     "name": "Water",
@@ -106,8 +164,32 @@
       "stateChangeTemps": [
         0.0, //water liquid temp
         100.0 //water boiling point
+      ],
+      "stateChangeViscosity": [
+        0,
+        10
+      ],
+      "stateChangeColors": [
+        {
+          "x": 200,
+          "y": 255,
+          "z": 255,
+          "w": 230
+        },
+        {
+          "x": 40,
+          "y": 0,
+          "z": 255,
+          "w": 255
+        },
+        {
+          "x": 200,
+          "y": 200,
+          "z": 200,
+          "w": 170
+        }
       ]
-    },
+    }
   },
   {
     "name": "Smoke",
@@ -128,13 +210,34 @@
       "heatTransferRate": 0.7, // (70 percent of heat transfers)
       "canStateChange": true,
       "stateChangeTemps": [
-        -78.5, //turns solid below this
+        -273.3, //turns liquid below this
         -78.5 //will be gas above the same temp
+      ],
+      "stateChangeViscosity": [
+        10,
+        10
+      ],
+      "stateChangeColors": [
+        {
+          "x": 240,
+          "y": 240,
+          "z": 240,
+          "w": 255
+        },
+        {
+          "x": 200,
+          "y": 200,
+          "z": 200,
+          "w": 90
+        },
+        {
+          "x": 80,
+          "y": 80,
+          "z": 80,
+          "w": 180
+        }
       ]
     },
-    "temperature": 0.0,
-    "autoIgnite": 0.0,
-    "heatTransferRate": 0.7 // (70 percent of heat transfers)
   },
   {
     "name": "Fire",
@@ -157,8 +260,32 @@
       "stateChangeTemps": [
         0.0,
         0.0
+      ],
+      "stateChangeViscosity": [
+        3,
+        3
+      ],
+      "stateChangeColors": [
+        {
+          "x": 240,
+          "y": 80,
+          "z": 20,
+          "w": 255
+        },
+        {
+          "x": 240,
+          "y": 80,
+          "z": 20,
+          "w": 255
+        },
+        {
+          "x": 240,
+          "y": 80,
+          "z": 20,
+          "w": 255
+        }
       ]
-    },
+    }
   },
   {
     "name": "WallHeatable",
@@ -181,7 +308,79 @@
       "stateChangeTemps": [
         0.0,
         0.0
+      ],
+      "stateChangeViscosity": [
+        0,
+        0
+      ],
+      "stateChangeColors": [
+        {
+          "x": 100,
+          "y": 70,
+          "z": 100,
+          "w": 255
+        },
+        {
+          "x": 100,
+          "y": 70,
+          "z": 100,
+          "w": 255
+        },
+        {
+          "x": 100,
+          "y": 70,
+          "z": 100,
+          "w": 255
+        }
       ]
-    },
+    }
   },
+  {
+    "name": "Iron",
+    "type": 100, // Unmoveable
+    "color": {
+      "x": 100,
+      "y": 100,
+      "z": 100,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        1500.0,
+        2800.0
+      ],
+      "stateChangeViscosity": [
+        5,
+        10
+      ],
+      "stateChangeColors": [
+        {
+          "x": 100,
+          "y": 100,
+          "z": 100,
+          "w": 255
+        },
+        {
+          "x": 100,
+          "y": 100,
+          "z": 100,
+          "w": 255
+        },
+        {
+          "x": 80,
+          "y": 80,
+          "z": 80,
+          "w": 200
+        }
+      ]
+    }
+  }
 ]
