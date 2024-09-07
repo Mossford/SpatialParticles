@@ -237,7 +237,7 @@
           "w": 180
         }
       ]
-    },
+    }
   },
   {
     "name": "Fire",
@@ -255,7 +255,7 @@
     "heatingProperties": {
       "temperature": 1000.0,
       "autoIgnite": 0.0,
-      "heatTransferRate": 0.9, // (90 percent of heat transfers)
+      "heatTransferRate": 0.5, // (50 percent of heat transfers)
       "canStateChange": false,
       "stateChangeTemps": [
         0.0,
@@ -283,6 +283,54 @@
           "y": 80,
           "z": 20,
           "w": 255
+        }
+      ]
+    }
+  },
+  {
+    "name": "MAPP",
+    "type": 4, // Fire
+    "color": {
+      "x": 60,
+      "y": 140,
+      "z": 255,
+      "w": 170
+    },
+    "viscosity": 3,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "temperature": 2900.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.5, // (50 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ],
+      "stateChangeViscosity": [
+        3,
+        3
+      ],
+      "stateChangeColors": [
+        {
+          "x": 60,
+          "y": 140,
+          "z": 255,
+          "w": 170
+        },
+        {
+          "x": 60,
+          "y": 140,
+          "z": 255,
+          "w": 170
+        },
+        {
+          "x": 60,
+          "y": 140,
+          "z": 255,
+          "w": 170
         }
       ]
     }
