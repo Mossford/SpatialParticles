@@ -136,6 +136,7 @@ namespace SpatialGame
                                     state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
                                     state.type = ParticleType.solid;
                                     state.color = properties.heatingProperties.stateChangeColors[0];
+                                    ParticleSimulation.SafePositionCheckSetNoBc(state.type.ToByte(), position);
                                 }
                                 //middle bound transition where a liquid base type stays what it is
                                 if (state.temperature > properties.heatingProperties.stateChangeTemps[0] && state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -149,7 +150,8 @@ namespace SpatialGame
                                 {
                                     state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
                                     state.type = ParticleType.gas;
-                                    state.color = properties.heatingProperties.stateChangeColors[1];
+                                    state.color = properties.heatingProperties.stateChangeColors[2];
+                                    ParticleSimulation.SafePositionCheckSetNoBc(state.type.ToByte(), position);
                                 }
                                 break;
                             }
@@ -162,6 +164,7 @@ namespace SpatialGame
                                     state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
                                     state.type = ParticleType.solid;
                                     state.color = properties.heatingProperties.stateChangeColors[0];
+                                    ParticleSimulation.SafePositionCheckSetNoBc(state.type.ToByte(), position);
                                 }
                                 //middle bound transition where a gas base type turns to liquid
                                 if (state.temperature > properties.heatingProperties.stateChangeTemps[0] && state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -169,6 +172,7 @@ namespace SpatialGame
                                     state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
                                     state.type = ParticleType.liquid;
                                     state.color = properties.heatingProperties.stateChangeColors[1];
+                                    ParticleSimulation.SafePositionCheckSetNoBc(state.type.ToByte(), position);
                                 }
                                 //upper bound gas transition where a gas base stays a gas
                                 if (state.temperature > properties.heatingProperties.stateChangeTemps[1])
@@ -194,21 +198,23 @@ namespace SpatialGame
                                 {
                                     state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
                                     state.type = ParticleType.liquid;
-                                    state.color = properties.heatingProperties.stateChangeColors[0];
+                                    state.color = properties.heatingProperties.stateChangeColors[1];
+                                    ParticleSimulation.SafePositionCheckSetNoBc(state.type.ToByte(), position);
                                 }
                                 //upper bound gas transition where liquid turns to gas
                                 if (state.type == ParticleType.liquid && state.temperature > properties.heatingProperties.stateChangeTemps[1])
                                 {
                                     state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
                                     state.type = ParticleType.gas;
-                                    state.color = properties.heatingProperties.stateChangeColors[1];
+                                    state.color = properties.heatingProperties.stateChangeColors[2];
+                                    ParticleSimulation.SafePositionCheckSetNoBc(state.type.ToByte(), position);
                                 }
                                 break;
                             }
                     }
                 }
 
-                if (state.temperature > 0f)
+                if (state.type != ParticleType.liquid && state.type != ParticleType.gas && state.temperature > 0f)
                 {
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
