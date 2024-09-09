@@ -36,6 +36,11 @@ namespace SpatialGame
             heatingProperties = new ParticleHeatingProperties();
             explosiveProperties = new ParticleExplosiveProperties();
         }
+        public override string ToString()
+        {
+            return name + " : Name\n" + type.ToString() + " : Type\n" + color.ToString() + " : Color\n" + viscosity + " : Viscosity\n" + xBounce + " : XBounce\n" + yBounce + " : YBounce\n" + canMove + " : CanMove\n"
+                + heatingProperties.ToString() + " : Heating Properties\n" + explosiveProperties + " : Explosive Properties\n";
+        }
     }
 
     public struct ParticleHeatingProperties
@@ -61,6 +66,11 @@ namespace SpatialGame
             canColorChange = new bool[3];
         }
 
+        public override string ToString()
+        {
+            return temperature + " : Temperature\n" + autoIgnite + " : AutoIgnite\n" + heatTransferRate + " : HeatTransferRate\n" + canStateChange + " : CanStateChange\n" + string.Join(", ", stateChangeTemps) + " : StateChangeTemps\n" +
+                string.Join(", ", stateChangeViscosity) + " : StateChangeViscosity\n" + string.Join(", ", stateChangeColors) + " : StateChangeColors\n" + string.Join(", ", canColorChange) + " : CanColorChange\n";
+        }
     }
 
     public struct ParticleExplosiveProperties
@@ -76,6 +86,11 @@ namespace SpatialGame
             power = 0;
             flashPoint = 0;
             heatOutput = 0;
+        }
+
+        public override string ToString()
+        {
+            return range + " : Range\n" + power + " : Power\n" + flashPoint + " : FlashPoint\n" + heatOutput + " : HeatOutput\n";
         }
     }
 

@@ -71,6 +71,9 @@ namespace SpatialGame
 
             pixelBuffer = new BufferObject<Vector4Byte>(pixelColors, 4, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
             lightBuffer = new BufferObject<ParticleLight>(particleLights, 5, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
+
+            Debugging.LogConsole("Initalized PixelColorer");
+            Debugging.LogConsole("Resolution: " + width + " " + height);
         }
 
         public static unsafe void Update()

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpatialEngine;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,6 +19,8 @@ namespace SpatialGame
         {
             particleNameIndexes = new Dictionary<string, int>();
             LoadParticles();
+
+            Debugging.LogConsole("Initalized Simulation Resources");
         }
 
         /*
@@ -38,15 +41,25 @@ namespace SpatialGame
             };
             if (File.Exists(SpatialEngine.Resources.SimPath + "Particles.json"))
             {
+                Debugging.LogConsole("Found Particles file");
                 string text = File.ReadAllText(SpatialEngine.Resources.SimPath + "Particles.json");
                 loadedParticles = JsonSerializer.Deserialize<ParticleProperties[]>(text, options);
                 particleIndexes = new int[loadedParticles.Length];
 
+                Debugging.LogConsole("Loaded particles of size " + loadedParticles.Length);
                 for (int i = 0; i < loadedParticles.Length; i++)
                 {
-                    particleNameIndexes.TryAdd(loadedParticles[i].name, i);
+                    if(particleNameIndexes.TryAdd(loadedParticles[i].name, i))
+                    {
+                        Debugging.LogConsole("Added particle " + loadedParticles[i].name);
+                    }
                     particleIndexes[i] = i;
                 }
+
+            }
+            else
+            {
+                Debugging.LogConsole("Could not find Particles file at " + SpatialEngine.Resources.SimPath + "Particles.json");
             }
         }
     }

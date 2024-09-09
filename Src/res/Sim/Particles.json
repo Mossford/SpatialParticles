@@ -117,7 +117,7 @@
     "viscosity": 0,
     "xBounce": 0.0,
     "yBounce": 0.0,
-    "canMove": false,
+    "canMove": true,
     "heatingProperties": {
       "temperature": 0.0,
       "autoIgnite": 0.0,

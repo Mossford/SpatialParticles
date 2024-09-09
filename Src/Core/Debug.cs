@@ -21,7 +21,7 @@ namespace SpatialEngine
         static Shader lineShader = new Shader(gl, "DebugDrawing.vert", "DebugDrawing.frag");
 
         public static List<string> consoleText = new List<string>();
-        public const int maxConsoleText = 500;
+        public const int maxConsoleText = 499;
 
         public static void LogConsole(string msg)
         {

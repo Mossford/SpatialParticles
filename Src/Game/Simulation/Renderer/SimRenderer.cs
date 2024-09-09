@@ -22,6 +22,8 @@ namespace SpatialGame
         {
             meshes = new List<SimMesh>();
             shader = new Shader(gl, "SimDefault.vert", "SimDefault.frag");
+
+            Debugging.LogConsole("Initalized Simulation Renderer");
         }
 
         /// <summary>

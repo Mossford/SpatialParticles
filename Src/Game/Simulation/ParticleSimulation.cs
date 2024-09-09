@@ -37,7 +37,7 @@ namespace SpatialGame
         public static Random random;
         public static int particleCount;
 
-        public static void InitPixelSim()
+        public static void InitParticleSim()
         {
 
             particles = new Particle[PixelColorer.width * PixelColorer.height];
@@ -91,14 +91,22 @@ namespace SpatialGame
                 particles[i].CheckDoubleOnPosition();
             }
 
-            DeleteElementsOnQueue();
+            DeleteParticlesOnQueue();
 
-            Debugging.LogConsole("test");
+            for (int i = 0; i < particles.Length; i++)
+            {
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                    continue;
+                particleCount++;
+            }
+
+            Debugging.LogConsole("Initalized Particle Simulation");
+            Debugging.LogConsole(particleCount + " Partcles");
 
             //DebugSimulation.Init();
         }
 
-        public static void RunPixelSim()
+        public static void RunParticleSim()
         {
             //DebugSimulation.Update();
             //First pass calculations
@@ -151,12 +159,12 @@ namespace SpatialGame
                 elements[i].CheckDoubleOnPosition();
             }*/
 
-            DeleteElementsOnQueue();
+            DeleteParticlesOnQueue();
 
 
         }
 
-        static void DeleteElementsOnQueue()
+        static void DeleteParticlesOnQueue()
         {
             if (idsToDelete.Count == 0)
                 return;
@@ -180,12 +188,16 @@ namespace SpatialGame
             //check if valid particle
             if(!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out int index))
             {
+                Debugging.LogConsole("Could not find particle of " + name);
                 //failed to find particle with that name so do nothing
                 return;
             }
             //we have reached where we dont have any more spots so we skip
             if (freeParticleSpots.Count == 0)
+            {
+                Debugging.LogConsole("Ran out of spots to add more particles");
                 return;
+            }
             int id = freeParticleSpots.Dequeue();
             particles[id] = new Particle()
             {

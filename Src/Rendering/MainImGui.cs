@@ -99,7 +99,10 @@ namespace SpatialEngine.Rendering
             ImGui.BeginChild("Output", new Vector2(0, ImGui.GetWindowSize().Y * 0.9f), true, ImGuiWindowFlags.NoResize);
             for (int i = 0; i < Debugging.consoleText.Count; i++)
             {
-                ImGui.Text(Debugging.consoleText[i]);
+                if(i == 0)
+                    ImGui.Text("> " + (Debugging.consoleText.Count - i) + " " + Debugging.consoleText[i]);
+                else
+                    ImGui.Text(Debugging.consoleText.Count - i + " " + Debugging.consoleText[i]);
             }
             ImGui.EndChild();
             ImGui.End();

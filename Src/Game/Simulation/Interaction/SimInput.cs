@@ -38,6 +38,8 @@ namespace SpatialGame
             selectedElement = index;
 
             MouseInteraction.Init();
+
+            Debugging.LogConsole("Initalized Simulation Input");
         }
 
         public static void Update()
