@@ -36,7 +36,6 @@ namespace SpatialGame
                     {
                         newPos += dir;
                         Vector2 position = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
-                        //newPos = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
                         int particleID = ParticleSimulation.SafeIdCheckGet(position);
                         if (particleID == -1)
                         {
