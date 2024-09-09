@@ -47,7 +47,7 @@ namespace SpatialGame
         public float[] stateChangeTemps { get; set; }
         public ushort[] stateChangeViscosity { get; set; }
         public Vector4Byte[] stateChangeColors { get; set; }
-        public bool canColorChange { get; set; }
+        public bool[] canColorChange { get; set; }
 
         public ParticleHeatingProperties()
         {
@@ -58,7 +58,7 @@ namespace SpatialGame
             stateChangeTemps = new float[2];
             stateChangeViscosity = new ushort[2];
             stateChangeColors = new Vector4Byte[3];
-            canColorChange = false;
+            canColorChange = new bool[3];
         }
 
     }

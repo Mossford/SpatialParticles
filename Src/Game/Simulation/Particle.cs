@@ -222,8 +222,26 @@ namespace SpatialGame
                     }
                 }
 
-                if (properties.heatingProperties.canColorChange && state.temperature > 0f)
+                bool canColorChange = true;
+                switch (state.type)
                 {
+                    case ParticleType.solid:
+                        if (!properties.heatingProperties.canColorChange[0])
+                            canColorChange = false;
+                        break;
+                    case ParticleType.liquid:
+                        if (!properties.heatingProperties.canColorChange[1])
+                            canColorChange = false;
+                        break;
+                    case ParticleType.gas:
+                        if (!properties.heatingProperties.canColorChange[2])
+                            canColorChange = false;
+                        break;
+                }
+
+                if (canColorChange && state.temperature > 0f)
+                {
+
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
                     //swap this out as unity code can be fucky

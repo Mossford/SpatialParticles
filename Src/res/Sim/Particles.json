@@ -45,7 +45,11 @@
           "w": 100
         }
       ],
-      "canColorChange": true
+      "canColorChange": [
+        true,
+        true, 
+        false
+      ]
     }
   },
   {
@@ -94,7 +98,11 @@
           "w": 180
         }
       ],
-      "canColorChange": true
+      "canColorChange": [
+        true,
+        true,
+        false
+      ]
     }
   },
   {
@@ -143,7 +151,11 @@
           "w": 255
         }
       ],
-      "canColorChange": false
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
     }
   },
   {
@@ -192,7 +204,11 @@
           "w": 170
         }
       ],
-      "canColorChange": false
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
     }
   },
   {
@@ -241,7 +257,11 @@
           "w": 180
         }
       ],
-      "canColorChange": false
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
     }
   },
   {
@@ -290,7 +310,11 @@
           "w": 255
         }
       ],
-      "canColorChange": true
+      "canColorChange": [
+        true,
+        true,
+        true
+      ]
     }
   },
   {
@@ -339,7 +363,11 @@
           "w": 170
         }
       ],
-      "canColorChange": true
+      "canColorChange": [
+        true,
+        true,
+        true
+      ]
     }
   },
   {
@@ -388,7 +416,11 @@
           "w": 255
         }
       ],
-      "canColorChange": true
+      "canColorChange": [
+        true,
+        true,
+        true
+      ]
     }
   },
   {
@@ -437,7 +469,11 @@
           "w": 200
         }
       ],
-      "canColorChange": true
+      "canColorChange": [
+        true,
+        true,
+        false
+      ]
     }
   },
   {
@@ -486,7 +522,11 @@
           "w": 255
         }
       ],
-      "canColorChange": false
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
     },
     "explosiveProperties": {
       "range": 10.0,
