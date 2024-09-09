@@ -97,10 +97,8 @@ namespace SpatialEngine.Rendering
             ImGui.SetNextWindowSize(new Vector2(600, 420), ImGuiCond.FirstUseEver);
             ImGui.Begin("Console Viewer");
             ImGui.BeginChild("Output", new Vector2(0, ImGui.GetWindowSize().Y * 0.9f), true, ImGuiWindowFlags.NoResize);
-            for (int i = Debugging.consoleText.Length - 1; i >= 0; i--)
+            for (int i = 0; i < Debugging.consoleText.Count; i++)
             {
-                if (Debugging.consoleText[i] == null)
-                    continue;
                 ImGui.Text(Debugging.consoleText[i]);
             }
             ImGui.EndChild();

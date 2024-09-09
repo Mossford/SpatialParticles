@@ -49,7 +49,6 @@ namespace SpatialGame
                 idCircleMesh = SimRenderer.meshes.Count;
                 SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(20, 0.95f));
             }
-            Debugging.LogConsole("click mouse " + Debugging.currentStringCounter);
             SimRenderer.meshes[idCircleMesh].show = true;
             SimRenderer.meshes[idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
             SimRenderer.meshes[idCircleMesh].position.Y *= -1;

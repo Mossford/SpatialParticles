@@ -20,18 +20,16 @@ namespace SpatialEngine
 
         static Shader lineShader = new Shader(gl, "DebugDrawing.vert", "DebugDrawing.frag");
 
-        public static string[] consoleText = new string[500];
-        /// <summary>
-        /// index of the current text line to add
-        /// </summary>
-        public static int currentStringCounter = -1;
+        public static List<string> consoleText = new List<string>();
+        public const int maxConsoleText = 500;
 
         public static void LogConsole(string msg)
         {
-            currentStringCounter++;
-            if (currentStringCounter >= consoleText.Length)
-                currentStringCounter = 0;
-            consoleText[currentStringCounter] = msg;
+            if (consoleText.Count >= maxConsoleText)
+            {
+                consoleText.RemoveAt(consoleText.Count - 1);
+            }
+            consoleText.Insert(0, msg);
         }
 
 
