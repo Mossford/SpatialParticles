@@ -44,7 +44,8 @@
           "z": 180,
           "w": 100
         }
-      ]
+      ],
+      "canColorChange": true
     }
   },
   {
@@ -92,7 +93,8 @@
           "z": 130,
           "w": 180
         }
-      ]
+      ],
+      "canColorChange": true
     }
   },
   {
@@ -140,7 +142,8 @@
           "z": 40,
           "w": 255
         }
-      ]
+      ],
+      "canColorChange": false
     }
   },
   {
@@ -188,7 +191,8 @@
           "z": 200,
           "w": 170
         }
-      ]
+      ],
+      "canColorChange": false
     }
   },
   {
@@ -236,7 +240,8 @@
           "z": 80,
           "w": 180
         }
-      ]
+      ],
+      "canColorChange": false
     }
   },
   {
@@ -284,7 +289,8 @@
           "z": 20,
           "w": 255
         }
-      ]
+      ],
+      "canColorChange": true
     }
   },
   {
@@ -332,7 +338,8 @@
           "z": 255,
           "w": 170
         }
-      ]
+      ],
+      "canColorChange": true
     }
   },
   {
@@ -380,7 +387,8 @@
           "z": 100,
           "w": 255
         }
-      ]
+      ],
+      "canColorChange": true
     }
   },
   {
@@ -399,7 +407,7 @@
     "heatingProperties": {
       "temperature": 0.0,
       "autoIgnite": 0.0,
-      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "heatTransferRate": 0.8, // (80 percent of heat transfers)
       "canStateChange": true,
       "stateChangeTemps": [
         1500.0,
@@ -428,7 +436,63 @@
           "z": 80,
           "w": 200
         }
-      ]
+      ],
+      "canColorChange": true
+    }
+  },
+  {
+    "name": "Explosive",
+    "type": 5, // Explosive
+    "color": {
+      "x": 205,
+      "y": 180,
+      "z": 10,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ],
+      "stateChangeViscosity": [
+        0,
+        0
+      ],
+      "stateChangeColors": [
+        {
+          "x": 205,
+          "y": 180,
+          "z": 10,
+          "w": 255
+        },
+        {
+          "x": 205,
+          "y": 180,
+          "z": 10,
+          "w": 255
+        },
+        {
+          "x": 205,
+          "y": 180,
+          "z": 10,
+          "w": 255
+        }
+      ],
+      "canColorChange": false
+    },
+    "explosiveProperties": {
+      "range": 10.0,
+      "power": 5.0,
+      "flashPoint": 500.0,
+      "heatOutput": 1300.0
     }
   }
 ]

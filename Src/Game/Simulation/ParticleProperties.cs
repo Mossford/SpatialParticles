@@ -22,6 +22,7 @@ namespace SpatialGame
         public float yBounce { get; set; }
         public bool canMove { get; set; }
         public ParticleHeatingProperties heatingProperties { get; set; }
+        public ParticleExplosiveProperties explosiveProperties { get; set; }
 
         public ParticleProperties()
         {
@@ -33,6 +34,7 @@ namespace SpatialGame
             yBounce = 0;
             canMove = false;
             heatingProperties = new ParticleHeatingProperties();
+            explosiveProperties = new ParticleExplosiveProperties();
         }
     }
 
@@ -45,6 +47,7 @@ namespace SpatialGame
         public float[] stateChangeTemps { get; set; }
         public ushort[] stateChangeViscosity { get; set; }
         public Vector4Byte[] stateChangeColors { get; set; }
+        public bool canColorChange { get; set; }
 
         public ParticleHeatingProperties()
         {
@@ -55,8 +58,25 @@ namespace SpatialGame
             stateChangeTemps = new float[2];
             stateChangeViscosity = new ushort[2];
             stateChangeColors = new Vector4Byte[3];
+            canColorChange = false;
         }
 
+    }
+
+    public struct ParticleExplosiveProperties
+    {
+        public float range { get; set; }
+        public float power { get; set; }
+        public float flashPoint { get; set; }
+        public float heatOutput { get; set; }
+
+        public ParticleExplosiveProperties()
+        {
+            range = 0;
+            power = 0;
+            flashPoint = 0;
+            heatOutput = 0;
+        }
     }
 
     /// <summary>
@@ -120,6 +140,7 @@ namespace SpatialGame
         liquid = 2,
         gas = 3,
         fire = 4,
+        explosive = 5,
         unmovable = 100,
     }
 

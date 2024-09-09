@@ -64,6 +64,11 @@ namespace SpatialGame
                         FireDefines.Update(this);
                         break;
                     }
+                case ParticleType.explosive: 
+                    {
+                        ExplosiveDefines.Update(this);
+                        break;
+                    }
             }
         }
 
@@ -96,15 +101,18 @@ namespace SpatialGame
                     }
                 }
 
+                //add one to include this particle
+                idsSurroundCount++;
+
                 //temperature transfers
                 for (int i = 0; i < 8; i++)
                 {
                     if (idsSurrounding[i] == -1)
                         continue;
-                    float tempMod = state.temperature * ParticleSimulation.particles[idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
-                    //heat transfer is current temp * transfer rate to get the temp modify
-                    state.temperatureTemp -= tempMod;
-                    ParticleSimulation.particles[idsSurrounding[i]].state.temperatureTemp += tempMod;
+
+                    float heatTrans = state.temperature * ParticleSimulation.particles[idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
+                    state.temperatureTemp -= heatTrans;
+                    ParticleSimulation.particles[idsSurrounding[i]].state.temperatureTemp += heatTrans;
                 }
             }
         }
@@ -214,7 +222,7 @@ namespace SpatialGame
                     }
                 }
 
-                if (state.type != ParticleType.liquid && state.type != ParticleType.gas && state.temperature > 0f)
+                if (properties.heatingProperties.canColorChange && state.temperature > 0f)
                 {
                     float temp = MathF.Max(state.temperature - 273f, 0.0f);
 
@@ -255,7 +263,7 @@ namespace SpatialGame
                     {
                         int index = PixelColorer.PosToIndex(position);
                         PixelColorer.particleLights[index].index = index;
-                        PixelColorer.particleLights[index].intensity = color.Length() + 1f;
+                        PixelColorer.particleLights[index].intensity = MathF.Min(color.Length() + 1f, 2f);
                         PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
                         PixelColorer.particleLights[index].range = 3;
                     }
@@ -330,11 +338,11 @@ namespace SpatialGame
             else
                 step = (int)Math.Abs(dir.Y);
 
-            Vector2 increse = dir / step;
+            Vector2 increase = dir / step;
 
             for (int i = 0; i < step; i++)
             {
-                Vector2 newPos = position + increse;
+                Vector2 newPos = position + increase;
                 newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
                 if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
                 {
