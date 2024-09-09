@@ -15,7 +15,8 @@ namespace SpatialGame
     public struct ParticleProperties
     {
         public string name { get; set; }
-        public ParticleType type { get; set; }
+        public ParticleMovementType moveType { get; set; }
+        public ParticleBehaviorType behaveType { get; set; }
         public Vector4Byte color { get; set; }
         public ushort viscosity { get; set; }
         public float xBounce { get; set; }
@@ -27,7 +28,8 @@ namespace SpatialGame
         public ParticleProperties()
         {
             name = "";
-            type = ParticleType.empty;
+            moveType = ParticleMovementType.empty;
+            behaveType = ParticleBehaviorType.empty;
             color = new Vector4Byte(0,0,0,0);
             viscosity = 0;
             xBounce = 0;
@@ -38,13 +40,14 @@ namespace SpatialGame
         }
         public override string ToString()
         {
-            return name + " : Name\n" + type.ToString() + " : Type\n" + color.ToString() + " : Color\n" + viscosity + " : Viscosity\n" + xBounce + " : XBounce\n" + yBounce + " : YBounce\n" + canMove + " : CanMove\n"
-                + heatingProperties.ToString() + " : Heating Properties\n" + explosiveProperties + " : Explosive Properties\n";
+            return name + " : Name\n" + moveType.ToString() + " : MoveType\n" + behaveType.ToString() + " : BehaveType\n" + color.ToString() + " : Color\n" + viscosity + " : Viscosity\n" + xBounce + " : XBounce\n" + 
+                yBounce + " : YBounce\n" + canMove + " : CanMove\n" + heatingProperties.ToString() + " : Heating Properties\n" + explosiveProperties + " : Explosive Properties\n";
         }
     }
 
     public struct ParticleHeatingProperties
     {
+        public bool enableHeatSim { get; set; }
         public float temperature { get; set; }
         public float autoIgnite { get; set; }
         public float heatTransferRate { get; set; }
@@ -56,6 +59,7 @@ namespace SpatialGame
 
         public ParticleHeatingProperties()
         {
+            enableHeatSim = false;
             temperature = 0;
             autoIgnite = 0;
             heatTransferRate = 0;
@@ -99,7 +103,8 @@ namespace SpatialGame
     /// </summary>
     public struct ParticleState
     {
-        public ParticleType type { get; set; } // 1 bytes
+        public ParticleMovementType moveType { get; set; } // 1 bytes
+        public ParticleBehaviorType behaveType { get; set; } // 1 bytes
         public Vector4Byte color { get; set; } // 4 bytes
         public ushort viscosity { get; set; } // 2 bytes
         public float xBounce { get; set; } // 4 bytes
@@ -110,7 +115,8 @@ namespace SpatialGame
 
         public ParticleState()
         {
-            type = ParticleType.empty;
+            moveType = ParticleMovementType.empty;
+            behaveType = ParticleBehaviorType.empty;
             color = new Vector4Byte(0, 0, 0, 0);
             viscosity = 0;
             xBounce = 0;
@@ -123,7 +129,8 @@ namespace SpatialGame
         {
             return new ParticleState
             {
-                type = properties.type,
+                moveType = properties.moveType,
+                behaveType = properties.behaveType,
                 color = properties.color,
                 viscosity = properties.viscosity,
                 xBounce = properties.xBounce,
@@ -135,7 +142,7 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return type.ToString() + "\n" + color.ToString() + " Color\n" + viscosity + " Viscosity\n" + xBounce + " XBounce\n" + yBounce + " YBounce\n" + canMove + " CanMove\n" + temperature
+            return behaveType.ToString() + " BehaveType\n" + moveType + " MoveType\n" + color.ToString() + " Color\n" + viscosity + " Viscosity\n" + xBounce + " XBounce\n" + yBounce + " YBounce\n" + canMove + " CanMove\n" + temperature
                 + " Temperature\n" + temperatureTemp + " TemperatureTemp";
         }
 
@@ -144,11 +151,11 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 24;
+            return 25;
         }
     }
 
-    public enum ParticleType : byte
+    public enum ParticleBehaviorType : byte
     {
         empty = 0,
         solid = 1, //moveable
@@ -156,7 +163,16 @@ namespace SpatialGame
         gas = 3,
         fire = 4,
         explosive = 5,
-        unmovable = 100,
+        wall = 6,
+    }
+
+    public enum ParticleMovementType : byte
+    {
+        empty = 0,
+        unmoving = 1,
+        particle = 2,
+        liquid = 3,
+        gas = 4,
     }
 
     public static class ParticleTypeConversion
@@ -165,7 +181,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static byte ToByte(this ParticleType elementType)
+        public static byte ToByte(this ParticleBehaviorType elementType)
         {
             return (byte)elementType;
         }

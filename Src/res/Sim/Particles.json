@@ -1,7 +1,8 @@
 [
   {
     "name": "Sand",
-    "type": 1, // Solid
+    "moveType": 2, // Particle movement
+    "behaveType": 1, // Solid behavior
     "color": {
       "x": 255,
       "y": 255,
@@ -13,6 +14,7 @@
     "yBounce": 0.07,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.6, // (60 percent of heat transfers)
@@ -47,14 +49,15 @@
       ],
       "canColorChange": [
         true,
-        true, 
+        true,
         false
       ]
     }
   },
   {
     "name": "Stone",
-    "type": 1, // Solid
+    "moveType": 2, // Particle movement
+    "behaveType": 1, // Solid behavior
     "color": {
       "x": 180,
       "y": 180,
@@ -66,6 +69,7 @@
     "yBounce": 0.01,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.4, // (40 percent of heat transfers)
@@ -107,7 +111,8 @@
   },
   {
     "name": "Wall",
-    "type": 100, // Unmoveable
+    "moveType": 1, // Unmoving movement
+    "behaveType": 6, // Wall behavior
     "color": {
       "x": 40,
       "y": 40,
@@ -119,6 +124,7 @@
     "yBounce": 0.0,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": false,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.0, // (0 percent of heat transfers)
@@ -160,7 +166,8 @@
   },
   {
     "name": "Water",
-    "type": 2, // Liquid
+    "moveType": 3, // Liquid movement
+    "behaveType": 2, // Liquid behavior
     "color": {
       "x": 40,
       "y": 0,
@@ -172,6 +179,7 @@
     "yBounce": 0.3,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.2, // (20 percent of heat transfers)
@@ -213,7 +221,8 @@
   },
   {
     "name": "Smoke",
-    "type": 3, // Gas
+    "moveType": 3, // Gas movement
+    "behaveType": 4, // Gas behavior
     "color": {
       "x": 80,
       "y": 80,
@@ -225,6 +234,7 @@
     "yBounce": 0.0,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.7, // (70 percent of heat transfers)
@@ -266,7 +276,8 @@
   },
   {
     "name": "Fire",
-    "type": 4, // Fire
+    "moveType": 4, // Gas movement
+    "behaveType": 4, // Fire behavior
     "color": {
       "x": 240,
       "y": 80,
@@ -278,6 +289,7 @@
     "yBounce": 0.0,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 1000.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.5, // (50 percent of heat transfers)
@@ -319,7 +331,8 @@
   },
   {
     "name": "MAPP",
-    "type": 4, // Fire
+    "moveType": 4, // Gas movement
+    "behaveType": 4, // Fire behavior
     "color": {
       "x": 60,
       "y": 140,
@@ -331,6 +344,7 @@
     "yBounce": 0.0,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 2900.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.5, // (50 percent of heat transfers)
@@ -372,7 +386,8 @@
   },
   {
     "name": "WallHeatable",
-    "type": 100, // Unmoveable
+    "moveType": 1, // Unmoving movement
+    "behaveType": 6, // Wall behavior
     "color": {
       "x": 100,
       "y": 70,
@@ -384,6 +399,7 @@
     "yBounce": 0.0,
     "canMove": false,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 1.0, // (100 percent of heat transfers)
@@ -425,7 +441,8 @@
   },
   {
     "name": "Iron",
-    "type": 100, // Unmoveable
+    "moveType": 1, // Unmoving movement
+    "behaveType": 1, // Solid behavior
     "color": {
       "x": 100,
       "y": 100,
@@ -437,6 +454,7 @@
     "yBounce": 0.0,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.8, // (80 percent of heat transfers)
@@ -478,7 +496,8 @@
   },
   {
     "name": "Explosive",
-    "type": 5, // Explosive
+    "moveType": 1, // Unmoving movement
+    "behaveType": 5, // Explosive behavior
     "color": {
       "x": 205,
       "y": 180,
@@ -490,6 +509,7 @@
     "yBounce": 0.0,
     "canMove": true,
     "heatingProperties": {
+      "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 1.0, // (100 percent of heat transfers)
@@ -533,6 +553,67 @@
       "power": 5.0,
       "flashPoint": 500.0,
       "heatOutput": 1300.0
+    }
+  },
+  {
+    "name": "ExplosivePowder",
+    "moveType": 2, // Particle movement
+    "behaveType": 5, // Explosive behavior
+    "color": {
+      "x": 205,
+      "y": 180,
+      "z": 10,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "enableHeatSim": true,
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ],
+      "stateChangeViscosity": [
+        0,
+        0
+      ],
+      "stateChangeColors": [
+        {
+          "x": 205,
+          "y": 180,
+          "z": 10,
+          "w": 255
+        },
+        {
+          "x": 205,
+          "y": 180,
+          "z": 10,
+          "w": 255
+        },
+        {
+          "x": 205,
+          "y": 180,
+          "z": 10,
+          "w": 255
+        }
+      ],
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
+    },
+    "explosiveProperties": {
+      "range": 10.0,
+      "power": 1.0,
+      "flashPoint": 300.0,
+      "heatOutput": 600.0
     }
   }
 ]

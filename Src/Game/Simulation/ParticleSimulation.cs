@@ -185,6 +185,9 @@ namespace SpatialGame
 
         public static void AddParticle(Vector2 pos, string name)
         {
+            //check if in bounds
+            if(!PixelColorer.BoundCheck(pos))
+                return;
             //check if valid particle
             if(!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out int index))
             {
@@ -207,7 +210,7 @@ namespace SpatialGame
                 propertyIndex = index,
                 state = ParticleResourceHandler.loadedParticles[index],
             };
-            SafePositionCheckSet(particles[id].GetElementType().ToByte(), pos);
+            SafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
             SafeIdCheckSet(id, pos);
         }
 

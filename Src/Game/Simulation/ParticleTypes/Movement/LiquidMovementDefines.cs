@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
 
 namespace SpatialGame
 {
-    /// <summary>
-    /// Swaps places with solid and gas
-    /// </summary>
-    public static class LiquidDefines
+    public static class LiquidMovementDefines
     {
 
 #if RELEASE
@@ -26,30 +23,30 @@ namespace SpatialGame
             //displacement
 
             int posCheckBelow = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X, particle.position.Y + 1));
-            bool displaceLiq = posCheckBelow == ParticleType.gas.ToByte();
+            bool displaceLiq = posCheckBelow == ParticleBehaviorType.gas.ToByte();
             //swapping down with a liquid
             if (displaceLiq)
             {
-                particle.SwapParticle(new Vector2(particle.position.X, particle.position.Y + 1), (ParticleType)posCheckBelow);
+                particle.SwapParticle(new Vector2(particle.position.X, particle.position.Y + 1), (ParticleBehaviorType)posCheckBelow);
                 return;
             }
             int posCheckLU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y + 1));
-            bool displaceLiqLU = posCheckLU == ParticleType.gas.ToByte() && posCheckBelow == ParticleType.empty.ToByte();
+            bool displaceLiqLU = posCheckLU == ParticleBehaviorType.gas.ToByte() && posCheckBelow == ParticleBehaviorType.empty.ToByte();
             if (displaceLiqLU && num == 0)
             {
-                particle.SwapParticle(new Vector2(particle.position.X - 1, particle.position.Y + 1), (ParticleType)posCheckLU);
+                particle.SwapParticle(new Vector2(particle.position.X - 1, particle.position.Y + 1), (ParticleBehaviorType)posCheckLU);
                 return;
             }
             int posCheckRU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y + 1));
-            bool displaceLiqRU = posCheckRU == ParticleType.gas.ToByte() && posCheckBelow == ParticleType.empty.ToByte();
+            bool displaceLiqRU = posCheckRU == ParticleBehaviorType.gas.ToByte() && posCheckBelow == ParticleBehaviorType.empty.ToByte();
             if (displaceLiqRU && num == 1)
             {
-                particle.SwapParticle(new Vector2(particle.position.X + 1, particle.position.Y + 1), (ParticleType)posCheckRU);
+                particle.SwapParticle(new Vector2(particle.position.X + 1, particle.position.Y + 1), (ParticleBehaviorType)posCheckRU);
                 return;
             }
 
             //gravity stuff
-            bool ground = posCheckBelow == ParticleType.empty.ToByte();
+            bool ground = posCheckBelow == ParticleBehaviorType.empty.ToByte();
             if (ground)
             {
                 particle.velocity = new Vector2(0, particle.velocity.Y);
@@ -58,7 +55,7 @@ namespace SpatialGame
                 return;
             }
             int posCheckL = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y));
-            bool LUnder = posCheckLU == ParticleType.empty.ToByte() && posCheckL == ParticleType.empty.ToByte();
+            bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte() && posCheckL == ParticleBehaviorType.empty.ToByte();
             if (LUnder && num == 0)
             {
                 particle.velocity = new Vector2(-1 - (particle.velocity.Y * particle.state.xBounce), 1 - (particle.velocity.Y * particle.state.yBounce));
@@ -66,14 +63,14 @@ namespace SpatialGame
                 return;
             }
             int posCheckR = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
-            bool RUnder = posCheckRU == ParticleType.empty.ToByte() && posCheckR == ParticleType.empty.ToByte();
+            bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte() && posCheckR == ParticleBehaviorType.empty.ToByte();
             if (RUnder && num == 1)
             {
                 particle.velocity = new Vector2(1 + (particle.velocity.Y * particle.state.xBounce), 1 - (particle.velocity.Y * particle.state.yBounce));
                 particle.MoveParticle();
                 return;
             }
-            bool left = posCheckBelow != ParticleType.empty.ToByte() && posCheckLU != ParticleType.empty.ToByte();
+            bool left = posCheckBelow != ParticleBehaviorType.empty.ToByte() && posCheckLU != ParticleBehaviorType.empty.ToByte();
             if (!ground && left && num == 0)
             {
                 int moveDisp = ParticleSimulation.random.Next(0, particle.state.viscosity);
@@ -85,7 +82,7 @@ namespace SpatialGame
                         if (!particle.BoundsCheck(checkPos))
                             return;
 
-                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleType.empty.ToByte())
+                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleBehaviorType.empty.ToByte())
                         {
                             particle.velocity = new Vector2(-1, 0);
                             particle.MoveParticle();
@@ -101,8 +98,8 @@ namespace SpatialGame
                         if (!particle.BoundsCheck(checkPos))
                             return;
 
-                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleType.empty.ToByte()
-                            && ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y + 1)) != ParticleType.empty.ToByte())
+                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleBehaviorType.empty.ToByte()
+                            && ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y + 1)) != ParticleBehaviorType.empty.ToByte())
                         {
                             particle.velocity = new Vector2(-1, 0);
                             particle.MoveParticle();
@@ -116,7 +113,7 @@ namespace SpatialGame
 
                 return;
             }
-            bool right = posCheckBelow != ParticleType.empty.ToByte() && posCheckRU != ParticleType.empty.ToByte();
+            bool right = posCheckBelow != ParticleBehaviorType.empty.ToByte() && posCheckRU != ParticleBehaviorType.empty.ToByte();
             if (!ground && right && num == 1)
             {
                 int moveDisp = ParticleSimulation.random.Next(0, particle.state.viscosity);
@@ -128,7 +125,7 @@ namespace SpatialGame
                         if (!particle.BoundsCheck(checkPos))
                             return;
 
-                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleType.empty.ToByte())
+                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleBehaviorType.empty.ToByte())
                         {
                             particle.velocity = new Vector2(1, 0);
                             particle.MoveParticle();
@@ -144,8 +141,8 @@ namespace SpatialGame
                         if (!particle.BoundsCheck(checkPos))
                             return;
 
-                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleType.empty.ToByte()
-                            && ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y + 1)) != ParticleType.empty.ToByte())
+                        if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleBehaviorType.empty.ToByte()
+                            && ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y + 1)) != ParticleBehaviorType.empty.ToByte())
                         {
                             particle.velocity = new Vector2(1, 0);
                             particle.MoveParticle();
