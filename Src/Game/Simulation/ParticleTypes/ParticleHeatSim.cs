@@ -42,9 +42,7 @@ namespace SpatialGame
 
                 float heatTrans = particle.state.temperature * ParticleSimulation.particles[particle.idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
                 particle.state.temperatureTemp -= heatTrans;
-                particle.state.temperatureTemp = MathF.Max(particle.state.temperatureTemp, -273.3f);
                 ParticleSimulation.particles[particle.idsSurrounding[i]].state.temperatureTemp += heatTrans;
-                particle.state.temperatureTemp = MathF.Max(ParticleSimulation.particles[particle.idsSurrounding[i]].state.temperatureTemp, -273.3f);
             }
         }
 
@@ -59,6 +57,7 @@ namespace SpatialGame
                 return;
 
             particle.state.temperature += particle.state.temperatureTemp;
+            particle.state.temperature = MathF.Max(particle.state.temperature, -273.3f);
             particle.state.temperatureTemp = 0;
 
             if (properties.heatingProperties.canStateChange)
