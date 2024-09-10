@@ -83,7 +83,7 @@ namespace SpatialGame
             }
             if (Input.IsKeyDown(Key.ShiftLeft))
             {
-                mouseSelection &= ParticleResourceHandler.particleIndexes.Length;
+                mouseSelection %= ParticleResourceHandler.particleIndexes.Length;
                 if (mouseSelection < 0)
                     mouseSelection = ParticleResourceHandler.particleIndexes.Length - 1;
                 selectionMode = false;
