@@ -22,6 +22,10 @@ namespace SpatialEngine.Rendering
         static bool ShowConsoleViewerMenu;
         static ImFontPtr font;
         static float fpsCount;
+        static float fpsTotal;
+        static float msCount;
+        static float msTotal;
+        static float fpsTime;
 
         public static void Init()
         {
@@ -43,7 +47,22 @@ namespace SpatialEngine.Rendering
             ImGui.Text("OpenGl " + OpenGlVersion);
             ImGui.Text("Gpu: " + Gpu);
             ImGui.Text(String.Format("{0:N3} ms/frame ({1:N1} FPS)", 1.0f / ImGui.GetIO().Framerate * 1000.0f, ImGui.GetIO().Framerate));
+            ImGui.Text(String.Format("{0:N3} ms Avg ({1:N1} FPS Avg)", msTotal / fpsCount, fpsTotal / fpsCount));
             ImGui.Text(String.Format("DrawCall per frame: ({0:N1})", MathF.Round(drawCallCount)));
+
+            fpsTotal += ImGui.GetIO().Framerate;
+            msTotal += 1.0f / ImGui.GetIO().Framerate * 1000f;
+            fpsCount++;
+            msTotal++;
+            fpsTime += deltaTime;
+            if(fpsTime >= 10)
+            {
+                fpsTime = 0f;
+                fpsTotal = 0f;
+                fpsCount = 0;
+                msTotal = 0;
+                msCount = 0;
+            }
 
             drawCallCount = 0;
 
