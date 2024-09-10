@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,9 @@ namespace SpatialGame
 {
     public static class ParticleHeatSim
     {
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void CalculateParticleTemp(in Particle particle)
         {
             if (!particle.GetParticleProperties().heatingProperties.enableHeatSim)
@@ -38,10 +42,15 @@ namespace SpatialGame
 
                 float heatTrans = particle.state.temperature * ParticleSimulation.particles[particle.idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
                 particle.state.temperatureTemp -= heatTrans;
+                particle.state.temperatureTemp = MathF.Max(particle.state.temperatureTemp, -273.3f);
                 ParticleSimulation.particles[particle.idsSurrounding[i]].state.temperatureTemp += heatTrans;
+                particle.state.temperatureTemp = MathF.Max(ParticleSimulation.particles[particle.idsSurrounding[i]].state.temperatureTemp, -273.3f);
             }
         }
 
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static void CalculateParticleHeatSimOthers(in Particle particle)
         {
             ParticleProperties properties = particle.GetParticleProperties();

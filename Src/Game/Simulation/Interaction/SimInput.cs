@@ -76,13 +76,18 @@ namespace SpatialGame
 
             if (Input.IsKeyDown(Key.ControlLeft))
             {
+                mouseSelection %= maxPropertySelectionChange;
+                if (mouseSelection < 0)
+                    mouseSelection = maxPropertySelectionChange - 1;
                 selectionMode = true;
             }
             if (Input.IsKeyDown(Key.ShiftLeft))
             {
+                mouseSelection &= ParticleResourceHandler.particleIndexes.Length;
+                if (mouseSelection < 0)
+                    mouseSelection = ParticleResourceHandler.particleIndexes.Length - 1;
                 selectionMode = false;
             }
-            Console.WriteLine(selectionMode);
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
         {
