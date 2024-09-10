@@ -26,7 +26,7 @@ namespace SpatialGame
         /// <summary>
         /// Shows the area elements can be spawned in
         /// </summary>
-        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, string name)
+        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, string name, bool mode, int selection)
         {
             if (!pressed)
             {
@@ -71,7 +71,7 @@ namespace SpatialGame
                         Vector2 pos = new Vector2(x, y);
                         int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
-                        if(button == 0)
+                        if(button == 0 && !mode)
                         {
                             if (idToCheck == -1)
                             {
@@ -83,7 +83,18 @@ namespace SpatialGame
                                 ParticleSimulation.particles[idToCheck].Delete();
                             }
                         }
-                        else
+                        else if (button == 0 && mode)
+                        {
+                            if(idToCheck != -1 && selection == 0)
+                            {
+                                ParticleSimulation.particles[idToCheck].state.temperature += 10f;
+                            }
+                            if (idToCheck != -1 && selection == 1)
+                            {
+                                ParticleSimulation.particles[idToCheck].state.temperature -= 10f;
+                            }
+                        }
+                        else if(button == 1)
                         {
                             if (idToCheck != -1)
                             {
@@ -95,7 +106,7 @@ namespace SpatialGame
             }
         }
 
-        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, string name)
+        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, string name, bool mode, int selection)
         {
             float scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
             float scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
@@ -122,7 +133,15 @@ namespace SpatialGame
                 SimRenderer.meshes[idElementSquareMesh].scaleY = scaleY;
 
                 SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
-                SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
+                if (!mode)
+                    SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
+                else
+                {
+                    if(selection == 0)
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
+                    if(selection == 1)
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+                }
                 SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
                 SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
                 SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;
@@ -149,7 +168,15 @@ namespace SpatialGame
             }
 
             SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
-            SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
+            if (!mode)
+                SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
+            else
+            {
+                if (selection == 0)
+                    SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
+                if (selection == 1)
+                    SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+            }
             SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
             SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;

@@ -19,7 +19,13 @@ namespace SpatialGame
         static bool firstInit;
         static bool initButton;
 
-        public static int selectedElement;
+        /// <summary>
+        /// true is property changing
+        /// false is particleSpawning
+        /// </summary>
+        public static bool selectionMode;
+        static int maxPropertySelectionChange = 2;
+        public static int mouseSelection;
 
         public static void Init()
         {
@@ -35,7 +41,8 @@ namespace SpatialGame
             mouseButtonPress = 0;
             mouseSpawnRadius = 10;
             ParticleResourceHandler.particleNameIndexes.TryGetValue("Sand", out int index);
-            selectedElement = index;
+            selectionMode = false;
+            mouseSelection = index;
 
             MouseInteraction.Init();
 
@@ -44,9 +51,9 @@ namespace SpatialGame
 
         public static void Update()
         {
-            string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[selectedElement]].name;
-            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, name);
-            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, name);
+            string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
+            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
+            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection);
 
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
@@ -66,6 +73,16 @@ namespace SpatialGame
                 initButton = false;
                 GameManager.changeResolution = false;
             }
+
+            if (Input.IsKeyDown(Key.ControlLeft))
+            {
+                selectionMode = true;
+            }
+            if (Input.IsKeyDown(Key.ShiftLeft))
+            {
+                selectionMode = false;
+            }
+            Console.WriteLine(selectionMode);
         }
         public static void MouseDown(IMouse mouse, MouseButton button)
         {
@@ -82,11 +99,17 @@ namespace SpatialGame
 
         public static void MouseScroll(IMouse mouse, ScrollWheel wheel)
         {
-            if (Input.IsKeyDown(Key.ShiftLeft))
+            if (Input.IsKeyDown(Key.ShiftLeft) && Input.IsKeyUp(Key.ControlLeft))
             {
-                selectedElement = (selectedElement + (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
-                if(selectedElement < 0)
-                    selectedElement = ParticleResourceHandler.particleIndexes.Length - 1;
+                mouseSelection = (mouseSelection + (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
+                if(mouseSelection < 0)
+                    mouseSelection = ParticleResourceHandler.particleIndexes.Length - 1;
+            }
+            else if(Input.IsKeyUp(Key.ShiftLeft) && Input.IsKeyDown(Key.ControlLeft))
+            {
+                mouseSelection = (mouseSelection + (int)wheel.Y) % maxPropertySelectionChange;
+                if (mouseSelection < 0)
+                    mouseSelection = maxPropertySelectionChange - 1;
             }
             else
             {
