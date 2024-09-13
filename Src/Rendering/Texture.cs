@@ -103,7 +103,7 @@ namespace SpatialEngine.Rendering
             textLocation = location;
         }
 
-        public unsafe void LoadTexture(byte[,,] pixels, int width, int height)
+        public unsafe void LoadTexture(byte[] pixels, int width, int height)
         {
             id = gl.GenTexture();
             gl.ActiveTexture(GLEnum.Texture0);
@@ -114,7 +114,7 @@ namespace SpatialEngine.Rendering
             gl.TextureParameter(id, GLEnum.TextureWrapS, (int)GLEnum.MirroredRepeat);
             gl.TextureParameter(id, GLEnum.TextureWrapT, (int)GLEnum.MirroredRepeat);
 
-            fixed(byte* data = pixels)
+            fixed (byte* data = pixels)
             {
                 gl.TexImage2D(GLEnum.Texture2D, 0, InternalFormat.Rgb, (uint)width, (uint)height, 0, GLEnum.Rgb, PixelType.UnsignedByte, data);
             }

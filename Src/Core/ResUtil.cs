@@ -13,6 +13,7 @@ namespace SpatialEngine
         public static string ImagePath = resourcePath + "Images/";
         public static string ModelPath = resourcePath + "Models/";
         public static string SimPath = resourcePath + "Sim/";
+        public static string FontPath = resourcePath + "Font/";
 
         //IMPORTANT
         //IF PUBLISHED IN SINGLE FILE DOTNET CANNOT FIND THE PATH OF EXECUTION AS REFLECTION DOES NOT WORK FOR SINGLE FILE PUBLISHING

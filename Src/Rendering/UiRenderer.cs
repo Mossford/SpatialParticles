@@ -156,13 +156,14 @@ namespace SpatialEngine.Rendering
 
         public static void Draw()
         {
+            float conv = MathF.PI / 180f;
             for (int i = 0; i < uiElements.Count; i++)
             {
                 Matrix4x4 model = Matrix4x4.Identity;
                 model *= Matrix4x4.CreateScale(uiElements[i].length * uiElements[i].scale, uiElements[i].height * uiElements[i].scale, 1f);
-                model *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, uiElements[i].rotation);
+                model *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, uiElements[i].rotation * conv);
                 model *= Matrix4x4.CreateTranslation(new(uiElements[i].position.X, uiElements[i].position.Y, 0f));
-                model *= Matrix4x4.CreateOrthographic(Globals.SCR_WIDTH, Globals.SCR_HEIGHT, -1, 1);
+                model *= Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1);
 
                 quad.Draw(in uiShader, model, in uiElements[i].texture);
             }
