@@ -21,6 +21,7 @@ namespace SpatialGame
         public bool toBeDeleted { get; set; }
         public int deleteIndex { get; set; }
         public float timeSpawned { get; set; }
+        public bool shouldUpdate { get; set; }
 
         public int propertyIndex;
         public ParticleState state;

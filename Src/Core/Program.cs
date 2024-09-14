@@ -144,8 +144,8 @@ namespace SpatialEngine
 
             input.Keyboards[0].KeyDown += KeyDown;
 
-            SpatialGame.SimText.Init();
-            SpatialGame.SimText.CreateText("test innnn nng");
+            //SpatialGame.SimText.Init();
+            //SpatialGame.SimText.CreateText("test innnn nng");
         }
 
         static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
