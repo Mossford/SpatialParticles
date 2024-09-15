@@ -23,14 +23,17 @@ namespace SpatialEngine.Rendering
         static ImFontPtr font;
         static float fpsCount;
         static float fpsTotal;
-        static float msCount;
         static float msTotal;
         static float fpsTime;
+        static float minFps;
+        static float maxFps;
 
         public static void Init()
         {
             font = ImGui.GetFont();
             font.Scale = 1.35f;
+            minFps = float.MaxValue;
+            maxFps = float.MinValue;
         }
 
         public static void ImGuiMenu(float deltaTime)
@@ -47,21 +50,27 @@ namespace SpatialEngine.Rendering
             ImGui.Text("OpenGl " + OpenGlVersion);
             ImGui.Text("Gpu: " + Gpu);
             ImGui.Text(String.Format("{0:N3} ms/frame ({1:N1} FPS)", 1.0f / ImGui.GetIO().Framerate * 1000.0f, ImGui.GetIO().Framerate));
+            ImGui.Text(String.Format("{0:N1} FPSMin {1:N1} FPSMax", minFps, maxFps));
             ImGui.Text(String.Format("{0:N3} ms Avg ({1:N1} FPS Avg)", msTotal / fpsCount, fpsTotal / fpsCount));
             ImGui.Text(String.Format("DrawCall per frame: ({0:N1})", MathF.Round(drawCallCount)));
 
+            if (minFps > ImGui.GetIO().Framerate)
+                minFps = ImGui.GetIO().Framerate;
+            if (maxFps < ImGui.GetIO().Framerate)
+                maxFps = ImGui.GetIO().Framerate;
             fpsTotal += ImGui.GetIO().Framerate;
             msTotal += 1.0f / ImGui.GetIO().Framerate * 1000f;
             fpsCount++;
             msTotal++;
             fpsTime += deltaTime;
-            if(fpsTime >= 10)
+            if(fpsTime >= 5)
             {
+                minFps = float.MaxValue;
+                maxFps = float.MinValue;
                 fpsTime = 0f;
                 fpsTotal = 0f;
                 fpsCount = 0;
                 msTotal = 0;
-                msCount = 0;
             }
 
             drawCallCount = 0;

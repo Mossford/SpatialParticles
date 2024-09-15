@@ -15,7 +15,8 @@
     <SignAssembly>False</SignAssembly>
     <Title>Spatialparticles</Title>
     <Authors>Mossfurd</Authors>
-    <Copyright>Mossfurd</Copyright>
+    <Copyright>Mossfurd 2024</Copyright>
+    <Version>0.1</Version>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<Optimize>true</Optimize>

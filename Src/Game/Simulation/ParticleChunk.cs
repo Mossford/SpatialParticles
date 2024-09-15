@@ -11,8 +11,8 @@ namespace SpatialGame
 {
     public class ParticleChunk
     {
-        public static Particle[] particles;
-        public static Queue<int> freeParticleSpots;
+        public Particle[] particles;
+        public Queue<int> freeParticleSpots;
         /// <summary>
         /// the type of the particle at its position
         /// 0 is no pixel at position,
@@ -21,24 +21,28 @@ namespace SpatialGame
         /// 3 is movable gas at position,
         /// 100 is a unmovable at position
         /// </summary>
-        public static byte[] positionCheck;
+        public byte[] positionCheck;
         /// <summary>
         /// the ids of the particles at their position
         /// </summary>
-        public static int[] idCheck;
+        public int[] idCheck;
+        /// <summary>
+        /// Queue of particles that will be deleted
+        /// </summary>
+        public static List<int> idsToDelete;
         /// <summary>
         /// avaliable spots count
         /// </summary>
-        public static int particleSpotCount;
+        public int particleSpotCount;
         /// <summary>
         /// Current updating particles ie. not empty
         /// </summary>
-        public static int particleCount;
-        public static Vector2 position;
+        public int particleCount;
+        public Vector2 position;
 
         public void Init()
         {
-            particleSpotCount = ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize;
+            particleSpotCount = ParticleChunkManager.chunkSizeWidth * ParticleChunkManager.chunkSizeHeight;
             particles = new Particle[particleSpotCount];
 
             freeParticleSpots = new Queue<int>();
@@ -49,6 +53,27 @@ namespace SpatialGame
             for (int i = 0; i < particles.Length; i++)
             {
                 freeParticleSpots.Enqueue(i);
+            }
+
+        }
+
+        public void InitSecond()
+        {
+            for (int i = 0; i < particles.Length; i++)
+            {
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                    continue;
+
+                particles[i].CheckDoubleOnPosition();
+            }
+
+            DeleteParticlesOnQueue();
+
+            for (int i = 0; i < particles.Length; i++)
+            {
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                    continue;
+                particleCount++;
             }
         }
 
@@ -79,6 +104,13 @@ namespace SpatialGame
                     //then set it to not be updated again to avoid a double update
                     //and remove from own chunk and add to other chunk
                     
+                    //check old position id
+                    //if -1 then we have no particle there and we can then add our current particle
+                    //to the next chunk that it moved into
+                    //if there is an id and it does not match the id of the current particle
+                    //then we have swapped particles
+                    //do nothing?
+                    //if do nothing then that depends if the movement code has properly set the states and shit
                 }
 
                 //reset its light color before it moves
@@ -105,13 +137,33 @@ namespace SpatialGame
             }
         }
 
+        void DeleteParticlesOnQueue()
+        {
+            if (idsToDelete.Count == 0)
+                return;
+
+            for (int i = 0; i < idsToDelete.Count; i++)
+            {
+                int id = idsToDelete[i];
+                if (particles[id] is null)
+                    continue;
+                if (id >= 0 && id < particles.Length && particles[id].toBeDeleted)
+                {
+                    particles[id].Delete();
+                }
+            }
+
+            idsToDelete.Clear();
+        }
+
+
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
         public bool ChunkBounds(Vector2 pos)
         {
-            if(pos.X > position.X + ParticleChunkManager.chunkSize && pos.Y > position.Y + ParticleChunkManager.chunkSize &&
-                pos.X < position.X - ParticleChunkManager.chunkSize && pos.Y < position.Y - ParticleChunkManager.chunkSize)
+            if(pos.X > position.X + ParticleChunkManager.chunkSizeWidth && pos.Y > position.Y + ParticleChunkManager.chunkSizeHeight &&
+                pos.X < position.X - ParticleChunkManager.chunkSizeWidth && pos.Y < position.Y - ParticleChunkManager.chunkSizeHeight)
                 return false;
             return true;
         }
