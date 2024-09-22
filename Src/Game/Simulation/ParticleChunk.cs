@@ -11,6 +11,7 @@ namespace SpatialGame
 {
     public class ParticleChunk
     {
+        //possibly try using a span so that its cache friendly more than an array?
         public Particle[] particles;
         public Queue<int> freeParticleSpots;
         /// <summary>
@@ -29,7 +30,7 @@ namespace SpatialGame
         /// <summary>
         /// Queue of particles that will be deleted
         /// </summary>
-        public static List<int> idsToDelete;
+        public List<int> idsToDelete;
         /// <summary>
         /// avaliable spots count
         /// </summary>
@@ -43,6 +44,7 @@ namespace SpatialGame
         public void Init()
         {
             particleSpotCount = ParticleChunkManager.chunkSizeWidth * ParticleChunkManager.chunkSizeHeight;
+            particleCount = ParticleChunkManager.chunkSizeWidth * ParticleChunkManager.chunkSizeHeight;
             particles = new Particle[particleSpotCount];
 
             freeParticleSpots = new Queue<int>();
@@ -135,6 +137,8 @@ namespace SpatialGame
 
                 }
             }
+
+            DeleteParticlesOnQueue();
         }
 
         void DeleteParticlesOnQueue()
@@ -167,5 +171,16 @@ namespace SpatialGame
                 return false;
             return true;
         }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public int GetParticleIndex(Vector2 pos)
+        {
+            pos -= new Vector2(position.X - ParticleChunkManager.chunkSizeWidth, position.Y - ParticleChunkManager.chunkSizeHeight);
+            int particleIndex = (int)(ParticleChunkManager.chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
+            return particleIndex;
+        }
+
     }
 }

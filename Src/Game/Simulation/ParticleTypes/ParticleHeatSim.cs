@@ -24,11 +24,12 @@ namespace SpatialGame
             //get all particles around the current particle
             for (int i = 0; i < 8; i++)
             {
-                particle.idsSurrounding[i] = ParticleSimulation.SafeIdCheckGet(particle.position + ParticleHelpers.surroundingPos[i]);
-                if (particle.idsSurrounding[i] != -1)
-                {
+                Vector2 position = particle.position + ParticleHelpers.surroundingPos[i];
+                particle.idsSurrounding[i].chunkIndex = ParticleChunkManager.SafeGetChunkIndex(position);
+                particle.idsSurrounding[i].particleIndex = ParticleChunkManager.SafeIdCheckGet(position);
+
+                if (particle.idsSurrounding[i].particleIndex != -1)
                     idsSurroundCount++;
-                }
             }
 
             //add one to include this particle
@@ -37,12 +38,12 @@ namespace SpatialGame
             //temperature transfers
             for (int i = 0; i < 8; i++)
             {
-                if (particle.idsSurrounding[i] == -1)
+                if (particle.idsSurrounding[i].particleIndex == -1)
                     continue;
 
-                float heatTrans = particle.state.temperature * ParticleSimulation.particles[particle.idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
+                float heatTrans = particle.state.temperature * ParticleChunkManager.chunks[particle.idsSurrounding[i].chunkIndex].particles[particle.idsSurrounding[i].particleIndex].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
                 particle.state.temperatureTemp -= heatTrans;
-                ParticleSimulation.particles[particle.idsSurrounding[i]].state.temperatureTemp += heatTrans;
+                ParticleChunkManager.chunks[particle.idsSurrounding[i].chunkIndex].particles[particle.idsSurrounding[i].particleIndex].state.temperatureTemp += heatTrans;
             }
         }
 
@@ -79,7 +80,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.solid;
                                 particle.state.moveType = ParticleMovementType.particle;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[0];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleChunkManager.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where a liquid base type stays what it is
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -93,7 +94,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.gas;
                                 particle.state.moveType = ParticleMovementType.gas;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[2];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleChunkManager.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             break;
                         }
@@ -107,7 +108,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.solid;
                                 particle.state.moveType = ParticleMovementType.particle;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[0];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleChunkManager.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where a gas base type turns to liquid
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -116,7 +117,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.liquid;
                                 particle.state.moveType = ParticleMovementType.liquid;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[1];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleChunkManager.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //upper bound gas transition where a gas base stays a gas
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
@@ -140,7 +141,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.liquid;
                                 particle.state.moveType = ParticleMovementType.liquid;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[1];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleChunkManager.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //upper bound gas transition where liquid turns to gas
                             if (particle.state.behaveType == ParticleBehaviorType.liquid && particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
@@ -149,7 +150,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.gas;
                                 particle.state.moveType = ParticleMovementType.gas;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[2];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleChunkManager.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             break;
                         }

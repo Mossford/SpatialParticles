@@ -26,7 +26,7 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSim()
         {
-            int size = ParticleSimulation.particles.Length;
+            int size = ParticleChunkManager.chunks[0].particles.Length * ParticleChunkManager.chunks.Length;
             size *= Particle.GetSize();
             return size / 1024f / 1024f;
         }
@@ -37,7 +37,7 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSimGPU()
         {
-            int size = ParticleSimulation.particles.Length;
+            int size = ParticleChunkManager.chunks[0].particles.Length * ParticleChunkManager.chunks.Length;
             size *= 4;
             return size / 1024f / 1024f;
         }
@@ -49,7 +49,7 @@ namespace SpatialGame
         static void CheckLostParticles()
         {
 
-            int count = 0;
+            /*int count = 0;
 
             for (int i = 0; i < ParticleSimulation.particles.Length; i++)
             {
@@ -72,7 +72,7 @@ namespace SpatialGame
             {
                 Console.WriteLine(totalElementCount + " vis " + count + " nn " + (ParticleSimulation.particles.Length - ParticleSimulation.freeParticleSpots.Count) + " qd");
                 //throw new Exception("Weird bullshit has happened there are more elements than on screen");
-            }
+            }*/
         }
     }
 }

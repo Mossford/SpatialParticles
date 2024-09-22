@@ -21,6 +21,8 @@ namespace SpatialGame
         public static void InitParticleSim()
         {
             //init chunk stuff
+            ParticleChunkManager.Init();
+
 
             for (int x = 0; x < PixelColorer.width; x++)
             {
@@ -44,6 +46,8 @@ namespace SpatialGame
                     }
                 }
             }
+
+            ParticleChunkManager.InitSecond();
 
             Debugging.LogConsole("Initalized Particle Simulation");
             Debugging.LogConsole(particleCount + " Partcles");

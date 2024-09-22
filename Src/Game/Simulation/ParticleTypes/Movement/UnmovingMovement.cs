@@ -14,8 +14,8 @@ namespace SpatialGame
 #endif
         public static void Update(in Particle particle)
         {
-            ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.wall.ToByte(), particle.position);
-            ParticleSimulation.SafeIdCheckSet(particle.id, particle.position);
+            ParticleChunkManager.SafePositionCheckSet(ParticleBehaviorType.wall.ToByte(), particle.position);
+            ParticleChunkManager.SafeIdCheckSet(particle.id.particleIndex, particle.position);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,17 +39,39 @@ namespace SpatialGame
         //handle updating chunks
 
 
-        public static void Init()
+        public static void Init(int chkWidth = 4, int chkHeight = 4)
         {
+            chunkAmountWidth = chkWidth;
+            chunkAmountHeight = chkHeight;
             chunkSizeWidth = PixelColorer.width / chunkAmountWidth;
-            chunkSizeHeight = PixelColorer.height / chunkAmountWidth;
-            chunkAmountHeight = PixelColorer.height / chunkSizeHeight;
+            chunkSizeHeight = PixelColorer.height / chunkAmountHeight;
             chunks = new ParticleChunk[chunkAmountWidth * chunkAmountHeight];
+
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                chunks[i] = new ParticleChunk();
+            }
+
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                chunks[i].Init();
+            }
+        }
+
+        public static void InitSecond()
+        {
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                chunks[i].InitSecond();
+            }
         }
 
         public static void Update()
         {
-
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                chunks[i].UpdateParticles();
+            }
         }
 
 #if RELEASE
@@ -74,11 +97,11 @@ namespace SpatialGame
                 Debugging.LogConsole("Ran out of spots to add more particles");
                 return;
             }
-            int id = chunks[chkIndex.chunkIndex].freeParticleSpots.Dequeue();
+            chkIndex.particleIndex = chunks[chkIndex.chunkIndex].freeParticleSpots.Dequeue();
             //change this to replace those values but this is fine for now
-            chunks[chkIndex.chunkIndex].particles[id] = new Particle()
+            chunks[chkIndex.chunkIndex].particles[chkIndex.particleIndex] = new Particle()
             {
-                id = id,
+                id = chkIndex,
                 position = pos,
                 timeSpawned = Globals.GetTime(),
                 propertyIndex = index,
@@ -86,8 +109,8 @@ namespace SpatialGame
             };
 
             //double calculation for index here
-            UnsafePositionCheckSet(chunks[chkIndex.chunkIndex].particles[id].GetParticleBehaviorType().ToByte(), pos);
-            UnsafeIdCheckSet(id, pos);
+            UnsafePositionCheckSet(chunks[chkIndex.chunkIndex].particles[chkIndex.particleIndex].GetParticleBehaviorType().ToByte(), pos);
+            UnsafeIdCheckSet(chkIndex.particleIndex, pos);
         }
 
 #if RELEASE
@@ -120,6 +143,8 @@ namespace SpatialGame
             //map position to size of chunks
             pos -= new Vector2(chunks[chunkIndex].position.X - chunkSizeWidth, chunks[chunkIndex].position.Y - chunkSizeHeight);
             int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
+            if(particleIndex < 0 || particleIndex > chunks[chunkIndex].particleCount)
+                return new ChunkIndex(-1, -1);
             return new ChunkIndex(chunkIndex, particleIndex);
         }
 
@@ -149,6 +174,21 @@ namespace SpatialGame
             int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
             return new ChunkIndex(chunkIndex, particleIndex);
         }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static ChunkIndex UnsafeGetIndexInChunks(Vector2 pos, int chunk)
+        {
+            //map position to size of chunks
+            pos -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
+            return new ChunkIndex(chunk, particleIndex);
+        }
+
+        //      Normal safe
+        //----------------------------------------------------------------------------------------------------------
+
 
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -196,6 +236,9 @@ namespace SpatialGame
             return chunks[index.chunkIndex].idCheck[index.particleIndex];
         }
 
+        //      Unsafe checks so no bounds checking
+        //----------------------------------------------------------------------------------------------------------
+
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -232,6 +275,106 @@ namespace SpatialGame
         {
             ChunkIndex index = UnsafeGetIndexInChunks(position);
             return chunks[index.chunkIndex].idCheck[index.particleIndex];
+        }
+
+
+        //      Takes in a chunk index instead of caclulating it
+        //----------------------------------------------------------------------------------------------------------
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool UnsafePositionCheckSet(int chunk, byte type, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            chunks[chunk].positionCheck[particleIndex] = type;
+            return true;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool UnsafeIdCheckSet(int chunk, int id, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            chunks[chunk].idCheck[particleIndex] = id;
+            return true;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte UnsafePositionCheckGet(int chunk, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            return chunks[chunk].positionCheck[particleIndex];
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int UnsafeIdCheckGet(int chunk, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            return chunks[chunk].idCheck[particleIndex];
+        }
+
+
+        //      Takes in a chunk index instead of caclulating it Safe version
+        //----------------------------------------------------------------------------------------------------------
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool SafePositionCheckSet(int chunk, byte type, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            if (particleIndex < 0 || particleIndex > chunks[chunk].particleCount)
+                return false;
+            chunks[chunk].positionCheck[particleIndex] = type;
+            return true;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool SafeIdCheckSet(int chunk, int id, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            if (particleIndex < 0 || particleIndex > chunks[chunk].particleCount)
+                return false;
+            chunks[chunk].idCheck[particleIndex] = id;
+            return true;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte SafePositionCheckGet(int chunk, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            if (particleIndex < 0 || particleIndex > chunks[chunk].particleCount)
+                return 0;
+            return chunks[chunk].positionCheck[particleIndex];
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int SafeIdCheckGet(int chunk, Vector2 position)
+        {
+            position -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(position.X) + MathF.Floor(position.Y));
+            if (particleIndex < 0 || particleIndex > chunks[chunk].particleCount)
+                return -1;
+            return chunks[chunk].idCheck[particleIndex];
         }
     }
 }

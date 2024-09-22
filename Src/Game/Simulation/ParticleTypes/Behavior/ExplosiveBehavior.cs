@@ -17,8 +17,8 @@ namespace SpatialGame
 #endif
         public static void Update(in Particle particle)
         {
-            ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.wall.ToByte(), particle.position);
-            ParticleSimulation.SafeIdCheckSet(particle.id, particle.position);
+            ParticleChunkManager.SafePositionCheckSet(ParticleBehaviorType.wall.ToByte(), particle.position);
+            ParticleChunkManager.SafeIdCheckSet(particle.id.particleIndex, particle.position);
 
             ParticleProperties properties = particle.GetParticleProperties();
 
@@ -36,10 +36,10 @@ namespace SpatialGame
                     {
                         newPos += dir;
                         Vector2 position = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
-                        int particleID = ParticleSimulation.SafeIdCheckGet(position);
+                        int particleID = ParticleChunkManager.SafeIdCheckGet(position);
                         if (particleID == -1)
                         {
-                            ParticleSimulation.AddParticle(position, "Fire");
+                            ParticleChunkManager.AddParticle(position, "Fire");
                             continue;
                         }
 
@@ -47,7 +47,7 @@ namespace SpatialGame
 
                         float powerScale = ((properties.explosiveProperties.range / (newPos - particle.position).Length()) - 1) * properties.explosiveProperties.power;
                         powerScale = MathF.Max(MathF.Min(powerScale, 1f), 0f);
-                        ParticleSimulation.particles[particleID].state.temperature += properties.explosiveProperties.heatOutput * powerScale;
+                        ParticleChunkManager.chunks[ParticleChunkManager.SafeGetChunkIndex(position)].particles[particleID].state.temperature += properties.explosiveProperties.heatOutput * powerScale;
                     }
                 }
 
