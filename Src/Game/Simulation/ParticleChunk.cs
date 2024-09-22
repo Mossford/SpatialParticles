@@ -57,13 +57,17 @@ namespace SpatialGame
                 freeParticleSpots.Enqueue(i);
             }
 
+            for (int i = 0; i < particles.Length; i++)
+            {
+                particles[i] = new Particle();
+            }
         }
 
         public void InitSecond()
         {
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 particles[i].CheckDoubleOnPosition();
@@ -73,7 +77,7 @@ namespace SpatialGame
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
                 particleCount++;
             }
@@ -93,7 +97,7 @@ namespace SpatialGame
                     PixelColorer.particleLights[i].range = 2;
                 }
 
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
@@ -123,11 +127,11 @@ namespace SpatialGame
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 particles[i].UpdateGeneralSecond();
-                if (particles[i] is not null || particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.particleIndex == -1 || particles[i].BoundsCheck(particles[i].position))
                 {
                     //apply transparencys to particle
                     //blend with background by the alpha
@@ -149,7 +153,7 @@ namespace SpatialGame
             for (int i = 0; i < idsToDelete.Count; i++)
             {
                 int id = idsToDelete[i];
-                if (particles[id] is null)
+                if (particles[i].id.particleIndex == -1)
                     continue;
                 if (id >= 0 && id < particles.Length && particles[id].toBeDeleted)
                 {

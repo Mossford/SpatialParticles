@@ -15,6 +15,12 @@ namespace SpatialGame
         public int chunkIndex;
         public int particleIndex;
 
+        public ChunkIndex()
+        {
+            chunkIndex = -1;
+            particleIndex = -1;
+        }
+
         public ChunkIndex(int chunkIndex, int particleIndex)
         {
             this.chunkIndex = chunkIndex;
@@ -50,6 +56,7 @@ namespace SpatialGame
             for (int i = 0; i < chunks.Length; i++)
             {
                 chunks[i] = new ParticleChunk();
+                chunks[i].position = new Vector2(MathF.Floor((float)i % chunkAmountHeight) / chunkAmountWidth * PixelColorer.width, MathF.Floor((float)i / chunkAmountHeight) / chunkAmountHeight * PixelColorer.height);
             }
 
             for (int i = 0; i < chunks.Length; i++)
@@ -141,9 +148,8 @@ namespace SpatialGame
                 return new ChunkIndex(-1, -1);
 
             //map position to size of chunks
-            pos -= new Vector2(chunks[chunkIndex].position.X - chunkSizeWidth, chunks[chunkIndex].position.Y - chunkSizeHeight);
-            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
-            if(particleIndex < 0 || particleIndex > chunks[chunkIndex].particleCount)
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X % chunkSizeWidth) + MathF.Floor(pos.Y % chunkSizeHeight));
+            if (particleIndex < 0 || particleIndex > chunks[chunkIndex].particleCount)
                 return new ChunkIndex(-1, -1);
             return new ChunkIndex(chunkIndex, particleIndex);
         }
@@ -170,8 +176,9 @@ namespace SpatialGame
             int chunkIndex = UnsafeGetChunkIndex(pos);
 
             //map position to size of chunks
-            pos -= new Vector2(chunks[chunkIndex].position.X - chunkSizeWidth, chunks[chunkIndex].position.Y - chunkSizeHeight);
-            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
+            //pos -= new Vector2(chunks[chunkIndex].position.X , chunks[chunkIndex].position.Y);
+            int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X % chunkSizeWidth) + MathF.Floor(pos.Y % chunkSizeHeight));
+            Console.WriteLine(particleIndex + " " + pos);
             return new ChunkIndex(chunkIndex, particleIndex);
         }
 
@@ -181,7 +188,7 @@ namespace SpatialGame
         public static ChunkIndex UnsafeGetIndexInChunks(Vector2 pos, int chunk)
         {
             //map position to size of chunks
-            pos -= new Vector2(chunks[chunk].position.X - chunkSizeWidth, chunks[chunk].position.Y - chunkSizeHeight);
+            //pos -= new Vector2(chunks[chunk].position.X, chunks[chunk].position.Y);
             int particleIndex = (int)(chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
             return new ChunkIndex(chunk, particleIndex);
         }

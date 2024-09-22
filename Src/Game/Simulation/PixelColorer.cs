@@ -159,7 +159,7 @@ namespace SpatialGame
 #endif
         public static Vector2 IndexToPos(int index)
         {
-            return new Vector2((float)Math.Floor((double)(index % height)), (float)Math.Floor((double)(index / height)));
+            return new Vector2(MathF.Floor((float)index % height), MathF.Floor((float)index / height));
         }
 
 #if RELEASE
