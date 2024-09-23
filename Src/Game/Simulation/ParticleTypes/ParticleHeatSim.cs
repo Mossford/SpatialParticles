@@ -28,7 +28,7 @@ namespace SpatialGame
                 particle.idsSurrounding[i].chunkIndex = ParticleChunkManager.SafeGetChunkIndex(position);
                 particle.idsSurrounding[i].particleIndex = ParticleChunkManager.SafeIdCheckGet(position);
 
-                if (particle.idsSurrounding[i].particleIndex != -1)
+                if (particle.idsSurrounding[i].chunkIndex != -1 && particle.idsSurrounding[i].particleIndex != -1)
                     idsSurroundCount++;
             }
 
@@ -38,7 +38,7 @@ namespace SpatialGame
             //temperature transfers
             for (int i = 0; i < 8; i++)
             {
-                if (particle.idsSurrounding[i].particleIndex == -1)
+                if (particle.idsSurrounding[i].chunkIndex == -1 && particle.idsSurrounding[i].particleIndex == -1)
                     continue;
 
                 float heatTrans = particle.state.temperature * ParticleChunkManager.chunks[particle.idsSurrounding[i].chunkIndex].particles[particle.idsSurrounding[i].particleIndex].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;

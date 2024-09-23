@@ -161,12 +161,13 @@ namespace SpatialGame
                 return;
 
             //------safe to access the arrays directly------
-            ChunkIndex ownId = ParticleChunkManager.UnsafeGetIndexInChunks(newPos);
-            ParticleChunkManager.chunks[ownId.chunkIndex].positionCheck[ownId.particleIndex] = type.ToByte();
+            int chunkIndex = ParticleChunkManager.UnsafeGetChunkIndex(newPos);
+            int ownId = ParticleChunkManager.UnsafeIdCheckGet(newPos);
+            ParticleChunkManager.chunks[chunkIndex].positionCheck[ownId] = type.ToByte();
             //set the element below the current element to the same position
-            ParticleChunkManager.chunks[ownId.chunkIndex].particles[ownId.particleIndex].position = position;
+            ParticleChunkManager.chunks[chunkIndex].particles[ownId].position = position;
             //set the id at the current position to the id from the element below
-            ParticleChunkManager.chunks[ownId.chunkIndex].idCheck[ownId.particleIndex] = swapid.particleIndex;
+            ParticleChunkManager.chunks[chunkIndex].idCheck[ownId] = swapid.particleIndex;
 
             //set the type to the new position to our current element
             ParticleChunkManager.chunks[swapid.chunkIndex].positionCheck[swapid.particleIndex] = GetParticleBehaviorType().ToByte();
@@ -258,10 +259,9 @@ namespace SpatialGame
         {
             if (toBeDeleted)
                 return;
-            int chunk = ParticleChunkManager.UnsafeGetChunkIndex(position);
-            ParticleChunkManager.chunks[chunk].idsToDelete.Add(id.particleIndex);
+            ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Add(id.particleIndex);
             toBeDeleted = true;
-            deleteIndex = ParticleChunkManager.chunks[chunk].idsToDelete.Count - 1;
+            deleteIndex = ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Count - 1;
         }
 
         /// <summary>
@@ -283,9 +283,7 @@ namespace SpatialGame
             PixelColorer.particleLights[positionIndex].index = -1;
             PixelColorer.particleLights[positionIndex].intensity = 1f;
             PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
-
-            propertyIndex = -1;
-            state = new ParticleState();
+            ParticleChunkManager.chunks[id.chunkIndex].particles[id.particleIndex] = null;
         }
 
         /// <summary>

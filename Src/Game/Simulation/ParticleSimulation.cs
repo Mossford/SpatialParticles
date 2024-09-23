@@ -20,9 +20,10 @@ namespace SpatialGame
 
         public static void InitParticleSim()
         {
+            random = new Random();
+
             //init chunk stuff
             ParticleChunkManager.Init();
-
 
             for (int x = 0; x < PixelColorer.width; x++)
             {
@@ -57,7 +58,12 @@ namespace SpatialGame
 
         public static void RunParticleSim()
         {
-            
+            ParticleChunkManager.Update();
+            particleCount = 0;
+            for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
+            {
+                particleCount += ParticleChunkManager.chunks[i].particleCount;
+            }
         }
 
 #if RELEASE

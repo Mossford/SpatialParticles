@@ -40,6 +40,10 @@ namespace SpatialGame
         /// </summary>
         public int particleCount;
         public Vector2 position;
+        /// <summary>
+        /// Index of the chunk in the main array
+        /// </summary>
+        public int chunkIndex;
 
         public void Init()
         {
@@ -50,6 +54,7 @@ namespace SpatialGame
             freeParticleSpots = new Queue<int>();
             positionCheck = new byte[particleSpotCount];
             idCheck = new int[particleSpotCount];
+            idsToDelete = new List<int>();
 
             //tell the queue that all spots are avaliable
             for (int i = 0; i < particles.Length; i++)
@@ -57,9 +62,9 @@ namespace SpatialGame
                 freeParticleSpots.Enqueue(i);
             }
 
-            for (int i = 0; i < particles.Length; i++)
+            for (int i = 0; i < particleSpotCount; i++)
             {
-                particles[i] = new Particle();
+                idCheck[i] = -1;
             }
         }
 
@@ -67,7 +72,7 @@ namespace SpatialGame
         {
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 particles[i].CheckDoubleOnPosition();
@@ -77,7 +82,7 @@ namespace SpatialGame
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
                 particleCount++;
             }
@@ -91,25 +96,35 @@ namespace SpatialGame
                 //reset all lights
                 if (Settings.SimulationSettings.EnableParticleLighting)
                 {
-                    PixelColorer.particleLights[i].index = 0;
-                    PixelColorer.particleLights[i].intensity = 1;
-                    PixelColorer.particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
-                    PixelColorer.particleLights[i].range = 2;
+                    int globalIndex = i + (particles.Length * chunkIndex);
+                    PixelColorer.particleLights[globalIndex].index = 0;
+                    PixelColorer.particleLights[globalIndex].intensity = 1;
+                    PixelColorer.particleLights[globalIndex].color = new Vector4Byte(255, 255, 255, 255);
+                    PixelColorer.particleLights[globalIndex].range = 2;
                 }
 
-                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
-
+                
                 PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
                 particles[i].Update();
 
                 //check if we are still in this chunk
-                if (!ChunkBounds(particles[i].position))
+                if (ChunkBounds(particles[i].position) == false)
                 {
                     //if failed
                     //then set it to not be updated again to avoid a double update
                     //and remove from own chunk and add to other chunk
-                    
+                    Console.WriteLine(particles[i].position + " " + this.position);
+                    string name = particles[i].GetParticleProperties().name;
+                    ParticleState state = particles[i].state;
+                    Vector2 position = particles[i].position;
+                    particles[i].Delete();
+                    ParticleChunkManager.AddParticle(position, name);
+                    ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+                    Console.WriteLine(newChunk.chunkIndex);
+                    ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
+                    ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                     //check old position id
                     //if -1 then we have no particle there and we can then add our current particle
                     //to the next chunk that it moved into
@@ -117,21 +132,23 @@ namespace SpatialGame
                     //then we have swapped particles
                     //do nothing?
                     //if do nothing then that depends if the movement code has properly set the states and shit
+                    continue;
                 }
 
                 //reset its light color before it moves
 
+                particles[i].shouldUpdate = true;
                 particles[i].UpdateGeneralFirst();
                 particleCount++;
             }
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i].id.particleIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 particles[i].UpdateGeneralSecond();
-                if (particles[i].id.particleIndex == -1 || particles[i].BoundsCheck(particles[i].position))
+                if (particles[i] is not null || particles[i].BoundsCheck(particles[i].position))
                 {
                     //apply transparencys to particle
                     //blend with background by the alpha
@@ -153,7 +170,7 @@ namespace SpatialGame
             for (int i = 0; i < idsToDelete.Count; i++)
             {
                 int id = idsToDelete[i];
-                if (particles[i].id.particleIndex == -1)
+                if (particles[id] is null)
                     continue;
                 if (id >= 0 && id < particles.Length && particles[id].toBeDeleted)
                 {
@@ -170,8 +187,7 @@ namespace SpatialGame
 #endif
         public bool ChunkBounds(Vector2 pos)
         {
-            if(pos.X > position.X + ParticleChunkManager.chunkSizeWidth && pos.Y > position.Y + ParticleChunkManager.chunkSizeHeight &&
-                pos.X < position.X - ParticleChunkManager.chunkSizeWidth && pos.Y < position.Y - ParticleChunkManager.chunkSizeHeight)
+            if (pos.X < position.X || pos.X > (position.X + ParticleChunkManager.chunkSizeWidth) || pos.Y < position.Y || pos.Y > (position.Y + ParticleChunkManager.chunkSizeHeight))
                 return false;
             return true;
         }
@@ -181,8 +197,7 @@ namespace SpatialGame
 #endif
         public int GetParticleIndex(Vector2 pos)
         {
-            pos -= new Vector2(position.X - ParticleChunkManager.chunkSizeWidth, position.Y - ParticleChunkManager.chunkSizeHeight);
-            int particleIndex = (int)(ParticleChunkManager.chunkSizeHeight * MathF.Floor(pos.X) + MathF.Floor(pos.Y));
+            int particleIndex = (int)(ParticleChunkManager.chunkSizeHeight * MathF.Floor(pos.X % ParticleChunkManager.chunkSizeWidth) + MathF.Floor(pos.Y % ParticleChunkManager.chunkSizeHeight));
             return particleIndex;
         }
 

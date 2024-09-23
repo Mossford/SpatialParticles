@@ -70,7 +70,10 @@ namespace SpatialGame
                     {
                         Vector2 pos = new Vector2(x, y);
                         int idToCheck = ParticleChunkManager.SafeIdCheckGet(pos);
-                        int chunkIndex = ParticleChunkManager.UnsafeGetChunkIndex(pos);
+                        int chunkIndex = ParticleChunkManager.SafeGetChunkIndex(pos);
+
+                        if (chunkIndex == -1)
+                            continue;
 
                         if (button == 0 && !mode)
                         {
