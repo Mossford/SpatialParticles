@@ -144,6 +144,9 @@ namespace SpatialGame
 #endif
         public static ChunkIndex SafeGetIndexInChunks(Vector2 pos)
         {
+            if (!PixelColorer.BoundCheck(pos))
+                return new ChunkIndex(-1, -1);
+
             int chunkIndex = SafeGetChunkIndex(pos);
 
             if(chunkIndex == -1)

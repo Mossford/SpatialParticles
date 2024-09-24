@@ -209,6 +209,26 @@ namespace SpatialGame
                         QueueDelete();
                         return;
                     }
+
+                    if (ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos) == false)
+                    {
+                        string name = GetParticleProperties().name;
+                        ParticleState state = this.state;
+                        Vector2 position = newPos;
+                        QueueDelete();
+                        return;
+                        ParticleChunkManager.AddParticle(newPos, name);
+                        //check if it got added and if it did not then a issue and no particle has been spawned
+                        if (ParticleChunkManager.SafeIdCheckGet(newPos) == -1)
+                        {
+                            return;
+                        }
+                        ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunks(newPos);
+                        Console.WriteLine(newChunk.chunkIndex + " " + newChunk.particleIndex);
+                        ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
+                        ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
+                        return;
+                    }
                 }
                 else
                     return;

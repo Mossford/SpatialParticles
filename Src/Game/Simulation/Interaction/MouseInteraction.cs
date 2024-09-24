@@ -84,7 +84,7 @@ namespace SpatialGame
                             else if (ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
                             {
                                 //replaced from queue delete may cause issues
-                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].Delete();
+                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].QueueDelete();
                             }
                         }
                         else if (button == 0 && mode)
@@ -102,7 +102,7 @@ namespace SpatialGame
                         {
                             if (idToCheck != -1)
                             {
-                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].Delete();
+                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].QueueDelete();
                             }
                         }
                     }

@@ -109,35 +109,7 @@ namespace SpatialGame
                 PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
                 particles[i].Update();
 
-                //check if we are still in this chunk
-                if (ChunkBounds(particles[i].position) == false)
-                {
-                    //if failed
-                    //then set it to not be updated again to avoid a double update
-                    //and remove from own chunk and add to other chunk
-                    Console.WriteLine(particles[i].position + " " + this.position);
-                    string name = particles[i].GetParticleProperties().name;
-                    ParticleState state = particles[i].state;
-                    Vector2 position = particles[i].position;
-                    particles[i].Delete();
-                    ParticleChunkManager.AddParticle(position, name);
-                    ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunks(position);
-                    Console.WriteLine(newChunk.chunkIndex);
-                    ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
-                    ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
-                    //check old position id
-                    //if -1 then we have no particle there and we can then add our current particle
-                    //to the next chunk that it moved into
-                    //if there is an id and it does not match the id of the current particle
-                    //then we have swapped particles
-                    //do nothing?
-                    //if do nothing then that depends if the movement code has properly set the states and shit
-                    continue;
-                }
-
                 //reset its light color before it moves
-
-                particles[i].shouldUpdate = true;
                 particles[i].UpdateGeneralFirst();
                 particleCount++;
             }
