@@ -69,40 +69,36 @@ namespace SpatialGame
                     if (check < radius)
                     {
                         Vector2 pos = new Vector2(x, y);
-                        int idToCheck = ParticleChunkManager.SafeIdCheckGet(pos);
-                        int chunkIndex = ParticleChunkManager.SafeGetChunkIndex(pos);
+                        int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
-                        if (chunkIndex == -1)
-                            continue;
-
-                        if (button == 0 && !mode)
+                        if(button == 0 && !mode)
                         {
                             if (idToCheck == -1)
                             {
-                                ParticleChunkManager.AddParticle(pos, name);
+                                ParticleSimulation.AddParticle(pos, name);
                             }
-                            else if (ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
+                            else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
                             {
                                 //replaced from queue delete may cause issues
-                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].QueueDelete();
+                                ParticleSimulation.particles[idToCheck].Delete();
                             }
                         }
                         else if (button == 0 && mode)
                         {
                             if(idToCheck != -1 && selection == 0)
                             {
-                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].state.temperature += 10f;
+                                ParticleSimulation.particles[idToCheck].state.temperature += 10f;
                             }
                             if (idToCheck != -1 && selection == 1)
                             {
-                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].state.temperature -= 10f;
+                                ParticleSimulation.particles[idToCheck].state.temperature -= 10f;
                             }
                         }
                         else if(button == 1)
                         {
                             if (idToCheck != -1)
                             {
-                                ParticleChunkManager.chunks[chunkIndex].particles[idToCheck].QueueDelete();
+                                ParticleSimulation.particles[idToCheck].Delete();
                             }
                         }
                     }

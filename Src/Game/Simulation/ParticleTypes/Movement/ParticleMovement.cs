@@ -16,7 +16,7 @@ namespace SpatialGame
         public static void Update(in Particle particle)
         {
             int num = ParticleSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left
-            int posCheckBelow = ParticleChunkManager.SafePositionCheckGet(new Vector2(particle.position.X, particle.position.Y + 1));
+            int posCheckBelow = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X, particle.position.Y + 1));
             bool displaceLiq = posCheckBelow == ParticleBehaviorType.liquid.ToByte() || posCheckBelow == ParticleBehaviorType.gas.ToByte();
             //swapping down with a liquid
             if (displaceLiq)
@@ -24,14 +24,14 @@ namespace SpatialGame
                 particle.SwapParticle(new Vector2(particle.position.X, particle.position.Y + 1), (ParticleBehaviorType)posCheckBelow);
                 return;
             }
-            int posCheckLU = ParticleChunkManager.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y + 1));
+            int posCheckLU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y + 1));
             bool displaceLiqLU = posCheckLU == ParticleBehaviorType.liquid.ToByte() || posCheckLU == ParticleBehaviorType.gas.ToByte() && posCheckBelow == ParticleBehaviorType.empty.ToByte();
             if (displaceLiqLU && num == 0)
             {
                 particle.SwapParticle(new Vector2(particle.position.X - 1, particle.position.Y + 1), (ParticleBehaviorType)posCheckLU);
                 return;
             }
-            int posCheckRU = ParticleChunkManager.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y + 1));
+            int posCheckRU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y + 1));
             bool displaceLiqRU = posCheckRU == ParticleBehaviorType.liquid.ToByte() || posCheckRU == ParticleBehaviorType.gas.ToByte() && posCheckBelow == ParticleBehaviorType.empty.ToByte();
             if (displaceLiqRU && num == 1)
             {
