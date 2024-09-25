@@ -38,7 +38,7 @@ namespace SpatialGame
         public static float GetCurrentMemoryOfSimGPU()
         {
             int size = ParticleSimulation.particles.Length;
-            size *= 4;
+            size *= 4 + 16;
             return size / 1024f / 1024f;
         }
 
