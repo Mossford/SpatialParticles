@@ -60,6 +60,12 @@ namespace SpatialGame
                 idCheck[i] = -1;
             }
 
+            //initalize all particles so that its cache friendly
+            for (int i = 0; i < particles.Length; i++)
+            {
+                particles[i] = new Particle();
+            }
+
             for (int x = 0; x < PixelColorer.width; x++)
             {
                 AddParticle(new Vector2(x, 0), "Wall");
@@ -74,18 +80,34 @@ namespace SpatialGame
 
             if(Settings.SimulationSettings.EnablePerfTestMode)
             {
+                List<Vector2> coords = new List<Vector2>();
+
                 for (int x = 1; x < PixelColorer.width - 1; x++)
                 {
                     for (int y = 1; y < PixelColorer.height - 1; y++)
                     {
-                        AddParticle(new Vector2(x, y), "Sand");
+                        coords.Add(new Vector2(x, y));
                     }
+                }
+
+                int n = coords.Count;
+                while (n > 1)
+                {
+                    n--;
+                    int k = random.Next(n + 1);
+                    (coords[n], coords[k]) = (coords[k], coords[n]);
+                }
+
+                // Add particles in the random order
+                foreach (Vector2 coord in coords)
+                {
+                    AddParticle(coord, "Sand");
                 }
             }
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 particles[i].CheckDoubleOnPosition();
@@ -95,7 +117,7 @@ namespace SpatialGame
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
                 particleCount++;
             }
@@ -122,7 +144,7 @@ namespace SpatialGame
                     PixelColorer.particleLights[i].range = 2;
                 }
 
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 //reset its light color before it moves
@@ -133,14 +155,14 @@ namespace SpatialGame
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i] is null || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 //reset its color before it moves
                 PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
                 particles[i].Update();
                 particles[i].UpdateGeneralSecond();
-                if (particles[i] is not null || particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id != -1 || particles[i].BoundsCheck(particles[i].position))
                 {
                     //apply transparencys to particle
                     //blend with background by the alpha
@@ -172,9 +194,9 @@ namespace SpatialGame
             for (int i = 0; i < idsToDelete.Count; i++)
             {
                 int id = idsToDelete[i];
-                if (particles[id] is null)
+                if (particles[id].id == -1)
                     continue;
-                if (id >= 0 && id < particles.Length && particles[id].toBeDeleted)
+                if (id >= 0 && id < particles.Length)
                 {
                     particles[id].Delete();
                 }
@@ -202,14 +224,11 @@ namespace SpatialGame
                 return;
             }
             int id = freeParticleSpots.Dequeue();
-            particles[id] = new Particle()
-            {
-                id = id,
-                position = pos,
-                timeSpawned = Globals.GetTime(),
-                propertyIndex = index,
-                state = ParticleResourceHandler.loadedParticles[index],
-            };
+            particles[id].id = id;
+            particles[id].position = pos;
+            particles[id].timeSpawned = Globals.GetTime();
+            particles[id].propertyIndex = index;
+            particles[id].state = ParticleResourceHandler.loadedParticles[index];
             SafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
             SafeIdCheckSet(id, pos);
         }

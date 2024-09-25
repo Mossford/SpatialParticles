@@ -19,7 +19,6 @@ namespace SpatialGame
 
             int num = ParticleSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left
 
-            particle.oldpos = particle.position;
             //displacement
 
             int posCheckBelow = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X, particle.position.Y + 1));

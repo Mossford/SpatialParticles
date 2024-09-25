@@ -17,8 +17,6 @@ namespace SpatialGame
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
         public int id { get; set; }
-        public Vector2 oldpos { get; set; }
-        public bool toBeDeleted { get; set; }
         public int deleteIndex { get; set; }
         public float timeSpawned { get; set; }
 
@@ -26,6 +24,17 @@ namespace SpatialGame
         public ParticleState state;
 
         public int[] idsSurrounding = new int[8];
+
+        public Particle()
+        {
+            position = Vector2.Zero;
+            velocity = Vector2.Zero;
+            id = -1;
+            deleteIndex = -1;
+            timeSpawned = 0;
+            propertyIndex = -1;
+            state = new ParticleState();
+        }
 
         /// <summary>
         /// Position check must be updated when pixel pos changed
@@ -279,10 +288,7 @@ namespace SpatialGame
 #endif
         public void QueueDelete()
         {
-            if (toBeDeleted)
-                return;
             ParticleSimulation.idsToDelete.Add(id);
-            toBeDeleted = true;
             deleteIndex = ParticleSimulation.idsToDelete.Count - 1;
         }
 
@@ -305,7 +311,9 @@ namespace SpatialGame
             PixelColorer.particleLights[positionIndex].index = -1;
             PixelColorer.particleLights[positionIndex].intensity = 1f;
             PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
-            ParticleSimulation.particles[id] = null;
+            //might create cache issues?
+            //try setting the default values instead
+            ParticleSimulation.particles[id] = new Particle();
         }
 
         /// <summary>
@@ -329,7 +337,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 73 + ParticleState.GetSize();
+            return 64 + ParticleState.GetSize();
         }
 
 #if RELEASE
@@ -353,7 +361,7 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return position + " Position\n" + velocity + " Velocity\n" + id + " Id\n" + oldpos + " OldPos\n" + toBeDeleted + " ToBeDeleted\n" + deleteIndex + " DeleteIndex\n" + timeSpawned + " TimeSpawned\n" + propertyIndex +
+            return position + " Position\n" + velocity + " Velocity\n" + id + " Id\n" + " ToBeDeleted\n" + deleteIndex + " DeleteIndex\n" + timeSpawned + " TimeSpawned\n" + propertyIndex +
                 " PropertyIndex\n" + state.ToString();
         }
 

@@ -16,8 +16,6 @@ namespace SpatialGame
         public static void Update(in Particle particle)
         {
             int num = ParticleSimulation.random.Next(0, 3); // choose random size to pick to favor instead of always left
-
-            particle.oldpos = particle.position;
             //displacement
 
             //gravity stuff
