@@ -199,7 +199,7 @@ namespace SpatialGame
                     break;
             }
 
-            if (canColorChange)
+            if (canColorChange && particle.state.temperature > 0f)
             {
                 int colorIndex = (int)MathF.Min(MathF.Max(particle.state.temperature, 0f), temperatureColorCount - 1);
                 Vector3 color = (Vector3)temperatureColors[colorIndex] / 255f;
@@ -235,6 +235,10 @@ namespace SpatialGame
                     PixelColorer.particleLights[index].range = 3;
                 }
             }
+            else
+            {
+                particle.state.color = properties.color;
+            }    
         }
     }
 }
