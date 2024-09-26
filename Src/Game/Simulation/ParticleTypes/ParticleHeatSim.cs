@@ -86,6 +86,64 @@ namespace SpatialGame
             particle.state.temperature = MathF.Max(particle.state.temperature, -273.3f);
             particle.state.temperatureTemp = 0;
 
+            bool canColorChange = true;
+            switch (particle.state.behaveType)
+            {
+                case ParticleBehaviorType.solid:
+                    canColorChange = properties.heatingProperties.canColorChange[0];
+                    break;
+                case ParticleBehaviorType.liquid:
+                    canColorChange = properties.heatingProperties.canColorChange[1];
+                    break;
+                case ParticleBehaviorType.gas:
+                    canColorChange = properties.heatingProperties.canColorChange[2];
+                    break;
+                default:
+                    canColorChange = properties.heatingProperties.canColorChange[0];
+                    break;
+            }
+
+            if (canColorChange && particle.state.temperature > 0f)
+            {
+                int colorIndex = (int)MathF.Min(MathF.Max(particle.state.temperature, 0f), temperatureColorCount - 1);
+                Vector3 color = (Vector3)temperatureColors[colorIndex] / 255f;
+
+                Vector3 baseColor = (Vector3)properties.color / 255f;
+
+                switch (particle.state.behaveType)
+                {
+                    case ParticleBehaviorType.solid:
+                        baseColor = (Vector3)properties.heatingProperties.stateChangeColors[0] / 255f;
+                        break;
+                    case ParticleBehaviorType.liquid:
+                        baseColor = (Vector3)properties.heatingProperties.stateChangeColors[1] / 255f;
+                        break;
+                    case ParticleBehaviorType.gas:
+                        baseColor = (Vector3)properties.heatingProperties.stateChangeColors[2] / 255f;
+                        break;
+                }
+
+                Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
+                Vector3 lerpedColorLight = Vector3.Lerp(Vector3.One, color, color.Length());
+                lerpedColor *= 255f;
+                lerpedColorLight *= 255f;
+                lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
+                lerpedColorLight = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColorLight, 0.0f, 255.0f);
+                particle.state.color = new Vector4Byte(lerpedColor, particle.state.color.w);
+                if (Settings.SimulationSettings.EnableParticleLighting)
+                {
+                    int index = PixelColorer.PosToIndex(particle.position);
+                    PixelColorer.particleLights[index].index = index;
+                    PixelColorer.particleLights[index].intensity = MathF.Min(color.Length() + 1f, 2f);
+                    PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
+                    PixelColorer.particleLights[index].range = 3;
+                }
+            }
+            else
+            {
+                particle.state.color = properties.color;
+            }
+
             if (properties.heatingProperties.canStateChange)
             {
                 //There is cases where solids can just turn straight into gases bypassing liquids
@@ -181,64 +239,6 @@ namespace SpatialGame
                         }
                 }
             }
-
-            bool canColorChange = true;
-            switch (particle.state.behaveType)
-            {
-                case ParticleBehaviorType.solid:
-                    canColorChange = properties.heatingProperties.canColorChange[0];
-                    break;
-                case ParticleBehaviorType.liquid:
-                    canColorChange = properties.heatingProperties.canColorChange[1];
-                    break;
-                case ParticleBehaviorType.gas:
-                    canColorChange = properties.heatingProperties.canColorChange[2];
-                    break;
-                default:
-                    canColorChange = properties.heatingProperties.canColorChange[0];
-                    break;
-            }
-
-            if (canColorChange && particle.state.temperature > 0f)
-            {
-                int colorIndex = (int)MathF.Min(MathF.Max(particle.state.temperature, 0f), temperatureColorCount - 1);
-                Vector3 color = (Vector3)temperatureColors[colorIndex] / 255f;
-
-                Vector3 baseColor = (Vector3)properties.color / 255f;
-
-                switch (particle.state.behaveType)
-                {
-                    case ParticleBehaviorType.solid:
-                        baseColor = (Vector3)properties.heatingProperties.stateChangeColors[0] / 255f;
-                        break;
-                    case ParticleBehaviorType.liquid:
-                        baseColor = (Vector3)properties.heatingProperties.stateChangeColors[1] / 255f;
-                        break;
-                    case ParticleBehaviorType.gas:
-                        baseColor = (Vector3)properties.heatingProperties.stateChangeColors[2] / 255f;
-                        break;
-                }
-
-                Vector3 lerpedColor = Vector3.Lerp(baseColor, color, color.Length());
-                Vector3 lerpedColorLight = Vector3.Lerp(Vector3.One, color, color.Length());
-                lerpedColor *= 255f;
-                lerpedColorLight *= 255f;
-                lerpedColor = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColor, 0.0f, 255.0f);
-                lerpedColorLight = SpatialEngine.SpatialMath.MathS.ClampVector3(lerpedColorLight, 0.0f, 255.0f);
-                particle.state.color = new Vector4Byte(lerpedColor, particle.state.color.w);
-                if (Settings.SimulationSettings.EnableParticleLighting)
-                {
-                    int index = PixelColorer.PosToIndex(particle.position);
-                    PixelColorer.particleLights[index].index = index;
-                    PixelColorer.particleLights[index].intensity = MathF.Min(color.Length() + 1f, 2f);
-                    PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
-                    PixelColorer.particleLights[index].range = 3;
-                }
-            }
-            else
-            {
-                particle.state.color = properties.color;
-            }    
         }
     }
 }
