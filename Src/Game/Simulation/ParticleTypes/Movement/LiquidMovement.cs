@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
-    public static class LiquidMovementDefines
+    public static class LiquidMovement
     {
 
 #if RELEASE

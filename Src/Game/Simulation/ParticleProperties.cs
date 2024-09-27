@@ -185,5 +185,10 @@ namespace SpatialGame
         {
             return (byte)elementType;
         }
+
+        public static byte ToByte(this ParticleMovementType elementType)
+        {
+            return (byte)elementType;
+        }
     }
 }

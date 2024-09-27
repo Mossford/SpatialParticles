@@ -58,7 +58,7 @@ namespace SpatialGame
                     }
                 case ParticleMovementType.liquid:
                 {
-                        LiquidMovementDefines.Update(this);
+                        LiquidMovement.Update(this);
                         break;
                     }
                 case ParticleMovementType.gas:
