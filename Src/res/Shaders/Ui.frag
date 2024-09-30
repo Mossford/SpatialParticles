@@ -6,6 +6,6 @@ in vec2 TexCoords;
 
 void main()
 {
-    vec3 color = texture(diffuseTexture, TexCoords).rgb;
-    out_color = vec4(color, 1.0);
+    //since only used for text just using the red channel
+    out_color = vec4(vec3(texture(diffuseTexture, TexCoords).r), 1.0);
 }

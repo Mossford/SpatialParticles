@@ -13,7 +13,7 @@ namespace SpatialEngine.Rendering
     public class UiElement : IDisposable
     {
         //size for the quad
-        public float length;
+        public float width;
         public float height;
 
         //transform
@@ -31,7 +31,7 @@ namespace SpatialEngine.Rendering
             this.position = pos;
             this.rotation = rot;
             this.scale = scale;
-            this.length = length;
+            this.width = length;
             this.height = height;
         }
 
@@ -41,7 +41,7 @@ namespace SpatialEngine.Rendering
             this.position = pos;
             this.rotation = rot;
             this.scale = scale;
-            this.length = length;
+            this.width = length;
             this.height = height;
         }
 
@@ -75,11 +75,11 @@ namespace SpatialEngine.Rendering
             //create quad
             UIVertex[] vert =
             {
-                new(new(-1, -1), new(0,0)),
-                new(new(1, -1), new(1,0)),
-                new(new(-1, 1), new(0,1)),
-                new(new(1, 1), new(1,1))
-                };
+                new(new(-1, -1), new(0, 1)),
+                new(new(1, -1), new(1, 1)),
+                new(new(-1, 1), new(0, 0)),
+                new(new(1, 1), new(1, 0))
+            };
             int[] ind = { 0, 1, 2, 1, 3, 2 };
 
             id = Globals.gl.GenVertexArray();
@@ -134,7 +134,7 @@ namespace SpatialEngine.Rendering
     public static class UiRenderer
     {
         static Shader uiShader;
-        static List<UiElement> uiElements;
+        public static List<UiElement> uiElements;
         //will reuse this quad for all elements
         static UiQuad quad;
 
@@ -160,7 +160,7 @@ namespace SpatialEngine.Rendering
             for (int i = 0; i < uiElements.Count; i++)
             {
                 Matrix4x4 model = Matrix4x4.Identity;
-                model *= Matrix4x4.CreateScale(uiElements[i].length * uiElements[i].scale, uiElements[i].height * uiElements[i].scale, 1f);
+                model *= Matrix4x4.CreateScale(uiElements[i].width * uiElements[i].scale, uiElements[i].height * uiElements[i].scale, 1f);
                 model *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, uiElements[i].rotation * conv);
                 model *= Matrix4x4.CreateTranslation(new(uiElements[i].position.X, uiElements[i].position.Y, 0f));
                 model *= Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1);
