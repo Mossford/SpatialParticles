@@ -195,7 +195,7 @@ namespace SpatialEngine
                 ImGuiMenu((float)dt);
             }
 
-            gl.ClearColor(Color.FromArgb(102, 178, 204));
+            gl.ClearColor(Color.Black);
             gl.Viewport(0,0, (uint)window.Size.X, (uint)window.Size.Y);
 
             gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

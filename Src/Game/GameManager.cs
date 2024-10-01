@@ -19,10 +19,16 @@ namespace SpatialGame
         //move this?
         public static bool changeResolution;
         public static bool started;
+        public static bool isInitalizing;
+        public static float timeSinceLastInit;
 
         public static void ReInitGame()
         {
-            if(started)
+            if (isInitalizing || (GetTime() - timeSinceLastInit) <= 1f)
+                return;
+            isInitalizing = true;
+            timeSinceLastInit = GetTime();
+            if (started)
             {
                 PixelColorer.CleanUp();
                 SimRenderer.CleanUp();
@@ -35,10 +41,13 @@ namespace SpatialGame
             SimRenderer.Init();
             SimInput.Init();
 
+            isInitalizing = false;
         }
 
         public static void InitGame()
         {
+            isInitalizing = true;
+            timeSinceLastInit = GetTime();
             ParticleResourceHandler.Init();
             PixelColorer.Init(false);
             ParticleHeatSim.Init();
@@ -47,10 +56,12 @@ namespace SpatialGame
             SimInput.Init();
 
             started = true;
+            isInitalizing = false;
         }
 
         public static void UpdateGame(float dt)
         {
+
             PixelColorer.Update();
             //SimRenderer.UpdateMeshes();
             SimRenderer.Update();

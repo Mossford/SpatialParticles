@@ -7,5 +7,8 @@ in vec2 TexCoords;
 void main()
 {
     //since only used for text just using the red channel
-    out_color = vec4(vec3(texture(diffuseTexture, TexCoords).r), 1.0);
+    float color = texture(diffuseTexture, TexCoords).r;
+    if(color < 0.1)
+        discard;
+    out_color = vec4(vec3(color), 1.0);
 }

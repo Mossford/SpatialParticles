@@ -38,20 +38,6 @@ namespace SpatialGame
 
             float scale = stbtt_ScaleForPixelHeight(font, textHeight);
 
-            float length = 0f;
-            fixed (char* textPtr = text)
-            {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    int advance;
-                    int lsb;
-                    stbtt_GetCodepointHMetrics(font, textPtr[i], &advance, &lsb);
-                    length += advance;
-                }
-            }
-
-            length *= scale;
-            width = (int)length;
             height = textHeight * numLines;
 
             byte[] bitmap = new byte[width * height];
@@ -71,6 +57,9 @@ namespace SpatialGame
                     int ax;
                     int lsb;
                     stbtt_GetCodepointHMetrics(font, text[i], &ax, &lsb);
+
+                    if (x + (ax * scale) > width)
+                        continue;
                     /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
 
                     /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
@@ -112,20 +101,6 @@ namespace SpatialGame
 
             float scale = stbtt_ScaleForPixelHeight(font, textHeight);
 
-            float length = 0f;
-            fixed (char* textPtr = text)
-            {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    int advance;
-                    int lsb;
-                    stbtt_GetCodepointHMetrics(font, textPtr[i], &advance, &lsb);
-                    length += advance;
-                }
-            }
-
-            length *= scale;
-            width = (int)length;
             height = textHeight * numLines;
 
             byte[] bitmap = new byte[width * height];
@@ -145,6 +120,9 @@ namespace SpatialGame
                     int ax;
                     int lsb;
                     stbtt_GetCodepointHMetrics(font, text[i], &ax, &lsb);
+
+                    if (x + (ax * scale) > width)
+                        continue;
                     /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
 
                     /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
