@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using SpatialEngine.Rendering;
 
 namespace SpatialGame
 {
@@ -31,9 +32,9 @@ namespace SpatialGame
         {
             if(!firstInit)
             {
-                Input.input.Mice[0].MouseUp += MouseUp;
-                Input.input.Mice[0].MouseDown += MouseDown;
-                Input.input.Mice[0].Scroll += MouseScroll;
+                Mouse.mouse.MouseUp += MouseUp;
+                Mouse.mouse.MouseDown += MouseDown;
+                Mouse.mouse.Scroll += MouseScroll;
                 firstInit = true;
             }
 
@@ -52,8 +53,8 @@ namespace SpatialGame
         public static void Update()
         {
             string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
-            MouseInteraction.DrawMouseCircleSpawner(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
-            MouseInteraction.DrawMouseElementSelect(Input.input.Mice[0].Position, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection);
+            MouseInteraction.DrawMouseCircleSpawner(Mouse.position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
+            MouseInteraction.DrawMouseElementSelect(Mouse.position, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection);
 
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
@@ -89,20 +90,23 @@ namespace SpatialGame
                 selectionMode = false;
             }
         }
-        public static void MouseDown(IMouse mouse, MouseButton button)
+        static void MouseDown(IMouse mouse, MouseButton button)
         {
+            if (Mouse.uiWantMouse)
+                return;
+            
             if (Globals.showImguiDebug && ImGui.GetIO().WantCaptureMouse)
                 return;
             mouseButtonPress = (int)button;
             mousePressed = true;
         }
 
-        public static void MouseUp(IMouse mouse, MouseButton button)
+        static void MouseUp(IMouse mouse, MouseButton button)
         {
             mousePressed = false;
         }
 
-        public static void MouseScroll(IMouse mouse, ScrollWheel wheel)
+        static void MouseScroll(IMouse mouse, ScrollWheel wheel)
         {
             if (Input.IsKeyDown(Key.ShiftLeft) && Input.IsKeyUp(Key.ControlLeft))
             {

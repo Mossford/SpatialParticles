@@ -6,9 +6,58 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Silk.NET.Input;
 
 namespace SpatialEngine.Rendering
 {
+
+    public enum UiElementType : byte
+    {
+        image = 0,
+        text = 1,
+    }
+
+    public class Button
+    {
+        public Vector2 position;
+        public Vector2 size;
+        Action onClick;
+
+        public Button(Vector2 position, Vector2 size, Action onClick)
+        {
+            this.position = position;
+            this.size = size;
+            this.onClick = onClick;
+            Mouse.mouse.MouseDown += RunOnClick;
+        }
+        
+        public void Update()
+        {
+            Mouse.uiWantMouse = false;
+            if (!BoundsCheck(Mouse.mouse.Position))
+                return;
+
+            Mouse.uiWantMouse = true;
+        }
+
+        void RunOnClick(IMouse mouse, MouseButton button)
+        {
+            if (Mouse.uiWantMouse && button == MouseButton.Left)
+            {
+                onClick.Invoke();
+            }
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public bool BoundsCheck(Vector2 pos)
+        {
+            if (pos.X < position.X - size.X || pos.X > position.X + size.X || pos.Y < position.Y - size.Y || pos.Y > position.Y + size.Y)
+                return false;
+            return true;
+        }
+    }
 
     public class UiElement : IDisposable
     {
@@ -24,7 +73,9 @@ namespace SpatialEngine.Rendering
         //texture that is displayed
         public Texture texture;
 
-        public UiElement(string textureLoc, Vector2 pos, float rot = 0f, float scale = 1f, float length = 100, float height = 100)
+        public UiElementType type;
+
+        public UiElement(string textureLoc, Vector2 pos, float rot = 0f, float scale = 1f, float length = 100, float height = 100, UiElementType type = UiElementType.image)
         {
             texture = new Texture();
             texture.LoadTexture(textureLoc);
@@ -33,9 +84,10 @@ namespace SpatialEngine.Rendering
             this.scale = scale;
             this.width = length;
             this.height = height;
+            this.type = type;
         }
 
-        public UiElement(Texture texture, Vector2 pos, float rot = 0f, float scale = 1f, float length = 100, float height = 100)
+        public UiElement(Texture texture, Vector2 pos, float rot = 0f, float scale = 1f, float length = 100, float height = 100, UiElementType type = UiElementType.image)
         {
             this.texture = texture;
             this.position = pos;
@@ -43,6 +95,7 @@ namespace SpatialEngine.Rendering
             this.scale = scale;
             this.width = length;
             this.height = height;
+            this.type = type;
         }
 
         public void Dispose()
@@ -133,25 +186,36 @@ namespace SpatialEngine.Rendering
 
     public static class UiRenderer
     {
-        static Shader uiShader;
+        static Shader uiTextShader;
+        static Shader uiImageShader;
         public static List<UiElement> uiElements;
+        public static List<Button> buttons;
         //will reuse this quad for all elements
         static UiQuad quad;
 
         public static void Init()
         {
-            uiShader = new Shader(Globals.gl, "Ui.vert", "Ui.frag");
+            uiTextShader = new Shader(Globals.gl, "UiText.vert", "UiText.frag");
+            uiImageShader = new Shader(Globals.gl, "UiImage.vert", "UiImage.frag");
 
             quad = new UiQuad();
             quad.Bind();
 
             uiElements = new List<UiElement>();
-            //uiElements.Add(new UiElement("RedDebug.png", new(0,0), 0f, 1.0f));
+            buttons = new List<Button>();
         }
 
-        public static void AddElement(Texture texture, Vector2 pos, float rotation, float scale, Vector2 dimension)
+        public static void AddElement(Texture texture, Vector2 pos, float rotation, float scale, Vector2 dimension, UiElementType type)
         {
-            uiElements.Add(new UiElement(texture, pos, rotation, scale, dimension.X, dimension.Y));
+            uiElements.Add(new UiElement(texture, pos, rotation, scale, dimension.X, dimension.Y, type));
+        }
+
+        public static void Update()
+        {
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                buttons[i].Update();
+            }
         }
 
         public static void Draw()
@@ -165,7 +229,18 @@ namespace SpatialEngine.Rendering
                 model *= Matrix4x4.CreateTranslation(new(uiElements[i].position.X, uiElements[i].position.Y, 0f));
                 model *= Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1);
 
-                quad.Draw(in uiShader, model, in uiElements[i].texture);
+                switch(uiElements[i].type)
+                {
+                    default:
+                        quad.Draw(in uiImageShader, model, in uiElements[i].texture);
+                        break;
+                    case UiElementType.image:
+                        quad.Draw(in uiImageShader, model, in uiElements[i].texture);
+                        break;
+                    case UiElementType.text:
+                        quad.Draw(in uiTextShader, model, in uiElements[i].texture);
+                        break;
+                }
             }
         }
     }

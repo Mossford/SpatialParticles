@@ -26,6 +26,7 @@ using Texture = SpatialEngine.Rendering.Texture;
 using static SpatialEngine.Debugging;
 using static SpatialEngine.Input;
 using SpatialGame;
+using Button = SpatialEngine.Rendering.Button;
 
 namespace SpatialEngine
 {
@@ -71,7 +72,6 @@ namespace SpatialEngine
     public class Game
     {
         static ImGuiController controller;
-        static Vector2 LastMousePosition;
 
         public static void Main(string[] args)
         {
@@ -95,6 +95,11 @@ namespace SpatialEngine
                 window.Render += OnRender;
                 window.Run();
             }
+        }
+
+        static void mouseTest()
+        {
+            Console.WriteLine("Mouse clicked button" + GetTime());
         }
 
         static unsafe void OnLoad() 
@@ -126,6 +131,7 @@ namespace SpatialEngine
             
             //input stuffs
             Input.Init();
+            Mouse.Init();
             //imgui control stuff
             controller = new ImGuiController(gl, window, input);
             ImGui.SetWindowSize(new Vector2(850, 500));
@@ -146,6 +152,10 @@ namespace SpatialEngine
 
             SpatialGame.SimText.Init();
             SpatialGame.SimText.CreateText("test innnn nng", 100, 100, 1f, 0f, 32, 1);
+            UiRenderer.buttons.Add(new Button(new Vector2(1920f / 2,1080f / 2), new Vector2(50, 50), mouseTest));
+            Texture texture = new Texture();
+            texture.LoadTexture("RedDebug.png");
+            UiRenderer.AddElement(texture, new Vector2(0, 0), 0f, 1f, new Vector2(50, 50), UiElementType.image);
         }
 
         static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
@@ -172,6 +182,8 @@ namespace SpatialEngine
             Input.Update();
             
             GameManager.UpdateGame((float)dt);
+            UiRenderer.Update();
+            Mouse.Update();
 
             totalTimeUpdate += (float)dt * 1000;
             while (totalTimeUpdate >= fixedUpdateTime)

@@ -91,7 +91,7 @@ namespace SpatialGame
             Texture texture = new Texture();
             texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
             textRefs.Add(UiRenderer.uiElements.Count);
-            UiRenderer.AddElement(texture, Vector2.Zero, rotation, scaleImage, new Vector2(imageWidth, imageHeight));
+            UiRenderer.AddElement(texture, Vector2.Zero, rotation, scaleImage, new Vector2(imageWidth, imageHeight), UiElementType.text);
         }
 
         public unsafe static void UpdateText(string text, int index, int width, int height, float scaleImage, float rotation, int textHeight, int numLines)
