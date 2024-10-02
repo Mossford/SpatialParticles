@@ -97,11 +97,6 @@ namespace SpatialEngine
             }
         }
 
-        static void mouseTest()
-        {
-            Console.WriteLine("Mouse clicked button" + GetTime());
-        }
-
         static unsafe void OnLoad() 
         {
             gl = window.CreateOpenGL();
@@ -152,10 +147,6 @@ namespace SpatialEngine
 
             SpatialGame.SimText.Init();
             SpatialGame.SimText.CreateText("test innnn nng", 100, 100, 1f, 0f, 32, 1);
-            UiRenderer.buttons.Add(new Button(new Vector2(1920f / 2,1080f / 2), new Vector2(50, 50), mouseTest));
-            Texture texture = new Texture();
-            texture.LoadTexture("RedDebug.png");
-            UiRenderer.AddElement(texture, new Vector2(0, 0), 0f, 1f, new Vector2(50, 50), UiElementType.image);
         }
 
         static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
