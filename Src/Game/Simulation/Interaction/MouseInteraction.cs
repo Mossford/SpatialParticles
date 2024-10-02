@@ -154,7 +154,7 @@ namespace SpatialGame
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleY = scaleYInner;
                 
             SimText.UpdateText(name, idElementText, textPos,500, 75, 0.5f, 0f, 64, 1);
-            //SimText.color = (Vector3)Particle.GetParticleColor(name) / 255f;
+            SimText.color = (Vector3)Particle.GetParticleColor(name) / 255f;
         }
 
 
