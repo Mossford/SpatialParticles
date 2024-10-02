@@ -3,6 +3,7 @@
 out vec4 out_color;
 uniform sampler2D diffuseTexture;
 in vec2 TexCoords;
+in vec3 uiColor;
 
 void main()
 {
@@ -10,5 +11,5 @@ void main()
     float color = texture(diffuseTexture, TexCoords).r;
     if(color < 0.1)
         discard;
-    out_color = vec4(vec3(color), 1.0);
+    out_color = vec4(vec3(color) * uiColor, 1.0);
 }

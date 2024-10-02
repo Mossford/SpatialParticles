@@ -3,8 +3,10 @@
 out vec4 out_color;
 uniform sampler2D diffuseTexture;
 in vec2 TexCoords;
+in vec3 uiColor;
 
 void main()
 {
-    out_color = texture(diffuseTexture, TexCoords);
+    vec3 color = texture(diffuseTexture, TexCoords).rgb * uiColor;
+    out_color = vec4(color, 1.0);
 }

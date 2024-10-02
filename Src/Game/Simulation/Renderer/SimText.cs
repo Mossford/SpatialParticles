@@ -13,7 +13,8 @@ namespace SpatialGame
     public static class SimText
     {
         static stbtt_fontinfo font;
-        static List<int> textRefs;
+        public static List<int> textRefs;
+        public static Vector3 color;
 
         public unsafe static void Init()
         {
@@ -31,7 +32,7 @@ namespace SpatialGame
         }
 
         //slow make better
-        public unsafe static void CreateText(string text, int width, int height, float scaleImage, float rotation, int textHeight, int numLines)
+        public unsafe static void CreateText(string text, Vector2 pos, int width, int height, float scaleImage, float rotation, int textHeight, int numLines)
         {
             int imageWidth = width;
             int imageHeight = height;
@@ -87,14 +88,14 @@ namespace SpatialGame
                 
             }
 
-
+            color = Vector3.One;
             Texture texture = new Texture();
             texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
             textRefs.Add(UiRenderer.uiElements.Count);
-            UiRenderer.AddElement(texture, Vector2.Zero, rotation, scaleImage, new Vector2(imageWidth, imageHeight), UiElementType.text);
+            UiRenderer.AddElement(texture, pos, rotation, scaleImage, new Vector2(imageWidth, imageHeight), UiElementType.text);
         }
 
-        public unsafe static void UpdateText(string text, int index, int width, int height, float scaleImage, float rotation, int textHeight, int numLines)
+        public unsafe static void UpdateText(string text, int index, Vector2 pos, int width, int height, float scaleImage, float rotation, int textHeight, int numLines)
         {
             UiRenderer.uiElements[index].width = width;
             UiRenderer.uiElements[index].height = height;
@@ -150,7 +151,9 @@ namespace SpatialGame
 
             }
 
+            UiRenderer.uiElements[index].color = color;
             UiRenderer.uiElements[index].scale = scaleImage;
+            UiRenderer.uiElements[index].position = pos;
             UiRenderer.uiElements[index].rotation = rotation;
             UiRenderer.uiElements[index].texture.UpdateTexture(bitmap, width, height);
         }

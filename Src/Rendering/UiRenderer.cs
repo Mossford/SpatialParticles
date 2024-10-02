@@ -69,6 +69,7 @@ namespace SpatialEngine.Rendering
         public Vector2 position;
         public float rotation;
         public float scale;
+        public Vector3 color;
 
         //texture that is displayed
         public Texture texture;
@@ -85,6 +86,7 @@ namespace SpatialEngine.Rendering
             this.width = length;
             this.height = height;
             this.type = type;
+            color = Vector3.One;
         }
 
         public UiElement(Texture texture, Vector2 pos, float rot = 0f, float scale = 1f, float length = 100, float height = 100, UiElementType type = UiElementType.image)
@@ -96,6 +98,7 @@ namespace SpatialEngine.Rendering
             this.width = length;
             this.height = height;
             this.type = type;
+            color = Vector3.One;
         }
 
         public void Dispose()
@@ -165,12 +168,13 @@ namespace SpatialEngine.Rendering
         }
 
         //ui renderer usage
-        public unsafe void Draw(in Shader shader, in Matrix4x4 mat, in Texture texture)
+        public unsafe void Draw(in Shader shader, in Matrix4x4 mat, in Texture texture, in Vector3 color)
         {
             Globals.gl.BindVertexArray(id);
             texture.Bind();
             Globals.gl.UseProgram(shader.shader);
             shader.setMat4("model", mat);
+            shader.setVec3("uiColor", color);
             Globals.gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
             Globals.gl.BindVertexArray(0);
             Globals.drawCallCount++;
@@ -232,13 +236,13 @@ namespace SpatialEngine.Rendering
                 switch(uiElements[i].type)
                 {
                     default:
-                        quad.Draw(in uiImageShader, model, in uiElements[i].texture);
+                        quad.Draw(in uiImageShader, model, in uiElements[i].texture, uiElements[i].color);
                         break;
                     case UiElementType.image:
-                        quad.Draw(in uiImageShader, model, in uiElements[i].texture);
+                        quad.Draw(in uiImageShader, model, in uiElements[i].texture, uiElements[i].color);
                         break;
                     case UiElementType.text:
-                        quad.Draw(in uiTextShader, model, in uiElements[i].texture);
+                        quad.Draw(in uiTextShader, model, in uiElements[i].texture, uiElements[i].color);
                         break;
                 }
             }

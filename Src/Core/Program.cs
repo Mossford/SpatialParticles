@@ -146,7 +146,6 @@ namespace SpatialEngine
             input.Keyboards[0].KeyDown += KeyDown;
 
             SpatialGame.SimText.Init();
-            SpatialGame.SimText.CreateText("test innnn nng", 100, 100, 1f, 0f, 32, 1);
         }
 
         static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
@@ -182,7 +181,6 @@ namespace SpatialEngine
                 totalTimeUpdate -= fixedUpdateTime;
                 FixedUpdate(fixedUpdateTime);
             }
-            SimText.UpdateText(String.Format("{0}", Globals.totalTime), 0, 100, 100, 1f, MathF.Sin((Globals.totalTime * 360f) * (MathF.PI / 180f)), 64, 1);
         }
 
         static void FixedUpdate(float dt)
