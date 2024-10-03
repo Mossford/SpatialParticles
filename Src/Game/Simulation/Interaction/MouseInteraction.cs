@@ -16,20 +16,17 @@ namespace SpatialGame
         static int idCircleMesh;
         static int idElementSquareMesh;
         static int idElementSqaureInnerMesh;
-        static int idElementText;
+        static SimText elementText;
 
         public static void Init()
         {
             idCircleMesh = -1;
             idElementSquareMesh = -1;
             idElementSqaureInnerMesh = -1;
-            idElementText = -1;
+            elementText = new SimText();
         }
 
-        /// <summary>
-        /// Shows the area elements can be spawned in
-        /// </summary>
-        public static void DrawMouseCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, string name, bool mode, int selection)
+        public static void DrawMouseElementsCircle(Vector2 positionMouse, int radius, bool pressed)
         {
             if (!pressed)
             {
@@ -50,13 +47,25 @@ namespace SpatialGame
             if (idCircleMesh == -1)
             {
                 idCircleMesh = SimRenderer.meshes.Count;
-                SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(20, 0.95f));
+                SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(60, 0.95f));
             }
             SimRenderer.meshes[idCircleMesh].show = true;
             SimRenderer.meshes[idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
             SimRenderer.meshes[idCircleMesh].position.Y *= -1;
             SimRenderer.meshes[idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
             SimRenderer.meshes[idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
+        }
+
+        /// <summary>
+        /// Shows the area elements can be spawned in
+        /// </summary>
+        public static void SpawnParticlesCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, string name, bool mode, int selection)
+        {
+            if (!pressed)
+            {
+                return;
+            }
+            
             Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
             position.X = MathF.Floor(position.X);
             position.Y = MathF.Floor(position.Y);
@@ -127,9 +136,8 @@ namespace SpatialGame
 
                 idElementSqaureInnerMesh = SimRenderer.meshes.Count;
                 SimRenderer.meshes.Add(CreateSimShapes.CreateSquare(1f));
-                    
-                idElementText = SimText.textRefs.Count;
-                SimText.CreateText("text", textPos,100, 50, 1f, 0f, 32, 1);
+                
+                elementText.CreateText("text", textPos, 100, 50, 1f, 0f, 32, 1);
             }
 
             SimRenderer.meshes[idElementSquareMesh].show = true;
@@ -139,22 +147,36 @@ namespace SpatialGame
             SimRenderer.meshes[idElementSquareMesh].scaleY = scaleY;
 
             SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
+            //particle spawn mode
             if (!mode)
+            {
+                elementText.UpdateText(name, textPos,500, 75, 0.5f, 0f, 64, 1);
+                elementText.color = (Vector3)Particle.GetParticleColor(name) / 255f;
                 SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
+            }
+            //function mode
             else
             {
-                if(selection == 0)
+                //heating
+                if (selection == 0)
+                {
+                    elementText.UpdateText("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
+                    elementText.color = new Vector3(1f, 100 / 255f, 0);
                     SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
-                if(selection == 1)
+                }
+                //cooling
+                if (selection == 1)
+                {
+                    elementText.UpdateText("Cool", textPos,500, 75, 0.5f, 0f, 64, 1);
+                    elementText.color = new Vector3(0, 100 / 255f, 1f);
                     SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+                }
             }
             SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
             SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleY = scaleYInner;
-                
-            SimText.UpdateText(name, idElementText, textPos,500, 75, 0.5f, 0f, 64, 1);
-            SimText.color = (Vector3)Particle.GetParticleColor(name) / 255f;
+            
         }
 
 

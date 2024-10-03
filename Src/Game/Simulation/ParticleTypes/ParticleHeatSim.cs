@@ -186,7 +186,7 @@ namespace SpatialGame
                                 particle.state.viscosity = properties.viscosity;
                                 particle.state.color = properties.color;
                                 particle.state.behaveType = ParticleBehaviorType.solid;
-                                particle.state.moveType = ParticleMovementType.particle;
+                                particle.state.moveType = properties.moveType;
                                 ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where base type turns to liquid

@@ -50,12 +50,18 @@ namespace SpatialGame
             Debugging.LogConsole("Initalized Simulation Input");
         }
 
+        public static void FixedUpdate()
+        {
+            string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
+            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
+        }
+        
         public static void Update()
         {
             string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
-            MouseInteraction.DrawMouseCircleSpawner(Mouse.position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
             MouseInteraction.DrawMouseElementSelect(Mouse.position, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection);
-
+            MouseInteraction.DrawMouseElementsCircle(Mouse.position, mouseSpawnRadius, mousePressed);
+            
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
                 GameManager.changeResolution = true;
