@@ -47,13 +47,17 @@ namespace SpatialGame
 
             MouseInteraction.Init();
 
-            Debugging.LogConsole("Initalized Simulation Input");
+            Debugging.LogConsole("Initialized Simulation Input");
+        }
+
+        public static void CleanUp()
+        {
+            MouseInteraction.CleanUp();
         }
 
         public static void FixedUpdate()
         {
-            string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
-            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
+            
         }
         
         public static void Update()
@@ -61,6 +65,7 @@ namespace SpatialGame
             string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
             MouseInteraction.DrawMouseElementSelect(Mouse.position, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection);
             MouseInteraction.DrawMouseElementsCircle(Mouse.position, mouseSpawnRadius, mousePressed);
+            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.position, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
             
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
@@ -116,13 +121,13 @@ namespace SpatialGame
         {
             if (Input.IsKeyDown(Key.ShiftLeft) && Input.IsKeyUp(Key.ControlLeft))
             {
-                mouseSelection = (mouseSelection + (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
+                mouseSelection = (mouseSelection - (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
                 if(mouseSelection < 0)
                     mouseSelection = ParticleResourceHandler.particleIndexes.Length - 1;
             }
             else if(Input.IsKeyUp(Key.ShiftLeft) && Input.IsKeyDown(Key.ControlLeft))
             {
-                mouseSelection = (mouseSelection + (int)wheel.Y) % maxPropertySelectionChange;
+                mouseSelection = (mouseSelection - (int)wheel.Y) % maxPropertySelectionChange;
                 if (mouseSelection < 0)
                     mouseSelection = maxPropertySelectionChange - 1;
             }

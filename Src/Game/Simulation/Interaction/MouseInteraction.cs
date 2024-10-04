@@ -26,6 +26,11 @@ namespace SpatialGame
             elementText = new SimText();
         }
 
+        public static void CleanUp()
+        {
+            elementText.Dispose();
+        }
+
         public static void DrawMouseElementsCircle(Vector2 positionMouse, int radius, bool pressed)
         {
             if (!pressed)
@@ -99,11 +104,11 @@ namespace SpatialGame
                         {
                             if(idToCheck != -1 && selection == 0)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature += 10f;
+                                ParticleSimulation.particles[idToCheck].state.temperature += 1000f * Globals.deltaTime;
                             }
                             if (idToCheck != -1 && selection == 1)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature -= 10f;
+                                ParticleSimulation.particles[idToCheck].state.temperature -= 1000f * Globals.deltaTime;
                             }
                         }
                         else if(button == 1)

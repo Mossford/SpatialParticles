@@ -17,7 +17,7 @@ namespace SpatialGame
 
         public static void Init()
         {
-            temperatureColorCount = 5000;
+            temperatureColorCount = 10000;
             temperatureColors = new Vector4Byte[temperatureColorCount];
 
             for (int i = 0; i < temperatureColorCount; i++)

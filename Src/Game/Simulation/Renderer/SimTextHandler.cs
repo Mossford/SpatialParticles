@@ -21,7 +21,8 @@ namespace SpatialGame
         public int textHeight;
         public int numLines;
         public Vector3 color;
-        
+
+        Texture texture;
         byte[] bitmap;
         int elementIndex;
 
@@ -101,7 +102,7 @@ namespace SpatialGame
             }
 
             color = Vector3.One;
-            Texture texture = new Texture();
+            texture = new Texture();
             texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
             elementIndex = UiRenderer.uiElements.Count;
             UiRenderer.AddElement(texture, position, rotation, scale, new Vector2(imageWidth, imageHeight), UiElementType.text);
@@ -171,9 +172,9 @@ namespace SpatialGame
                 }
                 
             }
-
+            
             color = Vector3.One;
-            Texture texture = new Texture();
+            texture = new Texture();
             texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
             elementIndex = UiRenderer.uiElements.Count;
             UiRenderer.AddElement(texture, position, rotation, scale, new Vector2(imageWidth, imageHeight), UiElementType.text);
@@ -253,7 +254,7 @@ namespace SpatialGame
         
         public void Dispose()
         {
-            UiRenderer.uiElements[elementIndex].Dispose();
+            UiRenderer.DeleteElement(elementIndex);
         }
     }
     
@@ -270,7 +271,7 @@ namespace SpatialGame
             {
                 if (stbtt_InitFont(font, fontDataPtr, 0) == 0)
                 {
-                    Console.WriteLine("failed text");
+                    throw new Exception("Error occured while loading font");
                 }
             }
         }

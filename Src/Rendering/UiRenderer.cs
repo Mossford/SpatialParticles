@@ -215,6 +215,11 @@ namespace SpatialEngine.Rendering
             uiElements.Add(new UiElement(texture, pos, rotation, scale, dimension.X, dimension.Y, type));
         }
 
+        public static void DeleteElement(int index)
+        {
+            uiElements.RemoveAt(index);
+        }
+
         public static void Update()
         {
             for (int i = 0; i < buttons.Count; i++)

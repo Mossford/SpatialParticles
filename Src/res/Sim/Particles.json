@@ -290,7 +290,7 @@
     "canMove": true,
     "heatingProperties": {
       "enableHeatSim": true,
-      "temperature": 1000.0,
+      "temperature": 1000000.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.5, // (50 percent of heat transfers)
       "canStateChange": false,
@@ -484,6 +484,116 @@
           "x": 80,
           "y": 80,
           "z": 80,
+          "w": 200
+        }
+      ],
+      "canColorChange": [
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  {
+    "name": "Tungsten",
+    "moveType": 1, // Unmoving movement
+    "behaveType": 1, // Solid behavior
+    "color": {
+      "x": 70,
+      "y": 70,
+      "z": 70,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "enableHeatSim": true,
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.85, // (85 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        3422.0,
+        5930.0
+      ],
+      "stateChangeViscosity": [
+        5,
+        10
+      ],
+      "stateChangeColors": [
+        {
+          "x": 70,
+          "y": 70,
+          "z": 70,
+          "w": 255
+        },
+        {
+          "x": 70,
+          "y": 70,
+          "z": 70,
+          "w": 255
+        },
+        {
+          "x": 60,
+          "y": 60,
+          "z": 60,
+          "w": 200
+        }
+      ],
+      "canColorChange": [
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  {
+    "name": "LiquidMetal",
+    "moveType": 1, // Unmoving movement
+    "behaveType": 1, // Solid behavior
+    "color": {
+      "x": 95,
+      "y": 95,
+      "z": 95,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "enableHeatSim": true,
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.100, // (85 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        2000.0,
+        10000000.0
+      ],
+      "stateChangeViscosity": [
+        5,
+        10
+      ],
+      "stateChangeColors": [
+        {
+          "x": 95,
+          "y": 95,
+          "z": 95,
+          "w": 255
+        },
+        {
+          "x": 95,
+          "y": 95,
+          "z": 95,
+          "w": 255
+        },
+        {
+          "x": 60,
+          "y": 60,
+          "z": 60,
           "w": 200
         }
       ],

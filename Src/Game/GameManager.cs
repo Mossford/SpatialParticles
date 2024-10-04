@@ -32,6 +32,7 @@ namespace SpatialGame
             {
                 PixelColorer.CleanUp();
                 SimRenderer.CleanUp();
+                SimInput.CleanUp();
             }
 
             ParticleResourceHandler.Init();
