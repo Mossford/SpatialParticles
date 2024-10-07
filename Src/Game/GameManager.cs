@@ -24,8 +24,8 @@ namespace SpatialGame
 
         public static void ReInitGame()
         {
-            if (isInitalizing || (GetTime() - timeSinceLastInit) <= 1f)
-                return;
+            //if (isInitalizing || (GetTime() - timeSinceLastInit) <= 1f)
+            //   return;
             isInitalizing = true;
             timeSinceLastInit = GetTime();
             if (started)
@@ -36,6 +36,7 @@ namespace SpatialGame
             }
 
             ParticleResourceHandler.Init();
+            SimTextHandler.Init();
             PixelColorer.Init(changeResolution);
             ParticleHeatSim.Init();
             ParticleSimulation.InitParticleSim();
@@ -50,6 +51,7 @@ namespace SpatialGame
             isInitalizing = true;
             timeSinceLastInit = GetTime();
             ParticleResourceHandler.Init();
+            SimTextHandler.Init();
             PixelColorer.Init(false);
             ParticleHeatSim.Init();
             ParticleSimulation.InitParticleSim();

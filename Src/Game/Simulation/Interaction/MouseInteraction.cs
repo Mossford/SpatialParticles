@@ -26,6 +26,8 @@ namespace SpatialGame
             idElementSquareMesh = -1;
             idElementSqaureInnerMesh = -1;
             elementText = new SimText();
+            nameBefore = "";
+            selectionBefore = -1;
         }
 
         public static void CleanUp()
