@@ -53,7 +53,7 @@ namespace SpatialGame
 
             for (int i = 0; i < ParticleSimulation.particles.Length; i++)
             {
-                if (ParticleSimulation.particles[i] is null)
+                if (ParticleSimulation.particles[i].id == -1)
                     continue;
 
                 count++;

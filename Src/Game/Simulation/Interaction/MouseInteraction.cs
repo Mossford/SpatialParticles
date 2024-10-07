@@ -17,6 +17,8 @@ namespace SpatialGame
         static int idElementSquareMesh;
         static int idElementSqaureInnerMesh;
         static SimText elementText;
+        static string nameBefore;
+        static int selectionBefore;
 
         public static void Init()
         {
@@ -229,9 +231,14 @@ namespace SpatialGame
             //particle spawn mode
             if (!mode)
             {
-                elementText.UpdateText(name, textPos,500, 75, 0.5f, 0f, 64, 1);
-                elementText.color = (Vector3)Particle.GetParticleColor(name) / 255f;
-                SimRenderer.meshes[idElementSqaureInnerMesh].color = (Vector3)Particle.GetParticleColor(name) / 255f;
+                if (nameBefore != name)
+                {
+                    Vector3 color = (Vector3)Particle.GetParticleColor(name) / 255f;
+                    elementText.UpdateText(name, textPos,500, 75, 0.5f, 0f, 64, 1);
+                    elementText.color = color;
+                    SimRenderer.meshes[idElementSqaureInnerMesh].color = color;
+                    nameBefore = name;
+                }
             }
             //function mode
             else
@@ -239,18 +246,28 @@ namespace SpatialGame
                 //heating
                 if (selection == 0)
                 {
-                    elementText.UpdateText("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
-                    elementText.color = new Vector3(1f, 100 / 255f, 0);
-                    SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
+                    if (selection != selectionBefore)
+                    {
+                        elementText.UpdateText("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
+                        elementText.color = new Vector3(1f, 100 / 255f, 0);
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
+                        selectionBefore = selection;
+                    }
                 }
                 //cooling
                 if (selection == 1)
                 {
-                    elementText.UpdateText("Cool", textPos,500, 75, 0.5f, 0f, 64, 1);
-                    elementText.color = new Vector3(0, 100 / 255f, 1f);
-                    SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+                    if (selection != selectionBefore)
+                    {
+                        elementText.UpdateText("Cool", textPos, 500, 75, 0.5f, 0f, 64, 1);
+                        elementText.color = new Vector3(0, 100 / 255f, 1f);
+                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+                        selectionBefore = selection;
+                    }
                 }
             }
+            
+            elementText.UpdateText(textPos, 500, 75, 0.5f, 0f);
             SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
             SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
             SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;

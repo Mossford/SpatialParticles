@@ -41,7 +41,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void CalculateParticleTemp(in Particle particle)
+        public static void CalculateParticleTemp(ref Particle particle)
         {
             if (!particle.GetParticleProperties().heatingProperties.enableHeatSim)
                 return;
@@ -75,7 +75,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void CalculateParticleHeatSimOthers(in Particle particle)
+        public static void CalculateParticleHeatSimOthers(ref Particle particle)
         {
             ParticleProperties properties = particle.GetParticleProperties();
             //temperature transfers

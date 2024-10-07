@@ -252,6 +252,22 @@ namespace SpatialGame
             UiRenderer.uiElements[elementIndex].texture.UpdateTexture(bitmap, width, height);
         }
         
+        public unsafe void UpdateText(Vector2 pos, int width, int height, float scaleImage, float rotation)
+        {
+            this.position = pos;
+            this.width = width;
+            this.height = height;
+            this.scale = scaleImage;
+            this.rotation = rotation;
+            
+            UiRenderer.uiElements[elementIndex].width = width;
+            UiRenderer.uiElements[elementIndex].height = height;
+            UiRenderer.uiElements[elementIndex].color = color;
+            UiRenderer.uiElements[elementIndex].scale = scaleImage;
+            UiRenderer.uiElements[elementIndex].position = pos;
+            UiRenderer.uiElements[elementIndex].rotation = rotation;
+        }
+        
         public void Dispose()
         {
             UiRenderer.DeleteElement(elementIndex);

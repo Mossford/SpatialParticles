@@ -14,7 +14,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void Update(in Particle particle)
+        public static void Update(ref Particle particle)
         {
 
             int num = ParticleSimulation.random.Next(0, 2); // choose random size to pick to favor instead of always left

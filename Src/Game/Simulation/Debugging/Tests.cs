@@ -44,7 +44,7 @@ namespace SpatialGame
             //test heat simulation
             for (int i = 0; i < ParticleSimulation.particles.Length; i++)
             {
-                if (ParticleSimulation.particles[i] is null)
+                if (ParticleSimulation.particles[i] .id == -1)
                     continue;
 
                 if (ParticleSimulation.particles[i].state.temperature != 0f)
@@ -77,7 +77,7 @@ namespace SpatialGame
 
             for (int i = 0; i < ParticleSimulation.particles.Length; i++)
             {
-                if (ParticleSimulation.particles[i] is null)
+                if (ParticleSimulation.particles[i].id == -1)
                     continue;
 
                 ParticleSimulation.particles[i].state.temperature = 100f;
@@ -90,7 +90,7 @@ namespace SpatialGame
 
             for (int i = 0; i < ParticleSimulation.particles.Length; i++)
             {
-                if (ParticleSimulation.particles[i] is null)
+                if (ParticleSimulation.particles[i].id == -1)
                     continue;
 
                 if (ParticleSimulation.particles[i].state.temperature < 0)

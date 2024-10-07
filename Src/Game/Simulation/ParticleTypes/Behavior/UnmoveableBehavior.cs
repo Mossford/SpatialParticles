@@ -13,7 +13,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void Update(in Particle particle)
+        public static void Update(ref Particle particle)
         {
             
         }

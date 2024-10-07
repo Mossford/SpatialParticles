@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
-    public class Particle : IDisposable
+    public struct Particle : IDisposable
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
@@ -59,22 +59,22 @@ namespace SpatialGame
             {
                 case ParticleMovementType.unmoving:
                     {
-                        UnmovingMovementDefines.Update(this);
+                        UnmovingMovementDefines.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.particle:
                     {
-                        ParticleMovementDefines.Update(this);
+                        ParticleMovementDefines.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.liquid:
                 {
-                        LiquidMovement.Update(this);
+                        LiquidMovement.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.gas:
                     {
-                        GasMovementDefines.Update(this);
+                        GasMovementDefines.Update(ref this);
                         break;
                     }
             }
@@ -83,32 +83,32 @@ namespace SpatialGame
             {
                 case ParticleBehaviorType.solid:
                     {
-                        SolidBehaviorDefines.Update(this);
+                        SolidBehaviorDefines.Update(ref this);
                         break;
                     }
                 case ParticleBehaviorType.liquid:
                     {
-                        LiquidBehaviorDefines.Update(this);
+                        LiquidBehaviorDefines.Update(ref this);
                         break;
                     }
                 case ParticleBehaviorType.wall:
                     {
-                        UnmoveableBehaviorDefines.Update(this);
+                        UnmoveableBehaviorDefines.Update(ref this);
                         break;
                     }
                 case ParticleBehaviorType.gas:
                     {
-                        GasBehaviorDefines.Update(this);
+                        GasBehaviorDefines.Update(ref this);
                         break;
                     }
                 case ParticleBehaviorType.fire:
                     {
-                        FireBehaviorDefines.Update(this);
+                        FireBehaviorDefines.Update(ref this);
                         break;
                     }
                 case ParticleBehaviorType.explosive: 
                     {
-                        ExplosiveBehaviorDefines.Update(this);
+                        ExplosiveBehaviorDefines.Update(ref this);
                         break;
                     }
             }
@@ -140,7 +140,7 @@ namespace SpatialGame
 
             if(Settings.SimulationSettings.EnableHeatSimulation)
             {
-                ParticleHeatSim.CalculateParticleTemp(this);
+                ParticleHeatSim.CalculateParticleTemp(ref this);
             }
         }
 
@@ -148,7 +148,7 @@ namespace SpatialGame
         {
             if (Settings.SimulationSettings.EnableHeatSimulation)
             {
-                ParticleHeatSim.CalculateParticleHeatSimOthers(this);
+                ParticleHeatSim.CalculateParticleHeatSimOthers(ref this);
             }
 
         }

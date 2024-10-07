@@ -15,7 +15,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void Update(in Particle particle)
+        public static void Update(ref Particle particle)
         {
             ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.wall.ToByte(), particle.position);
             ParticleSimulation.SafeIdCheckSet(particle.id, particle.position);
