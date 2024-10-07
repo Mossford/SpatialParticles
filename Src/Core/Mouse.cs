@@ -8,6 +8,7 @@ namespace SpatialEngine
     {
         public static IMouse mouse;
         public static Vector2 position;
+        public static Vector2 lastPosition;
         public static bool uiWantMouse;
 
         public static void Init()
@@ -17,6 +18,7 @@ namespace SpatialEngine
         
         public static void Update()
         {
+            lastPosition = position;
             position = mouse.Position;
         }
     }

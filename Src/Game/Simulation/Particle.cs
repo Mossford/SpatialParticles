@@ -36,6 +36,17 @@ namespace SpatialGame
             state = new ParticleState();
         }
 
+        public void Reset()
+        {
+            position = Vector2.Zero;
+            velocity = Vector2.Zero;
+            id = -1;
+            deleteIndex = -1;
+            timeSpawned = 0;
+            propertyIndex = -1;
+            state = new ParticleState();
+        }
+
         /// <summary>
         /// Position check must be updated when pixel pos changed
         /// </summary>
@@ -313,7 +324,7 @@ namespace SpatialGame
             PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
             //might create cache issues?
             //try setting the default values instead
-            ParticleSimulation.particles[id] = new Particle();
+            ParticleSimulation.particles[id].Reset();
         }
 
         /// <summary>

@@ -64,27 +64,101 @@ namespace SpatialGame
         /// <summary>
         /// Shows the area elements can be spawned in
         /// </summary>
-        public static void SpawnParticlesCircleSpawner(Vector2 positionMouse, int radius, bool pressed, int button, string name, bool mode, int selection)
+        public static void SpawnParticlesCircleSpawner(Vector2 positionMouse, Vector2 oldPositionMouse, int radius, bool pressed, int button, string name, bool mode, int selection)
         {
             if (!pressed)
             {
                 return;
             }
             
-            Vector2 position = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
-            position.X = MathF.Floor(position.X);
-            position.Y = MathF.Floor(position.Y);
+            Vector2 newPosTemp = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
+            newPosTemp.X = MathF.Floor(newPosTemp.X);
+            newPosTemp.Y = MathF.Floor(newPosTemp.Y);
 
-            for (int x = (int)position.X - radius; x < position.X + radius; x++)
+            if (positionMouse == oldPositionMouse)
             {
-                for (int y = (int)position.Y - radius; y < position.Y + radius; y++)
+                //create circle of particles
+                for (int x = (int)newPosTemp.X - radius; x < newPosTemp.X + radius; x++)
                 {
-                    if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
-                        continue;
-
-                    float check = (float)Math.Sqrt(((x - position.X) * (x - position.X)) + ((y - position.Y) * (y - position.Y)));
-                    if (check < radius)
+                    for (int y = (int)newPosTemp.Y - radius; y < newPosTemp.Y + radius; y++)
                     {
+                        if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
+                            continue;
+
+                        float check = (float)Math.Sqrt(((x - newPosTemp.X) * (x - newPosTemp.X)) + ((y - newPosTemp.Y) * (y - newPosTemp.Y)));
+                        if (check > radius)
+                            continue;
+                        
+                        Vector2 pos = new Vector2(x, y);
+                        int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
+
+                        if(button == 0 && !mode)
+                        {
+                            if (idToCheck == -1)
+                            {
+                                ParticleSimulation.AddParticle(pos, name);
+                            }
+                            else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
+                            {
+                                //replaced from queue delete may cause issues
+                                ParticleSimulation.particles[idToCheck].Delete();
+                            }
+                        }
+                        else if (button == 0 && mode)
+                        {
+                            if(idToCheck != -1 && selection == 0)
+                            {
+                                ParticleSimulation.particles[idToCheck].state.temperature += 1000f * Globals.deltaTime;
+                            }
+                            if (idToCheck != -1 && selection == 1)
+                            {
+                                ParticleSimulation.particles[idToCheck].state.temperature -= 1000f * Globals.deltaTime;
+                            }
+                        }
+                        else if(button == 1)
+                        {
+                            if (idToCheck != -1)
+                            {
+                                ParticleSimulation.particles[idToCheck].Delete();
+                            }
+                        }
+                    }
+                }
+                
+                return;
+            }
+
+            Vector2 tempPos = oldPositionMouse;
+            Vector2 dir = positionMouse - oldPositionMouse;
+            int step;
+
+            if (Math.Abs(dir.X) > Math.Abs(dir.Y))
+                step = (int)Math.Abs(dir.X);
+            else
+                step = (int)Math.Abs(dir.Y);
+
+            Vector2 increase = dir / step;
+
+            for (int i = 0; i < step; i++)
+            {
+                tempPos += increase;
+                
+                Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (tempPos / (Vector2)Globals.window.Size);
+                newPos.X = MathF.Floor(newPos.X);
+                newPos.Y = MathF.Floor(newPos.Y);
+                
+                //create circle of particles
+                for (int x = (int)newPos.X - radius; x < newPos.X + radius; x++)
+                {
+                    for (int y = (int)newPos.Y - radius; y < newPos.Y + radius; y++)
+                    {
+                        if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
+                            continue;
+
+                        float check = (float)Math.Sqrt(((x - newPos.X) * (x - newPos.X)) + ((y - newPos.Y) * (y - newPos.Y)));
+                        if (check > radius)
+                            continue;
+                        
                         Vector2 pos = new Vector2(x, y);
                         int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
