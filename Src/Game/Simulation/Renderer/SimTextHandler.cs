@@ -278,9 +278,10 @@ namespace SpatialGame
     public static class SimTextHandler
     {
         public static stbtt_fontinfo font;
+        static byte[] fontData;
         public unsafe static void Init()
         {
-            byte[] fontData = File.ReadAllBytes(SpatialEngine.Resources.FontPath + "JetBrainsMono-Regular.ttf");
+            fontData = File.ReadAllBytes(SpatialEngine.Resources.FontPath + "JetBrainsMono-Regular.ttf");
             font = new stbtt_fontinfo();
             
             fixed (byte* fontDataPtr = fontData)
