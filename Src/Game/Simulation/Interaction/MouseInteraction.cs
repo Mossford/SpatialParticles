@@ -70,22 +70,22 @@ namespace SpatialGame
             {
                 return;
             }
-            
-            Vector2 newPosTemp = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
-            newPosTemp.X = MathF.Floor(newPosTemp.X);
-            newPosTemp.Y = MathF.Floor(newPosTemp.Y);
 
             if (positionMouse == oldPositionMouse)
             {
+                Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
+                newPos.X = MathF.Floor(newPos.X);
+                newPos.Y = MathF.Floor(newPos.Y);
+                
                 //create circle of particles
-                for (int x = (int)newPosTemp.X - radius; x < newPosTemp.X + radius; x++)
+                for (int x = (int)newPos.X - radius; x < newPos.X + radius; x++)
                 {
-                    for (int y = (int)newPosTemp.Y - radius; y < newPosTemp.Y + radius; y++)
+                    for (int y = (int)newPos.Y - radius; y < newPos.Y + radius; y++)
                     {
                         if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
                             continue;
 
-                        float check = (float)Math.Sqrt(((x - newPosTemp.X) * (x - newPosTemp.X)) + ((y - newPosTemp.Y) * (y - newPosTemp.Y)));
+                        float check = (float)Math.Sqrt(((x - newPos.X) * (x - newPos.X)) + ((y - newPos.Y) * (y - newPos.Y)));
                         if (check > radius)
                             continue;
                         
