@@ -29,6 +29,7 @@ namespace SpatialGame
         public static Matrix4x4 mat;
 
         public static int resSwitcher = 2;
+        public static int resSwitcherDir = -1;
         public static Vector2[] resolutions = new Vector2[]
         {
             new Vector2(128, 72),
@@ -37,14 +38,15 @@ namespace SpatialGame
             new Vector2(512, 288),
             new Vector2(640, 360),
             new Vector2(960, 540),
-            new Vector2(1280, 720),
         };
 
         public static unsafe void Init(bool resChange)
         {
             if(resChange)
             {
-                resSwitcher++;
+                resSwitcher += resSwitcherDir;
+                if (resSwitcher < 0)
+                    resSwitcher = resolutions.Length - 1;
                 resSwitcher %= resolutions.Length;
             }
             width = (int)resolutions[resSwitcher].X;

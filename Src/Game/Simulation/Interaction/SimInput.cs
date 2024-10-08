@@ -70,17 +70,25 @@ namespace SpatialGame
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
                 GameManager.changeResolution = true;
+                PixelColorer.resSwitcherDir = -1;
                 GameManager.ReInitGame();
                 initButton = true;
             }
-            else if (Input.IsKeyDown(Key.R) && !initButton)
+            if (Input.IsKeyDown(Key.G) && !initButton)
+            {
+                GameManager.changeResolution = true;
+                PixelColorer.resSwitcherDir = 1;
+                GameManager.ReInitGame();
+                initButton = true;
+            }
+            if (Input.IsKeyDown(Key.R) && !initButton)
             {
                 GameManager.changeResolution = false;
                 GameManager.ReInitGame();
                 initButton = true;
             }
 
-            if (Input.IsKeyUp(Key.T) && Input.IsKeyUp(Key.R) && initButton)
+            if (Input.IsKeyUp(Key.T) && Input.IsKeyUp(Key.R) && Input.IsKeyUp(Key.G) && initButton)
             {
                 initButton = false;
                 GameManager.changeResolution = false;
