@@ -290,7 +290,7 @@
     "canMove": true,
     "heatingProperties": {
       "enableHeatSim": true,
-      "temperature": 1000000.0,
+      "temperature": 1000.0,
       "autoIgnite": 0.0,
       "heatTransferRate": 0.5, // (50 percent of heat transfers)
       "canStateChange": false,
@@ -551,30 +551,30 @@
   },
   {
     "name": "LiquidMetal",
-    "moveType": 1, // Unmoving movement
-    "behaveType": 1, // Solid behavior
+    "moveType": 3, // liquid movement
+    "behaveType": 2, // liquid behavior
     "color": {
       "x": 95,
       "y": 95,
       "z": 95,
       "w": 255
     },
-    "viscosity": 0,
-    "xBounce": 0.0,
-    "yBounce": 0.0,
+    "viscosity": 8,
+    "xBounce": 0.3,
+    "yBounce": 0.4,
     "canMove": true,
     "heatingProperties": {
       "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
-      "heatTransferRate": 0.100, // (85 percent of heat transfers)
+      "heatTransferRate": 0.95, // (95 percent of heat transfers)
       "canStateChange": true,
       "stateChangeTemps": [
-        2000.0,
-        10000000.0
+        -274.0,
+        500.0
       ],
       "stateChangeViscosity": [
-        5,
+        0,
         10
       ],
       "stateChangeColors": [
@@ -600,7 +600,7 @@
       "canColorChange": [
         true,
         true,
-        true
+        false
       ]
     }
   },
@@ -660,7 +660,7 @@
     },
     "explosiveProperties": {
       "range": 10.0,
-      "power": 5.0,
+      "power": 1.0,
       "flashPoint": 500.0,
       "heatOutput": 1300.0
     }

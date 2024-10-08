@@ -45,6 +45,12 @@ namespace SpatialGame
 
                         //------safe to access the arrays directly------
 
+                        int rand = ParticleSimulation.random.Next(0, 10);
+                        if (rand == 0 && ParticleSimulation.particles[particleID].GetParticleBehaviorType() != ParticleBehaviorType.wall)
+                        {
+                            ParticleSimulation.particles[particleID].Delete();
+                        }
+                        
                         float powerScale = ((properties.explosiveProperties.range / (newPos - particle.position).Length()) - 1) * properties.explosiveProperties.power;
                         powerScale = MathF.Max(MathF.Min(powerScale, 1f), 0f);
                         ParticleSimulation.particles[particleID].state.temperature += properties.explosiveProperties.heatOutput * powerScale;
