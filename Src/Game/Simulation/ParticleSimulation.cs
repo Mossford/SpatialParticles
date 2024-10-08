@@ -61,9 +61,10 @@ namespace SpatialGame
             }
 
             //initalize all particles so that its cache friendly
+            Particle temParticle = new Particle();
             for (int i = 0; i < particles.Length; i++)
             {
-                particles[i] = new Particle();
+                particles[i] = temParticle;
             }
 
             for (int x = 0; x < PixelColorer.width; x++)
