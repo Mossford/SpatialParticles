@@ -134,16 +134,10 @@ namespace SpatialGame
 
             Vector2 tempPos = oldPositionMouse;
             Vector2 dir = positionMouse - oldPositionMouse;
-            int step;
 
-            if (Math.Abs(dir.X) > Math.Abs(dir.Y))
-                step = (int)Math.Abs(dir.X);
-            else
-                step = (int)Math.Abs(dir.Y);
+            Vector2 increase = dir / radius;
 
-            Vector2 increase = dir / step;
-
-            for (int i = 0; i < step; i++)
+            for (int i = 0; i < radius; i++)
             {
                 tempPos += increase;
                 

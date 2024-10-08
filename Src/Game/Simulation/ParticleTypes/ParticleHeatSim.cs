@@ -14,11 +14,14 @@ namespace SpatialGame
     {
         static int temperatureColorCount;
         static Vector4Byte[] temperatureColors;
+        //ids of the current particle being calculated
+        static int[] suroundingIdOfParticle;
 
         public static void Init()
         {
             temperatureColorCount = 10000;
             temperatureColors = new Vector4Byte[temperatureColorCount];
+            suroundingIdOfParticle = new int[8];
 
             for (int i = 0; i < temperatureColorCount; i++)
             {
@@ -50,8 +53,8 @@ namespace SpatialGame
             //get all particles around the current particle
             for (int i = 0; i < 8; i++)
             {
-                particle.idsSurrounding[i] = ParticleSimulation.SafeIdCheckGet(particle.position + ParticleHelpers.surroundingPos[i]);
-                if (particle.idsSurrounding[i] != -1)
+                suroundingIdOfParticle[i] = ParticleSimulation.SafeIdCheckGet(particle.position + ParticleHelpers.surroundingPos[i]);
+                if (suroundingIdOfParticle[i] != -1)
                 {
                     idsSurroundCount++;
                 }
@@ -63,12 +66,12 @@ namespace SpatialGame
             //temperature transfers
             for (int i = 0; i < 8; i++)
             {
-                if (particle.idsSurrounding[i] == -1)
+                if (suroundingIdOfParticle[i] == -1)
                     continue;
 
-                float heatTrans = particle.state.temperature * ParticleSimulation.particles[particle.idsSurrounding[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
+                float heatTrans = particle.state.temperature * ParticleSimulation.particles[suroundingIdOfParticle[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
                 particle.state.temperatureTemp -= heatTrans;
-                ParticleSimulation.particles[particle.idsSurrounding[i]].state.temperatureTemp += heatTrans;
+                ParticleSimulation.particles[suroundingIdOfParticle[i]].state.temperatureTemp += heatTrans;
             }
         }
 

@@ -23,8 +23,6 @@ namespace SpatialGame
         public int propertyIndex;
         public ParticleState state;
 
-        public int[] idsSurrounding = new int[8];
-
         public Particle()
         {
             position = Vector2.Zero;
@@ -348,7 +346,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 64 + ParticleState.GetSize();
+            return 32 + ParticleState.GetSize();
         }
 
 #if RELEASE
