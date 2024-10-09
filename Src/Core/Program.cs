@@ -40,7 +40,7 @@ namespace SpatialEngine
         public const int SCR_HEIGHT = 1080;
         public static int MAX_SCR_WIDTH;
         public static int MAX_SCR_HEIGHT;
-        public static string EngVer = "PAR:0.1 | ENG:0.6.8 Stable";
+        public static string EngVer = "PAR:0.4 | ENG:0.6.8 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";
 
@@ -84,7 +84,7 @@ namespace SpatialEngine
                 WindowOptions options = WindowOptions.Default with
                 {
                     Size = new Vector2D<int>(SCR_WIDTH, SCR_HEIGHT),
-                    Title = "SpatialParticles 0.1",
+                    Title = "SpatialParticles 0.4",
                     VSync = vsync,
                     PreferredDepthBufferBits = 24,
                     API = glApi,

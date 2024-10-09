@@ -182,7 +182,7 @@
       "enableHeatSim": true,
       "temperature": 0.0,
       "autoIgnite": 0.0,
-      "heatTransferRate": 0.2, // (20 percent of heat transfers)
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
       "canStateChange": true,
       "stateChangeTemps": [
         0.0, //water liquid temp
