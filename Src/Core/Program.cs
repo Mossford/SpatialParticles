@@ -31,7 +31,7 @@ using Button = SpatialEngine.Rendering.Button;
 namespace SpatialEngine
 {
 
-    public static class Globals
+    public static unsafe class Globals
     {
         public static GL gl;
         public static GraphicsAPI glApi = GraphicsAPI.Default;
@@ -40,7 +40,7 @@ namespace SpatialEngine
         public const int SCR_HEIGHT = 1080;
         public static int MAX_SCR_WIDTH;
         public static int MAX_SCR_HEIGHT;
-        public static string EngVer = "PAR:0.4 | ENG:0.6.8 Stable";
+        public static string EngVer = "PAR:0.4 | ENG:0.7 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";
 
@@ -57,7 +57,7 @@ namespace SpatialEngine
         public static uint drawCallCount = 0;
         public static float totalTime = 0.0f;
         public static float deltaTime = 0.0f;
-        public const float fixedUpdateTime = 16.7f;
+        public const float fixedUpdateTime = 16.667f;
 
         /// <summary>
         /// In Seconds
@@ -100,7 +100,6 @@ namespace SpatialEngine
         static unsafe void OnLoad() 
         {
             gl = window.CreateOpenGL();
-            //gl = GL.GetApi(window);
             byte* text = gl.GetString(GLEnum.Renderer);
             int textLength = 0;
             while (text[textLength] != 0)
@@ -184,7 +183,7 @@ namespace SpatialEngine
 
         static void FixedUpdate(float dt)
         {
-            GameManager.FixedUpdateGame(dt);
+            GameManager.FixedUpdateGame(dt / 1000f);
         }
 
         static unsafe void OnRender(double dt)

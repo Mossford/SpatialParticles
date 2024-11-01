@@ -39,7 +39,6 @@ namespace SpatialGame
 
         public static void InitParticleSim()
         {
-
             particles = new Particle[PixelColorer.width * PixelColorer.height];
             freeParticleSpots = new Queue<int>();
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
