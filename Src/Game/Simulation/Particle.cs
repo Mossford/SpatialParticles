@@ -15,6 +15,7 @@ namespace SpatialGame
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
+        public Vector2 pastVelocity { get; set; }
         public int id { get; set; }
         public int deleteIndex { get; set; }
         public float timeSpawned { get; set; }
@@ -26,6 +27,7 @@ namespace SpatialGame
         {
             position = Vector2.Zero;
             velocity = Vector2.Zero;
+            pastVelocity = Vector2.Zero;
             id = -1;
             deleteIndex = -1;
             timeSpawned = 0;
@@ -37,6 +39,7 @@ namespace SpatialGame
         {
             position = Vector2.Zero;
             velocity = Vector2.Zero;
+            pastVelocity = Vector2.Zero;
             id = -1;
             deleteIndex = -1;
             timeSpawned = 0;
@@ -47,11 +50,13 @@ namespace SpatialGame
         /// <summary>
         /// Position check must be updated when pixel pos changed
         /// </summary>
-        public void Update()
+        public void Update(float delta)
         {
             if (!state.canMove)
                 return;
 
+            pastVelocity = velocity;
+            
             switch (GetParticleMovementType())
             {
                 case ParticleMovementType.unmoving:
@@ -61,16 +66,22 @@ namespace SpatialGame
                     }
                 case ParticleMovementType.particle:
                     {
+                        velocity += new Vector2(0,0.5f);
+                        MoveParticle();
                         ParticleMovementDefines.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.liquid:
-                {
+                    {
+                        velocity += new Vector2(0,0.5f);
+                        MoveParticle();
                         LiquidMovement.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.gas:
                     {
+                        velocity += new Vector2(0,-0.5f);
+                        MoveParticle();
                         GasMovementDefines.Update(ref this);
                         break;
                     }
@@ -157,7 +168,6 @@ namespace SpatialGame
             {
                 ParticleHeatSim.CalculateParticleHeatSimOthers(ref this);
             }
-
         }
 
 
@@ -213,8 +223,8 @@ namespace SpatialGame
         {
             //find new position
             Vector2 posMove = position + velocity;
-            posMove.X = MathF.Floor(posMove.X);
-            posMove.Y = MathF.Floor(posMove.Y);
+            posMove.X = MathF.Round(posMove.X);
+            posMove.Y = MathF.Round(posMove.Y);
 
             Vector2 dir = posMove - position;
             int step;
@@ -229,8 +239,9 @@ namespace SpatialGame
             for (int i = 0; i < step; i++)
             {
                 Vector2 newPos = position + increase;
-                newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
-                if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
+                newPos = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
+                int otherId = ParticleSimulation.SafeIdCheckGet(newPos);
+                if (otherId == -1)
                 {
                     if (!BoundsCheck(newPos))
                     {
@@ -240,7 +251,12 @@ namespace SpatialGame
                     }
                 }
                 else
+                {
+                    //hit something so transfer velocity
+                    //ParticleSimulation.particles[otherId].velocity = velocity;
+                    //velocity = velocity;
                     return;
+                }
 
                 //------safe to access the arrays directly------
 
@@ -269,12 +285,13 @@ namespace SpatialGame
                 return;
             }
 
-            ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), position);
-            ParticleSimulation.SafeIdCheckSet(-1, position);
+            int index = PixelColorer.PosToIndexUnsafe(position);
+            ParticleSimulation.positionCheck[index] = ParticleBehaviorType.empty.ToByte();
+            ParticleSimulation.idCheck[index] = -1;
             position += dir;
-            velocity = dir;
-            ParticleSimulation.SafePositionCheckSet(GetParticleBehaviorType().ToByte(), position);
-            ParticleSimulation.SafeIdCheckSet(id, position);
+            index = PixelColorer.PosToIndexUnsafe(position);
+            ParticleSimulation.positionCheck[index] = GetParticleBehaviorType().ToByte();
+            ParticleSimulation.idCheck[index] = id;
         }
 
         /// <summary>

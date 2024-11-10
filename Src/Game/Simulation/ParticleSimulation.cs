@@ -128,7 +128,7 @@ namespace SpatialGame
             //DebugSimulation.Init();
         }
 
-        public static void RunParticleSim()
+        public static void RunParticleSim(float delta)
         {
             //DebugSimulation.Update();
             //First pass calculations
@@ -160,7 +160,7 @@ namespace SpatialGame
 
                 //reset its color before it moves
                 PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
-                particles[i].Update();
+                particles[i].Update(delta);
                 particles[i].UpdateGeneralSecond();
                 if (particles[i].id != -1 || particles[i].BoundsCheck(particles[i].position))
                 {

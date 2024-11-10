@@ -38,30 +38,32 @@ namespace SpatialGame
                 particle.SwapParticle(new Vector2(particle.position.X + 1, particle.position.Y + 1), (ParticleBehaviorType)posCheckRU);
                 return;
             }
-
+            
+            //check around particle for collision
+            
             //if there is air under the solid
-            bool grounded = posCheckBelow == ParticleBehaviorType.empty.ToByte();
-            if (grounded)
+            bool inAir = posCheckBelow == ParticleBehaviorType.empty.ToByte();
+            float velocityMag = particle.pastVelocity.Length();
+            
+            if (inAir == false)
             {
-                particle.velocity = new Vector2(0, particle.velocity.Y);
-                particle.velocity += new Vector2(0, 0.5f);
-                particle.MoveParticle();
-                return;
+                particle.velocity = new Vector2(0, velocityMag * particle.state.yBounce);
+                if (particle.velocity.Length() < 0.01f)
+                {
+                    bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
+                    bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte();
+                    
+                    if (LUnder && num == 0)
+                    {
+                        particle.MoveParticleOne(new Vector2(-1, 1));
+                    }
+                    if (RUnder && num == 1)
+                    {
+                        particle.MoveParticleOne(new Vector2(1, 1));
+                    }
+                }
             }
-            bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
-            if (LUnder && num == 0)
-            {
-                particle.velocity = new Vector2(-1 - (particle.velocity.Y * particle.state.xBounce), 1 - (particle.velocity.Y * particle.state.yBounce));
-                particle.MoveParticle();
-                return;
-            }
-            bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte();
-            if (RUnder && num == 1)
-            {
-                particle.velocity = new Vector2(1 + (particle.velocity.Y * particle.state.xBounce), 1 - (particle.velocity.Y * particle.state.yBounce));
-                particle.MoveParticle();
-                return;
-            }
+            
         }
     }
 }

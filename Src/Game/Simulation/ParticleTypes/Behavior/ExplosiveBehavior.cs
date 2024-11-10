@@ -28,11 +28,11 @@ namespace SpatialGame
                 //ray cast 60 times around
                 for (int i = 0; i < 360; i += 360 / 60)
                 {
-                    Vector2 dir = new Vector2(MathF.Cos(i * conv), MathF.Sin(i * conv));
+                    Vector2 dir = Vector2.Normalize(new Vector2(MathF.Cos(i * conv), MathF.Sin(i * conv)));
 
                     Vector2 newPos = particle.position;
 
-                    for (int g = 0; g < properties.explosiveProperties.range; g++)
+                    for (int g = (int)properties.explosiveProperties.range; g >= 0; g--)
                     {
                         newPos += dir;
                         Vector2 position = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
@@ -44,16 +44,22 @@ namespace SpatialGame
                         }
 
                         //------safe to access the arrays directly------
-
+                        
+                        float powerScale = ((properties.explosiveProperties.range / (particle.position - newPos).Length()) - 1) * properties.explosiveProperties.power;
+                        powerScale = MathF.Max(MathF.Min(powerScale, 1f), 0f);
+                        
                         int rand = ParticleSimulation.random.Next(0, 10);
                         if (rand == 0 && ParticleSimulation.particles[particleID].GetParticleBehaviorType() != ParticleBehaviorType.wall)
                         {
                             ParticleSimulation.particles[particleID].Delete();
                         }
+                        else
+                        {
+                            continue;
+                        }
                         
-                        float powerScale = ((properties.explosiveProperties.range / (newPos - particle.position).Length()) - 1) * properties.explosiveProperties.power;
-                        powerScale = MathF.Max(MathF.Min(powerScale, 1f), 0f);
                         ParticleSimulation.particles[particleID].state.temperature += properties.explosiveProperties.heatOutput * powerScale;
+                        ParticleSimulation.particles[particleID].velocity = dir * 2 * properties.explosiveProperties.power;
                     }
                 }
 

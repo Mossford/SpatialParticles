@@ -122,7 +122,7 @@
     "viscosity": 0,
     "xBounce": 0.0,
     "yBounce": 0.0,
-    "canMove": true,
+    "canMove": false,
     "heatingProperties": {
       "enableHeatSim": false,
       "temperature": 0.0,
@@ -659,8 +659,8 @@
       ]
     },
     "explosiveProperties": {
-      "range": 10.0,
-      "power": 1.0,
+      "range": 50.0,
+      "power": 5.0,
       "flashPoint": 500.0,
       "heatOutput": 1300.0
     }
@@ -720,10 +720,10 @@
       ]
     },
     "explosiveProperties": {
-      "range": 10.0,
-      "power": 1.0,
+      "range": 25.0,
+      "power": 3.0,
       "flashPoint": 300.0,
-      "heatOutput": 600.0
+      "heatOutput": 800.0
     }
   },
   {

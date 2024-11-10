@@ -20,34 +20,34 @@ namespace SpatialGame
 
             //gravity stuff
             int posCheckBelow = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X, particle.position.Y - 1));
-            bool ground = posCheckBelow == ParticleBehaviorType.empty.ToByte();
-            if (ground && num == 2)
-            {
-                particle.velocity = new Vector2(0, particle.velocity.Y);
-                particle.velocity -= new Vector2(0, 1.8f);
-                particle.MoveParticle();
-                return;
-            }
             int posCheckLU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y - 1));
             int posCheckL = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y));
-            bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte() && posCheckL == ParticleBehaviorType.empty.ToByte();
-            if (LUnder && num == 0)
-            {
-                particle.velocity = new Vector2(-1, -1);
-                particle.MoveParticle();
-                return;
-            }
             int posCheckRU = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y - 1));
             int posCheckR = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
-            bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte() && posCheckR == ParticleBehaviorType.empty.ToByte();
-            if (RUnder && num == 1)
+            
+            bool inAir = posCheckBelow == ParticleBehaviorType.empty.ToByte();
+            float velocityMag = particle.pastVelocity.Length();
+            if (inAir == false)
             {
-                particle.velocity = new Vector2(1, -1);
-                particle.MoveParticle();
-                return;
+                particle.velocity = new Vector2(0, velocityMag * particle.state.yBounce);
+                if (particle.velocity.Length() < 0.01f)
+                {
+                    bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
+                    bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte();
+                    
+                    if (LUnder && num == 0)
+                    {
+                        particle.MoveParticleOne(new Vector2(-1, -1));
+                    }
+                    if (RUnder && num == 1)
+                    {
+                        particle.MoveParticleOne(new Vector2(1, -1));
+                    }
+                }
             }
+            
             bool Left = posCheckL == ParticleBehaviorType.empty.ToByte();
-            if (!ground && Left && num == 0)
+            if (!inAir && Left && num == 0)
             {
                 for (int i = 0; i < particle.state.viscosity; i++)
                 {
@@ -64,11 +64,9 @@ namespace SpatialGame
                         break;
                     }
                 }
-
-                return;
             }
             bool Right = posCheckR == ParticleBehaviorType.empty.ToByte();
-            if (!ground && Right && num == 1)
+            if (!inAir && Right && num == 1)
             {
                 for (int i = 0; i < particle.state.viscosity; i++)
                 {
@@ -85,8 +83,6 @@ namespace SpatialGame
                         break;
                     }
                 }
-
-                return;
             }
         }
     }

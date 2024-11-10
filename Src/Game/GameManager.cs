@@ -74,7 +74,7 @@ namespace SpatialGame
         public static void FixedUpdateGame(float dt)
         {
             SimInput.FixedUpdate();
-            ParticleSimulation.RunParticleSim();
+            ParticleSimulation.RunParticleSim(dt);
         }
     }
 }
