@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <RollForward>Major</RollForward>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
@@ -13,7 +13,7 @@
     <AssemblyName>Spatialparticles</AssemblyName>
     <ApplicationIcon>IconSpace.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <SignAssembly>False</SignAssembly>
+    <SignAssembly>true</SignAssembly>
     <Title>Spatialparticles</Title>
     <Authors>Mossfurd</Authors>
     <Copyright>Mossfurd</Copyright>
@@ -21,8 +21,6 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<Optimize>true</Optimize>
 		<DebugType>none</DebugType>
-		<PublishSingleFile>true</PublishSingleFile>
-		<EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
 	</PropertyGroup>
   <ItemGroup>
     <None Remove="IconSpace.ico" />
