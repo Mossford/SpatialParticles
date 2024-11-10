@@ -725,5 +725,115 @@
       "flashPoint": 300.0,
       "heatOutput": 600.0
     }
+  },
+  {
+    "name": "Heater",
+    "moveType": 1, // unmoving movement
+    "behaveType": 7, // Heating behavior
+    "color": {
+      "x": 255,
+      "y": 0,
+      "z": 0,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "enableHeatSim": true,
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ],
+      "stateChangeViscosity": [
+        0,
+        0
+      ],
+      "stateChangeColors": [
+        {
+          "x": 255,
+          "y": 0,
+          "z": 0,
+          "w": 255
+        },
+        {
+          "x": 255,
+          "y": 0,
+          "z": 0,
+          "w": 255
+        },
+        {
+          "x": 255,
+          "y": 0,
+          "z": 0,
+          "w": 255
+        }
+      ],
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  {
+    "name": "Cooler",
+    "moveType": 1, // unmoving movement
+    "behaveType": 8, // Cooling behavior
+    "color": {
+      "x": 0,
+      "y": 0,
+      "z": 255,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.0,
+    "yBounce": 0.0,
+    "canMove": true,
+    "heatingProperties": {
+      "enableHeatSim": true,
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 1.0, // (100 percent of heat transfers)
+      "canStateChange": false,
+      "stateChangeTemps": [
+        0.0,
+        0.0
+      ],
+      "stateChangeViscosity": [
+        0,
+        0
+      ],
+      "stateChangeColors": [
+        {
+          "x": 0,
+          "y": 0,
+          "z": 255,
+          "w": 255
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 255,
+          "w": 255
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 255,
+          "w": 255
+        }
+      ],
+      "canColorChange": [
+        false,
+        false,
+        false
+      ]
+    }
   }
 ]
