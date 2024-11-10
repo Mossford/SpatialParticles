@@ -1,5 +1,4 @@
 ﻿using Silk.NET.Core;
-using Silk.NET.GLFW;
 using SpatialEngine;
 using System;
 using System.Collections.Generic;
@@ -107,6 +106,16 @@ namespace SpatialGame
                 case ParticleBehaviorType.explosive: 
                     {
                         ExplosiveBehaviorDefines.Update(ref this);
+                        break;
+                    }
+                case ParticleBehaviorType.heater:
+                    {
+                        HeaterBehaviorDefines.Update(ref this);
+                        break;
+                    }
+                case ParticleBehaviorType.cooler:
+                    {
+                        CoolerBehaviorDefines.Update(ref this);
                         break;
                     }
             }

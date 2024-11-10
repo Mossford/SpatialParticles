@@ -164,6 +164,8 @@ namespace SpatialGame
         fire = 4,
         explosive = 5,
         wall = 6,
+        heater = 7,
+        cooler = 8,
     }
 
     public enum ParticleMovementType : byte
