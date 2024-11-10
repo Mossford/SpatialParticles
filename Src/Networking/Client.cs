@@ -68,6 +68,7 @@ namespace SpatialEngine.Networking
         {
             client.Disconnect();
             disconnected = true;
+            NetworkManager.running = false;
         }
 
         static float accu = 0f;
@@ -88,9 +89,9 @@ namespace SpatialEngine.Networking
 
                 //get ping every 1 seconds and if nothing can be done disconnect from server as time out
                 accu += deltaTime;
-                while (accu >= 0.7f)
+                while (accu >= 700f)
                 {
-                    accu -= 0.7f;
+                    accu -= 700f;
                     GetPingAsync();
                 }
             }

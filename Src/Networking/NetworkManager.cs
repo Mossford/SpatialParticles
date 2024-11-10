@@ -14,6 +14,7 @@ namespace SpatialEngine.Networking
         public static SpatialServer server;
         public static bool isServer;
         public static bool didInit;
+        public static bool running;
 
         public static void Init()
         {
@@ -26,6 +27,7 @@ namespace SpatialEngine.Networking
             client.Start("127.0.0.1", 58301);
             didInit = true;
             isServer = false;
+            running = true;
         }
 
         public static void InitServer() 
@@ -34,6 +36,7 @@ namespace SpatialEngine.Networking
             server.Start();
             didInit = true;
             isServer = true;
+            running = true;
         }
 
         public static void Cleanup()
@@ -43,10 +46,12 @@ namespace SpatialEngine.Networking
                 if(isServer)
                 {
                     server.Close();
+                    isServer = false;
                 }
                 else
                 {
                     client.Close();
+                    isServer = false;
                 }
             }
         }

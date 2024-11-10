@@ -142,7 +142,7 @@ namespace SpatialEngine.Rendering
         {
             ImGui.SetNextWindowSize(new Vector2(600, 420), ImGuiCond.FirstUseEver);
             ImGui.Begin("Network Viewer");
-            if(!NetworkManager.didInit)
+            if(!NetworkManager.running)
             {
                 if(ImGui.Button("StartServer"))
                 {

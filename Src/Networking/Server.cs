@@ -64,6 +64,8 @@ namespace SpatialEngine.Networking
         {
             stopping = true;
             server.Stop();
+            NetworkManager.isServer = false;
+            NetworkManager.running = false;
         }
 
         public void Update(float deltaTime)

@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
-
+using SpatialEngine.Networking;
 
 //Custom Engine things
 using static SpatialEngine.Rendering.MeshUtils;
@@ -95,6 +95,14 @@ namespace SpatialEngine
                 window.Render += OnRender;
                 window.Run();
             }
+            else if (args[0] == "server")
+            {
+                //handles all the initilization of scene and physics and netowrking for server
+                //and starts running the update loop
+                HeadlessServer.Init();
+            }
+            
+            NetworkManager.Cleanup();
         }
 
         static unsafe void OnLoad() 
@@ -136,6 +144,8 @@ namespace SpatialEngine
             //init game
             GameManager.InitGame();
             MainImGui.Init();
+            NetworkManager.Init();
+            player = new Player(Vector2.Zero);
 
             //get the display size
             window.WindowState = WindowState.Fullscreen;
@@ -184,7 +194,25 @@ namespace SpatialEngine
 
         static void FixedUpdate(float dt)
         {
-            GameManager.FixedUpdateGame(dt);
+            if (NetworkManager.running)
+            {
+                if(NetworkManager.isServer)
+                {
+                    NetworkManager.server.Update(dt);
+                }
+                else
+                {
+                    if(!NetworkManager.client.IsConnected())
+                    {
+                        GameManager.FixedUpdateGame(dt);
+                    }
+                    NetworkManager.client.Update(dt);
+                }
+            }
+            else
+            {
+                GameManager.FixedUpdateGame(dt);
+            }
         }
 
         static unsafe void OnRender(double dt)
