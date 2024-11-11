@@ -56,8 +56,7 @@ namespace SpatialGame
 
                     if (ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - (i + 1), particle.position.Y)) == ParticleBehaviorType.empty.ToByte())
                     {
-                        particle.velocity = new Vector2(-1, 0);
-                        particle.MoveParticle();
+                        particle.MoveParticleOne(new Vector2(-1, 0));
                     }
                     else
                     {
@@ -75,8 +74,7 @@ namespace SpatialGame
 
                     if (ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + (i + 1), particle.position.Y)) == ParticleBehaviorType.empty.ToByte())
                     {
-                        particle.velocity = new Vector2(1, 0);
-                        particle.MoveParticle();
+                        particle.MoveParticleOne(new Vector2(1, 0));
                     }
                     else
                     {
