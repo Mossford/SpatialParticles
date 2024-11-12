@@ -277,8 +277,12 @@ namespace SpatialGame
 #endif
         public void MoveParticleOne(Vector2 dir)
         {
+            Vector2 posMove = position + dir;
+            posMove.X = MathF.Round(posMove.X);
+            posMove.Y = MathF.Round(posMove.Y);
+            
             //push to simulation to be deleted
-            if(!BoundsCheck(position + dir))
+            if(!BoundsCheck(posMove))
             {
                 velocity = dir;
                 QueueDelete();
@@ -288,7 +292,7 @@ namespace SpatialGame
             int index = PixelColorer.PosToIndexUnsafe(position);
             ParticleSimulation.positionCheck[index] = ParticleBehaviorType.empty.ToByte();
             ParticleSimulation.idCheck[index] = -1;
-            position += dir;
+            position = posMove;
             index = PixelColorer.PosToIndexUnsafe(position);
             ParticleSimulation.positionCheck[index] = GetParticleBehaviorType().ToByte();
             ParticleSimulation.idCheck[index] = id;

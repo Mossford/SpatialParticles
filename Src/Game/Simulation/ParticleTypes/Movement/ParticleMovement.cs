@@ -57,7 +57,7 @@ namespace SpatialGame
                     {
                         particle.MoveParticleOne(new Vector2(-1, 1));
                     }
-                    if (RUnder && num == 1)
+                    else if (RUnder && num == 1)
                     {
                         particle.MoveParticleOne(new Vector2(1, 1));
                     }

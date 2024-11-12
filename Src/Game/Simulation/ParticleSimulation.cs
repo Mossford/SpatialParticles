@@ -71,8 +71,8 @@ namespace SpatialGame
                 AddParticle(new Vector2(x, 0), "Wall");
                 AddParticle(new Vector2(x, PixelColorer.height - 1), "Wall");
             }
-
-            for (int y = 0; y < PixelColorer.height; y++)
+            
+            for (int y = 1; y < PixelColorer.height - 1; y++)
             {
                 AddParticle(new Vector2(0, y), "Wall");
                 AddParticle(new Vector2(PixelColorer.width - 1, y), "Wall");
