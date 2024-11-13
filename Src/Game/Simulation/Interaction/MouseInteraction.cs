@@ -75,7 +75,7 @@ namespace SpatialGame
                 return;
             }
 
-            if (positionMouse == oldPositionMouse)
+            if (positionMouse == oldPositionMouse || (positionMouse - oldPositionMouse).Length() < radius)
             {
                 Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
                 newPos.X = MathF.Floor(newPos.X);
