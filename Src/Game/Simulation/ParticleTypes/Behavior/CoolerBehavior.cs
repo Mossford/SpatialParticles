@@ -19,7 +19,7 @@ namespace SpatialGame
 #endif
         public static void Update(ref Particle particle)
         {
-            particle.state.temperature--;
+            particle.state.temperature -= 100;
         }
     }
 }

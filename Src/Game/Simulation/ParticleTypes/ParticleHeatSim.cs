@@ -69,7 +69,9 @@ namespace SpatialGame
                 if (suroundingIdOfParticle[i] == -1)
                     continue;
 
-                float heatTrans = particle.state.temperature * ParticleSimulation.particles[suroundingIdOfParticle[i]].GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
+                Particle other = ParticleSimulation.particles[suroundingIdOfParticle[i]];
+                
+                float heatTrans = particle.state.temperature * other.GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
                 particle.state.temperatureTemp -= heatTrans;
                 ParticleSimulation.particles[suroundingIdOfParticle[i]].state.temperatureTemp += heatTrans;
             }
