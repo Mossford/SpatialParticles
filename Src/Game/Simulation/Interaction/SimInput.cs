@@ -130,13 +130,13 @@ namespace SpatialGame
         {
             if (Input.IsKeyDown(Key.ShiftLeft) && Input.IsKeyUp(Key.ControlLeft))
             {
-                mouseSelection = (mouseSelection - (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
+                mouseSelection = (mouseSelection + (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;
                 if(mouseSelection < 0)
                     mouseSelection = ParticleResourceHandler.particleIndexes.Length - 1;
             }
             else if(Input.IsKeyUp(Key.ShiftLeft) && Input.IsKeyDown(Key.ControlLeft))
             {
-                mouseSelection = (mouseSelection - (int)wheel.Y) % maxPropertySelectionChange;
+                mouseSelection = (mouseSelection + (int)wheel.Y) % maxPropertySelectionChange;
                 if (mouseSelection < 0)
                     mouseSelection = maxPropertySelectionChange - 1;
             }

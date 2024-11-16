@@ -47,7 +47,7 @@ namespace SpatialGame
             
             if (inAir == false)
             {
-                particle.velocity = new Vector2(0, velocityMag * particle.state.yBounce);
+                particle.velocity = new Vector2(0, -velocityMag * particle.state.yBounce);
                 if (particle.velocity.Length() < 0.01f)
                 {
                     bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
