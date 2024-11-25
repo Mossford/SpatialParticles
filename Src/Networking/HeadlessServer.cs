@@ -43,7 +43,7 @@ namespace SpatialEngine.Networking
                 {
                     totalTimeUpdate -= 16.667f;
                     //needs to be in seconds so will be 0.016667f
-                    Update(0.016667f);
+                    Update(16.667f);
                 }
 
                 lastTime = (float)ts.TotalMilliseconds;
