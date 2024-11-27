@@ -10,7 +10,7 @@ namespace SpatialGame
 #endif
         public static void Update(ref Particle particle)
         {
-            int num = ParticleSimulation.GetRandomNumberOnPos(particle.position); // choose random size to pick to favor instead of always left
+            int num = ParticleSimulation.random.Next(0,2); // choose random size to pick to favor instead of always left
             //displacement
 
             //gravity stuff

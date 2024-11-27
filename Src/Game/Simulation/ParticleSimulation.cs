@@ -35,16 +35,12 @@ namespace SpatialGame
         /// Random that particles will use
         /// </summary>
         public static Random random;
-        //grab random numbers based on the position of the particle so that the server can sync
-        static byte[] randomPos;
-        static float timeCounter;
         public static int particleCount;
         
 
         public static void InitParticleSim()
         {
             particles = new Particle[PixelColorer.width * PixelColorer.height];
-            randomPos = new byte[PixelColorer.width * PixelColorer.height];
             freeParticleSpots = new Queue<int>();
             positionCheck = new byte[PixelColorer.width * PixelColorer.height];
             idCheck = new int[PixelColorer.width * PixelColorer.height];
@@ -71,11 +67,6 @@ namespace SpatialGame
                 particles[i] = temParticle;
             }
             
-            //initalize the random numbers
-            for (int i = 0; i < particles.Length; i++)
-            {
-                randomPos[i] = (byte)random.Next(0,2);
-            }
 
             for (int x = 0; x < PixelColorer.width; x++)
             {
@@ -183,17 +174,6 @@ namespace SpatialGame
                     PixelColorer.SetColorAtPos(particles[i].position, (byte)color.X, (byte)color.Y, (byte)color.Z);
 
                 }
-            }
-
-            timeCounter += delta / 1000f;
-            if (timeCounter > 0.2f)
-            {
-                timeCounter = 0;
-                for (int i = 0; i < particles.Length; i++)
-                {
-                    randomPos[i] = (byte)random.Next(0,2);
-                }
-                //send network update here to update the random numbers
             }
             
             /*for (int i = 0; i < elements.Length; i++)
@@ -356,17 +336,6 @@ namespace SpatialGame
             if (index == -1)
                 return -1;
             return idCheck[index];
-        }
-        
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public static byte GetRandomNumberOnPos(Vector2 position)
-        {
-            int index = PixelColorer.PosToIndex(position);
-            if (index == -1)
-                return 0;
-            return randomPos[index];
         }
         
     }
