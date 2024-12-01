@@ -5,6 +5,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <RollForward>Major</RollForward>
     <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RootNamespace>Spatialparticles</RootNamespace>
+    <Company>Mossford</Company>
   </PropertyGroup>
   <PropertyGroup>
     <PackageIcon>IconSpace.png</PackageIcon>
