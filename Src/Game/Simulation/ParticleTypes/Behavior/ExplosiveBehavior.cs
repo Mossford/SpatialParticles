@@ -48,6 +48,7 @@ namespace SpatialGame
                         float powerScale = ((properties.explosiveProperties.range / (particle.position - newPos).Length()) - 1) * properties.explosiveProperties.power;
                         powerScale = MathF.Max(MathF.Min(powerScale, 1f), 0f);
                         
+                        //make deteriministic
                         int rand = ParticleSimulation.random.Next(0, 10);
                         if (rand == 0 && ParticleSimulation.particles[particleID].GetParticleBehaviorType() != ParticleBehaviorType.wall)
                         {

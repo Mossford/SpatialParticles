@@ -18,6 +18,7 @@ namespace SpatialGame
 #endif
         public static void Update(ref Particle particle)
         {
+            //make deterministic
             if(ParticleHelpers.RandomChance(20f))
             {
                 particle.QueueDelete();
