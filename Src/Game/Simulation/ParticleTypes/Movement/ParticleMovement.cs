@@ -15,7 +15,13 @@ namespace SpatialGame
 #endif
         public static void Update(ref Particle particle)
         {
-            int num = ParticleSimulation.random.Next(0,2); // choose random size to pick to favor instead of always left
+            //loop last move direction
+            //this will switch between 0 and 1 and loop at 2
+            //which gives a deterministic behavior of going left and right instead of using random
+            //should also give performance boost
+            particle.lastMoveDirection %= 2;
+            
+            int num = particle.lastMoveDirection;
             int posCheckBelow = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X, particle.position.Y + 1));
             bool displaceLiq = posCheckBelow == ParticleBehaviorType.liquid.ToByte() || posCheckBelow == ParticleBehaviorType.gas.ToByte();
             //swapping down with a liquid
@@ -63,7 +69,8 @@ namespace SpatialGame
                     }
                 }
             }
-            
+
+            particle.lastMoveDirection++;
         }
     }
 }

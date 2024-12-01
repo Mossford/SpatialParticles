@@ -19,6 +19,7 @@ namespace SpatialGame
         public int id { get; set; }
         public int deleteIndex { get; set; }
         public float timeSpawned { get; set; }
+        public byte lastMoveDirection { get; set; }
 
         public int propertyIndex;
         public ParticleState state;
@@ -376,7 +377,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 32 + ParticleState.GetSize();
+            return 41 + ParticleState.GetSize();
         }
 
 #if RELEASE
@@ -400,7 +401,7 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return position + " Position\n" + velocity + " Velocity\n" + id + " Id\n" + " ToBeDeleted\n" + deleteIndex + " DeleteIndex\n" + timeSpawned + " TimeSpawned\n" + propertyIndex +
+            return position + " Position\n" + velocity + " Velocity\n" + pastVelocity + " PastVelocity\n" + id + " Id\n" + " ToBeDeleted\n" + deleteIndex + " DeleteIndex\n" + timeSpawned + " TimeSpawned\n" + propertyIndex +
                 " PropertyIndex\n" + state.ToString();
         }
 

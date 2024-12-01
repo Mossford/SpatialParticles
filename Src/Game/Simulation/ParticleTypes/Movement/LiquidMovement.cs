@@ -16,8 +16,9 @@ namespace SpatialGame
 #endif
         public static void Update(ref Particle particle)
         {
-
-            int num = ParticleSimulation.random.Next(0,2); // choose random size to pick to favor instead of always left
+            
+            particle.lastMoveDirection %= 2;
+            int num = particle.lastMoveDirection;
 
             //displacement
 
@@ -144,6 +145,8 @@ namespace SpatialGame
                     }
                 }
             }
+
+            particle.lastMoveDirection++;
         }
     }
 }
