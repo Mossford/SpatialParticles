@@ -203,7 +203,11 @@ namespace SpatialGame
             float scaleYInner = ((float)Globals.window.Size.Y / PixelColorer.height - (0.35f * Globals.window.Size.Y / PixelColorer.height)) * radius;
             float boxDist = MathF.Sqrt((scaleX * scaleX) + (scaleY * scaleY));
             Vector2 BoxPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(1 * boxDist, -1 * boxDist);
-            Vector2 textPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(2 * boxDist + 250, -1 * boxDist);
+            Vector2 textPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(2 * scaleX + 250, -1 * boxDist);
+            if (textPos.X - 125 > Globals.window.Size.X / 2f)
+            {
+                textPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(-2 * scaleX + 250, -1 * boxDist);
+            }
             textPos.Y *= -1;
 
             if (idElementSquareMesh == -1)
