@@ -15,6 +15,8 @@ using System.Diagnostics;
 using SpatialEngine.Rendering;
 using System.Collections.Generic;
 using SpatialEngine.SpatialMath;
+using SpatialEngine.Networking.Packets;
+using SpatialGame;
 
 namespace SpatialEngine.Networking
 {
@@ -81,8 +83,7 @@ namespace SpatialEngine.Networking
                     SpatialObjectPacket packet = new SpatialObjectPacket(i, scene.SpatialObjects[i].SO_mesh.position, scene.SpatialObjects[i].SO_mesh.rotation);
                     SendUnrelib(packet);
                 }*/
-                //send own player pos and rot to server
-                PlayerPacket packet = new PlayerPacket(0, player.position);
+                PlayerPacket packet = new PlayerPacket(0, player.position, SimInput.mouseSelection, SimInput.selectionMode);
                 SendUnrelib(packet);
                 client.Update();
 

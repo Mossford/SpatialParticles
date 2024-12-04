@@ -13,56 +13,78 @@ namespace SpatialGame
 {
     public static class MouseInteraction
     {
-        static int idCircleMesh;
-        static int idElementSquareMesh;
-        static int idElementSqaureInnerMesh;
-        static SimText elementText;
-        static string nameBefore;
-        static int selectionBefore;
+        class Spawner
+        {
+            public int idCircleMesh;
+            public int idElementSquareMesh;
+            public int idElementSqaureInnerMesh;
+            public SimText elementText;
+            public string nameBefore;
+            public int selectionBefore;
+
+            public Spawner()
+            {
+                idCircleMesh = -1;
+                idElementSquareMesh = -1;
+                idElementSqaureInnerMesh = -1;
+                elementText = new SimText();
+                nameBefore = "";
+                selectionBefore = -1;
+            }
+        }
+
+        static List<Spawner> spawners;
 
         public static void Init()
         {
-            idCircleMesh = -1;
-            idElementSquareMesh = -1;
-            idElementSqaureInnerMesh = -1;
-            elementText = new SimText();
-            nameBefore = "";
-            selectionBefore = -1;
+            spawners = new List<Spawner>();
+            spawners.Add(new Spawner());
         }
 
         public static void CleanUp()
         {
-            elementText.Dispose();
+            for (int i = 0; i < spawners.Count; i++)
+            {
+                spawners[i].elementText.Dispose();
+            }
         }
 
-        public static void DrawMouseElementsCircle(Vector2 positionMouse, int radius, bool pressed)
+        public static void DrawMouseElementsCircle(Vector2 positionMouse, int radius, bool pressed, int id)
         {
             if (!pressed)
             {
-                if (idCircleMesh == -1)
+                if (id >= spawners.Count || spawners[id].idCircleMesh == -1)
                 {
-                    idCircleMesh = SimRenderer.meshes.Count;
+                    if (id >= spawners.Count)
+                    {
+                        spawners.Add(new Spawner());
+                    }
+                    spawners[id].idCircleMesh = SimRenderer.meshes.Count;
                     SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(60, 0.95f));
                 }
 
-                SimRenderer.meshes[idCircleMesh].show = true;
-                SimRenderer.meshes[idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
-                SimRenderer.meshes[idCircleMesh].position.Y *= -1;
-                SimRenderer.meshes[idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
-                SimRenderer.meshes[idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
+                SimRenderer.meshes[spawners[id].idCircleMesh].show = true;
+                SimRenderer.meshes[spawners[id].idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
+                SimRenderer.meshes[spawners[id].idCircleMesh].position.Y *= -1;
+                SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
+                SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
                 return;
             }
 
-            if (idCircleMesh == -1)
+            if (id >= spawners.Count || spawners[id].idCircleMesh == -1)
             {
-                idCircleMesh = SimRenderer.meshes.Count;
+                if (id >= spawners.Count)
+                {
+                    spawners.Add(new Spawner());
+                }
+                spawners[id].idCircleMesh = SimRenderer.meshes.Count;
                 SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(60, 0.95f));
             }
-            SimRenderer.meshes[idCircleMesh].show = true;
-            SimRenderer.meshes[idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
-            SimRenderer.meshes[idCircleMesh].position.Y *= -1;
-            SimRenderer.meshes[idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
-            SimRenderer.meshes[idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
+            SimRenderer.meshes[spawners[id].idCircleMesh].show = true;
+            SimRenderer.meshes[spawners[id].idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
+            SimRenderer.meshes[spawners[id].idCircleMesh].position.Y *= -1;
+            SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
+            SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
         }
 
         /// <summary>
@@ -195,7 +217,7 @@ namespace SpatialGame
             }
         }
 
-        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, string name, bool mode, int selection)
+        public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, string name, bool mode, int selection, int id)
         {
             float scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
             float scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
@@ -210,34 +232,38 @@ namespace SpatialGame
             }
             textPos.Y *= -1;
 
-            if (idElementSquareMesh == -1)
+            if (id >= spawners.Count || spawners[id].idElementSquareMesh == -1)
             {
-                idElementSquareMesh = SimRenderer.meshes.Count;
+                if (id >= spawners.Count)
+                {
+                    spawners.Add(new Spawner());
+                }
+                spawners[id].idElementSquareMesh = SimRenderer.meshes.Count;
                 SimRenderer.meshes.Add(CreateSimShapes.CreateSquare(0.05f));
 
-                idElementSqaureInnerMesh = SimRenderer.meshes.Count;
+                spawners[id].idElementSqaureInnerMesh = SimRenderer.meshes.Count;
                 SimRenderer.meshes.Add(CreateSimShapes.CreateSquare(1f));
                 
-                elementText.CreateText("text", textPos, 100, 50, 1f, 0f, 32, 1);
+                spawners[id].elementText.CreateText("text", textPos, 100, 50, 1f, 0f, 32, 1);
             }
 
-            SimRenderer.meshes[idElementSquareMesh].show = true;
-            SimRenderer.meshes[idElementSquareMesh].position = BoxPos;
-            SimRenderer.meshes[idElementSquareMesh].position.Y *= -1;
-            SimRenderer.meshes[idElementSquareMesh].scaleX = scaleX;
-            SimRenderer.meshes[idElementSquareMesh].scaleY = scaleY;
+            SimRenderer.meshes[spawners[id].idElementSquareMesh].show = true;
+            SimRenderer.meshes[spawners[id].idElementSquareMesh].position = BoxPos;
+            SimRenderer.meshes[spawners[id].idElementSquareMesh].position.Y *= -1;
+            SimRenderer.meshes[spawners[id].idElementSquareMesh].scaleX = scaleX;
+            SimRenderer.meshes[spawners[id].idElementSquareMesh].scaleY = scaleY;
 
-            SimRenderer.meshes[idElementSqaureInnerMesh].show = true;
+            SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].show = true;
             //particle spawn mode
             if (!mode)
             {
-                if (nameBefore != name)
+                if (spawners[id].nameBefore != name)
                 {
                     Vector3 color = (Vector3)Particle.GetParticleColor(name) / 255f;
-                    elementText.UpdateText(name, textPos,500, 75, 0.5f, 0f, 64, 1);
-                    elementText.color = color;
-                    SimRenderer.meshes[idElementSqaureInnerMesh].color = color;
-                    nameBefore = name;
+                    spawners[id].elementText.UpdateText(name, textPos,500, 75, 0.5f, 0f, 64, 1);
+                    spawners[id].elementText.color = color;
+                    SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = color;
+                    spawners[id].nameBefore = name;
                 }
             }
             //function mode
@@ -246,32 +272,32 @@ namespace SpatialGame
                 //heating
                 if (selection == 0)
                 {
-                    if (selection != selectionBefore)
+                    if (selection != spawners[id].selectionBefore)
                     {
-                        elementText.UpdateText("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
-                        elementText.color = new Vector3(1f, 100 / 255f, 0);
-                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
-                        selectionBefore = selection;
+                        spawners[id].elementText.UpdateText("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
+                        spawners[id].elementText.color = new Vector3(1f, 100 / 255f, 0);
+                        SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
+                        spawners[id].selectionBefore = selection;
                     }
                 }
                 //cooling
                 if (selection == 1)
                 {
-                    if (selection != selectionBefore)
+                    if (selection != spawners[id].selectionBefore)
                     {
-                        elementText.UpdateText("Cool", textPos, 500, 75, 0.5f, 0f, 64, 1);
-                        elementText.color = new Vector3(0, 100 / 255f, 1f);
-                        SimRenderer.meshes[idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
-                        selectionBefore = selection;
+                        spawners[id].elementText.UpdateText("Cool", textPos, 500, 75, 0.5f, 0f, 64, 1);
+                        spawners[id].elementText.color = new Vector3(0, 100 / 255f, 1f);
+                        SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+                        spawners[id].selectionBefore = selection;
                     }
                 }
             }
             
-            elementText.UpdateText(textPos, 500, 75, 0.5f, 0f);
-            SimRenderer.meshes[idElementSqaureInnerMesh].position = BoxPos;
-            SimRenderer.meshes[idElementSqaureInnerMesh].position.Y *= -1;
-            SimRenderer.meshes[idElementSqaureInnerMesh].scaleX = scaleXInner;
-            SimRenderer.meshes[idElementSqaureInnerMesh].scaleY = scaleYInner;
+            spawners[id].elementText.UpdateText(textPos, 500, 75, 0.5f, 0f);
+            SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].position = BoxPos;
+            SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].position.Y *= -1;
+            SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].scaleX = scaleXInner;
+            SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].scaleY = scaleYInner;
             
         }
 
