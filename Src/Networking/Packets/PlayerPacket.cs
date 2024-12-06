@@ -8,7 +8,11 @@ namespace SpatialEngine.Networking.Packets
     {
         public int id;
         public Vector2 position;
+        public Vector2 lastPosition;
+        public int radius;
+        public bool pressing;
         public int selection;
+        public int mouseButtonPress;
         public bool selectionMode;
 
         public PlayerPacket()
@@ -16,11 +20,15 @@ namespace SpatialEngine.Networking.Packets
 
         }
 
-        public PlayerPacket(int id, Vector2 position, int selection, bool selectionMode)
+
+        public PlayerPacket(Vector2 position, Vector2 lastPosition, int radius, bool pressing, int selection, int mouseButtonPress, bool selectionMode)
         {
-            this.id = id;
             this.position = position;
+            this.lastPosition = lastPosition;
+            this.radius = radius;
+            this.pressing = pressing;
             this.selection = selection;
+            this.mouseButtonPress = mouseButtonPress;
             this.selectionMode = selectionMode;
         }
 
@@ -35,7 +43,12 @@ namespace SpatialEngine.Networking.Packets
             //position
             writer.Write(position.X);
             writer.Write(position.Y);
+            writer.Write(lastPosition.X);
+            writer.Write(lastPosition.Y);
+            writer.Write(radius);
+            writer.Write(pressing);
             writer.Write(selection);
+            writer.Write(mouseButtonPress);
             writer.Write(selectionMode);
             stream.Close();
             writer.Close();
@@ -52,7 +65,13 @@ namespace SpatialEngine.Networking.Packets
             float posX = reader.ReadSingle();
             float posY = reader.ReadSingle();
             position = new Vector2(posX, posY);
+            posX = reader.ReadSingle();
+            posY = reader.ReadSingle();
+            lastPosition = new Vector2(posX, posY);
+            radius = reader.ReadInt32();
+            pressing = reader.ReadBoolean();
             selection = reader.ReadInt32();
+            mouseButtonPress = reader.ReadInt32();
             selectionMode = reader.ReadBoolean();
             stream.Close();
             reader.Close();

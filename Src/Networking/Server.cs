@@ -282,12 +282,12 @@ namespace SpatialEngine.Networking
 
                                 if (currentId > connectionIds[server.Clients[i].Id])
                                 {
-                                    packet.id = (int)currentId - 1;
+                                    packet.id = (int)currentId;
                                     SendUnrelib(packet, server.Clients[i].Id);
                                 }
                                 else
                                 {
-                                    packet.id = (int)currentId;
+                                    packet.id = (int)currentId + 1;
                                     SendUnrelib(packet, server.Clients[i].Id);
                                 }
                             }

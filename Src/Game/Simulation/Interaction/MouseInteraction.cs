@@ -64,7 +64,7 @@ namespace SpatialGame
                 }
 
                 SimRenderer.meshes[spawners[id].idCircleMesh].show = true;
-                SimRenderer.meshes[spawners[id].idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
+                SimRenderer.meshes[spawners[id].idCircleMesh].position = positionMouse;
                 SimRenderer.meshes[spawners[id].idCircleMesh].position.Y *= -1;
                 SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
                 SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
@@ -81,7 +81,7 @@ namespace SpatialGame
                 SimRenderer.meshes.Add(CreateSimShapes.CreateCircle(60, 0.95f));
             }
             SimRenderer.meshes[spawners[id].idCircleMesh].show = true;
-            SimRenderer.meshes[spawners[id].idCircleMesh].position = ((positionMouse * 2) - (Vector2)Globals.window.Size) / 2;
+            SimRenderer.meshes[spawners[id].idCircleMesh].position = positionMouse;
             SimRenderer.meshes[spawners[id].idCircleMesh].position.Y *= -1;
             SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
             SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
@@ -96,7 +96,11 @@ namespace SpatialGame
             {
                 return;
             }
-
+            
+            //put mouse position out of local window space
+            positionMouse = (positionMouse * 2 + (Vector2)Globals.window.Size) / 2;
+            oldPositionMouse = (oldPositionMouse * 2 + (Vector2)Globals.window.Size) / 2;
+            
             if (positionMouse == oldPositionMouse || (positionMouse - oldPositionMouse).Length() < radius)
             {
                 Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
@@ -224,11 +228,11 @@ namespace SpatialGame
             float scaleXInner = ((float)Globals.window.Size.X / PixelColorer.width - (0.35f * Globals.window.Size.X / PixelColorer.width)) * radius;
             float scaleYInner = ((float)Globals.window.Size.Y / PixelColorer.height - (0.35f * Globals.window.Size.Y / PixelColorer.height)) * radius;
             float boxDist = MathF.Sqrt((scaleX * scaleX) + (scaleY * scaleY));
-            Vector2 BoxPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(1 * boxDist, -1 * boxDist);
-            Vector2 textPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(2 * scaleX + 250, -1 * boxDist);
+            Vector2 BoxPos = positionMouse + new Vector2(1 * boxDist, -1 * boxDist);
+            Vector2 textPos = positionMouse + new Vector2(2 * scaleX + 250, -1 * boxDist);
             if (textPos.X - 125 > Globals.window.Size.X / 2f)
             {
-                textPos = (((positionMouse * 2) - (Vector2)Globals.window.Size) / 2) + new Vector2(-2 * scaleX + 250, -1 * boxDist);
+                textPos = positionMouse + new Vector2(-2 * scaleX + 250, -1 * boxDist);
             }
             textPos.Y *= -1;
 

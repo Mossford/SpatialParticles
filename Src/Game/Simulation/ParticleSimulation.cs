@@ -132,7 +132,6 @@ namespace SpatialGame
 
         public static void RunParticleSim(float delta)
         {
-            
             //DebugSimulation.Update();
             //First pass calculations
             particleCount = 0;

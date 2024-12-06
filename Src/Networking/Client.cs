@@ -83,7 +83,7 @@ namespace SpatialEngine.Networking
                     SpatialObjectPacket packet = new SpatialObjectPacket(i, scene.SpatialObjects[i].SO_mesh.position, scene.SpatialObjects[i].SO_mesh.rotation);
                     SendUnrelib(packet);
                 }*/
-                PlayerPacket packet = new PlayerPacket(0, player.position, SimInput.mouseSelection, SimInput.selectionMode);
+                PlayerPacket packet = new PlayerPacket(Mouse.localPosition, Mouse.lastLocalPosition, SimInput.mouseSpawnRadius, SimInput.mousePressed, SimInput.mouseSelection, SimInput.mouseButtonPress, SimInput.selectionMode);
                 SendUnrelib(packet);
                 client.Update();
 
@@ -226,12 +226,18 @@ namespace SpatialEngine.Networking
                     {
                         PlayerPacket packet = new PlayerPacket();
                         packet.ByteToPacket(data);
+                        
+                        //since the code auto adds on multiple spawner circles we can just call the function
+                        string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[packet.selection]].name;
+                        MouseInteraction.DrawMouseElementSelect(packet.position, packet.radius, packet.pressing, name, packet.selectionMode, packet.selection, packet.id);
+                        MouseInteraction.DrawMouseElementsCircle(packet.position, packet.radius, packet.pressing, packet.id);
+                        MouseInteraction.SpawnParticlesCircleSpawner(packet.position, packet.lastPosition, packet.radius, packet.pressing, packet.mouseButtonPress, name, packet.selectionMode, packet.selection);
                         break;
                     }
                 case (ushort)PacketType.PlayerJoin:
                     {
                         PlayerJoinPacket packet = new PlayerJoinPacket();
-                        //hardcoded mesh location for now as using the packet causes it not to find the mesh
+                        
                         break;
                     }
                 case (ushort)PacketType.PlayerLeave:

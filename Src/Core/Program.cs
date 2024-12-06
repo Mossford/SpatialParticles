@@ -48,7 +48,7 @@ namespace SpatialEngine
 
         public static bool showImguiDebug = false;
         //going to be true because my gpu squeals if vsync is off
-        public static bool vsync = false;
+        public static bool vsync = true;
         public static uint vertCount;
         public static uint indCount;
 
@@ -202,10 +202,7 @@ namespace SpatialEngine
                 }
                 else
                 {
-                    if(!NetworkManager.client.IsConnected())
-                    {
-                        GameManager.FixedUpdateGame(dt);
-                    }
+                    GameManager.FixedUpdateGame(dt);
                     NetworkManager.client.Update(dt);
                 }
             }

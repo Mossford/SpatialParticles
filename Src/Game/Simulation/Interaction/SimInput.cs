@@ -13,9 +13,9 @@ namespace SpatialGame
 {
     public static class SimInput
     {
-        static bool mousePressed;
-        static int mouseSpawnRadius;
-        static int mouseButtonPress;
+        public static bool mousePressed;
+        public static int mouseSpawnRadius;
+        public static int mouseButtonPress;
 
         static bool firstInit;
         static bool initButton;
@@ -63,9 +63,9 @@ namespace SpatialGame
         public static void Update()
         {
             string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
-            MouseInteraction.DrawMouseElementSelect(Mouse.position, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection, 0);
-            MouseInteraction.DrawMouseElementsCircle(Mouse.position, mouseSpawnRadius, mousePressed, 0);
-            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.position, Mouse.lastPosition, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
+            MouseInteraction.DrawMouseElementSelect(Mouse.localPosition, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection, 0);
+            MouseInteraction.DrawMouseElementsCircle(Mouse.localPosition, mouseSpawnRadius, mousePressed, 0);
+            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.localPosition, Mouse.lastLocalPosition, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
             
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
