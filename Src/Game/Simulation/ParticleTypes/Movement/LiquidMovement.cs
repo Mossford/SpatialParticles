@@ -70,6 +70,7 @@ namespace SpatialGame
             bool left = posCheckBelow != ParticleBehaviorType.empty.ToByte() && posCheckLU != ParticleBehaviorType.empty.ToByte();
             if (!inAir && left && num == 0)
             {
+                int moveDisp = ParticleSimulation.random.Next(0, particle.state.viscosity);
                 for (int i = 0; i < particle.state.viscosity; i++)
                 {
                     if (i < 5)
@@ -108,7 +109,8 @@ namespace SpatialGame
             bool right = posCheckBelow != ParticleBehaviorType.empty.ToByte() && posCheckRU != ParticleBehaviorType.empty.ToByte();
             if (!inAir && right && num == 1)
             {
-                for (int i = 0; i < particle.state.viscosity; i++)
+                int moveDisp = ParticleSimulation.random.Next(0, particle.state.viscosity);
+                for (int i = 0; i < moveDisp; i++)
                 {
                     if (i < 5)
                     {
