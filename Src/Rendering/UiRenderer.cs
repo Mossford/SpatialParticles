@@ -72,6 +72,8 @@ namespace SpatialEngine.Rendering
         public float scale;
         public Vector3 color;
 
+        public Matrix4x4 matrix;
+        
         //texture that is displayed
         public Texture texture;
 
@@ -100,6 +102,16 @@ namespace SpatialEngine.Rendering
             this.height = height;
             this.type = type;
             color = Vector3.One;
+        }
+        
+        static float conv = MathF.PI / 180f;
+        public void Update()
+        {
+            matrix = Matrix4x4.Identity;
+            matrix *= Matrix4x4.CreateScale(width * scale, height * scale, 1f);
+            matrix *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation * conv);
+            matrix *= Matrix4x4.CreateTranslation(new(position.X, position.Y, 0f));
+            matrix *= Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1);
         }
 
         public void Dispose()
@@ -226,29 +238,27 @@ namespace SpatialEngine.Rendering
             {
                 buttons[i].Update();
             }
-        }
-
-        public static void Draw()
-        {
-            float conv = MathF.PI / 180f;
+            
             for (int i = 0; i < uiElements.Count; i++)
             {
-                Matrix4x4 model = Matrix4x4.Identity;
-                model *= Matrix4x4.CreateScale(uiElements[i].width * uiElements[i].scale, uiElements[i].height * uiElements[i].scale, 1f);
-                model *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, uiElements[i].rotation * conv);
-                model *= Matrix4x4.CreateTranslation(new(uiElements[i].position.X, uiElements[i].position.Y, 0f));
-                model *= Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1);
-
+                uiElements[i].Update();
+            }
+        }
+        
+        public static void Draw()
+        {
+            for (int i = 0; i < uiElements.Count; i++)
+            {
                 switch(uiElements[i].type)
                 {
                     default:
-                        quad.Draw(in uiImageShader, model, in uiElements[i].texture, uiElements[i].color);
+                        quad.Draw(in uiImageShader, in uiElements[i].matrix, in uiElements[i].texture, uiElements[i].color);
                         break;
                     case UiElementType.image:
-                        quad.Draw(in uiImageShader, model, in uiElements[i].texture, uiElements[i].color);
+                        quad.Draw(in uiImageShader, in uiElements[i].matrix, in uiElements[i].texture, uiElements[i].color);
                         break;
                     case UiElementType.text:
-                        quad.Draw(in uiTextShader, model, in uiElements[i].texture, uiElements[i].color);
+                        quad.Draw(in uiTextShader, in uiElements[i].matrix, in uiElements[i].texture, uiElements[i].color);
                         break;
                 }
             }

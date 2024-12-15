@@ -10,6 +10,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageIcon>IconSpace.png</PackageIcon>
+    <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
     <Nullable>disable</Nullable>
     <StartupObject></StartupObject>
     <AssemblyName>Spatialparticles</AssemblyName>
@@ -60,6 +61,9 @@
     <Exec Command="dotnet tool restore" />
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="XCOPY &quot;Src\res&quot; &quot;$(TargetDir)\res&quot; /E /I /Y /F" />
+  </Target>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="XCOPY &quot;Src\res&quot; &quot;$(TargetDir)\res&quot; /E /I /Y /F" />
   </Target>
 </Project>

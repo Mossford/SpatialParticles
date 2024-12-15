@@ -65,12 +65,13 @@ namespace SpatialGame
         public static void UpdateGame(float dt)
         {
             PixelColorer.Update();
+            SimRenderer.Update();
+            //SimInput.Update();
             //SimRenderer.UpdateMeshes();
         }
 
         public static void FixedUpdateGame(float dt)
         {
-            SimRenderer.Update();
             SimInput.Update();
             SimInput.FixedUpdate();
             ParticleSimulation.RunParticleSim(dt);

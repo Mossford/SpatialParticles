@@ -40,7 +40,7 @@ namespace SpatialEngine
         public const int SCR_HEIGHT = 1080;
         public static int MAX_SCR_WIDTH;
         public static int MAX_SCR_HEIGHT;
-        public static string EngVer = "PAR:0.4 | ENG:0.6.8 Stable";
+        public static string EngVer = "PAR:0.5 | ENG:0.6.8 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";
 
@@ -57,7 +57,7 @@ namespace SpatialEngine
         public static uint drawCallCount = 0;
         public static float totalTime = 0.0f;
         public static float deltaTime = 0.0f;
-        public const float fixedUpdateTime = 16.7f;
+        public const float fixedUpdateTime = 16.667f;
 
         /// <summary>
         /// In Seconds
@@ -84,7 +84,7 @@ namespace SpatialEngine
                 WindowOptions options = WindowOptions.Default with
                 {
                     Size = new Vector2D<int>(SCR_WIDTH, SCR_HEIGHT),
-                    Title = "SpatialParticles 0.4",
+                    Title = "SpatialParticles 0.5",
                     VSync = vsync,
                     PreferredDepthBufferBits = 24,
                     API = glApi,
@@ -181,8 +181,8 @@ namespace SpatialEngine
             Input.Update();
             
             GameManager.UpdateGame((float)dt);
-            UiRenderer.Update();
             Mouse.Update();
+            UiRenderer.Update();
 
             totalTimeUpdate += (float)dt * 1000;
             while (totalTimeUpdate >= fixedUpdateTime)
@@ -210,6 +210,7 @@ namespace SpatialEngine
             {
                 GameManager.FixedUpdateGame(dt);
             }
+            
         }
 
         static unsafe void OnRender(double dt)
@@ -226,9 +227,12 @@ namespace SpatialEngine
             gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             gl.DepthFunc(GLEnum.Lequal);
             gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
-
+            
+            //renders the pixels and simulation
             PixelColorer.Render();
+            //renders some simulation ui stuff
             SimRenderer.Render();
+            //renders other more generic ui stuff
             UiRenderer.Draw();
 
             if (showImguiDebug)

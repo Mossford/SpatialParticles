@@ -11,7 +11,7 @@ namespace SpatialGame
         public static void Update(ref Particle particle)
         {
             particle.lastMoveDirection %= 2;
-            int num = particle.lastMoveDirection;
+            int num = ParticleSimulation.random.Next(0, 2);
             //displacement
 
             //gravity stuff
@@ -50,7 +50,7 @@ namespace SpatialGame
                     if (!particle.BoundsCheck(new Vector2(particle.position.X - (i + 1), particle.position.Y)))
                         return;
 
-                    if (ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - (i + 1), particle.position.Y)) == ParticleBehaviorType.empty.ToByte())
+                    if (ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X - (i + 1), particle.position.Y)) == ParticleBehaviorType.empty.ToByte())
                     {
                         particle.MoveParticleOne(new Vector2(-1, 0));
                     }
@@ -68,7 +68,7 @@ namespace SpatialGame
                     if (!particle.BoundsCheck(new Vector2(particle.position.X + (i + 1), particle.position.Y)))
                         return;
 
-                    if (ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + (i + 1), particle.position.Y)) == ParticleBehaviorType.empty.ToByte())
+                    if (ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X + (i + 1), particle.position.Y)) == ParticleBehaviorType.empty.ToByte())
                     {
                         particle.MoveParticleOne(new Vector2(1, 0));
                     }

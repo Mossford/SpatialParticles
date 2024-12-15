@@ -264,7 +264,7 @@ namespace SpatialGame
                 if (spawners[id].nameBefore != name)
                 {
                     Vector3 color = (Vector3)Particle.GetParticleColor(name) / 255f;
-                    spawners[id].elementText.UpdateText(name, textPos,500, 75, 0.5f, 0f, 64, 1);
+                    spawners[id].elementText.UpdateTextFull(name, textPos,500, 75, 0.5f, 0f, 64, 1);
                     spawners[id].elementText.color = color;
                     SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = color;
                     spawners[id].nameBefore = name;
@@ -278,7 +278,7 @@ namespace SpatialGame
                 {
                     if (selection != spawners[id].selectionBefore)
                     {
-                        spawners[id].elementText.UpdateText("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
+                        spawners[id].elementText.UpdateTextFull("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
                         spawners[id].elementText.color = new Vector3(1f, 100 / 255f, 0);
                         SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
                         spawners[id].selectionBefore = selection;
@@ -289,7 +289,7 @@ namespace SpatialGame
                 {
                     if (selection != spawners[id].selectionBefore)
                     {
-                        spawners[id].elementText.UpdateText("Cool", textPos, 500, 75, 0.5f, 0f, 64, 1);
+                        spawners[id].elementText.UpdateTextFull("Cool", textPos, 500, 75, 0.5f, 0f, 64, 1);
                         spawners[id].elementText.color = new Vector3(0, 100 / 255f, 1f);
                         SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
                         spawners[id].selectionBefore = selection;
