@@ -30,14 +30,16 @@ namespace SpatialGame
                 {
                     bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
                     bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte();
+                    int posCheckRight = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
+                    int posCheckLeft = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y));
                     
-                    if (LUnder && num == 0)
+                    if (LUnder && num == 0 && posCheckLeft == ParticleBehaviorType.empty.ToByte())
                     {
-                        particle.MoveParticleOne(new Vector2(-1, -1));
+                        particle.MoveParticleOne(new Vector2(-1, 1));
                     }
-                    if (RUnder && num == 1)
+                    else if (RUnder && num == 1 && posCheckRight == ParticleBehaviorType.empty.ToByte())
                     {
-                        particle.MoveParticleOne(new Vector2(1, -1));
+                        particle.MoveParticleOne(new Vector2(1, 1));
                     }
                 }
             }

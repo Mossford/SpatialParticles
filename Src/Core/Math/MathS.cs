@@ -55,6 +55,11 @@ namespace SpatialEngine.SpatialMath
                 temp.Z = max;
             return temp;
         }
+        
+        public static void SwapVector2(ref Vector2 a, ref Vector2 b)
+        {
+            (a, b) = (b, a);
+        }
 
         public static float Vector3Angle(Vector3 a, Vector3 b)
         {

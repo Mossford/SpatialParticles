@@ -225,6 +225,10 @@ namespace SpatialGame
                 Debugging.LogConsole("Ran out of spots to add more particles");
                 return;
             }
+            //check if there is a particle there because I somehow forgot this
+            if(SafeIdCheckGetNoBc(pos) != -1)
+                return;
+            
             int id = freeParticleSpots.Dequeue();
             particles[id].id = id;
             particles[id].position = pos;

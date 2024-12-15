@@ -57,6 +57,9 @@ namespace SpatialGame
             ParticleSimulation.InitParticleSim();
             SimRenderer.Init();
             SimInput.Init();
+            
+            SimBody simBody = new SimBody(new Vector2(100, 50), 10f, 0f);
+            simBody.Update();
 
             started = true;
             isInitalizing = false;
