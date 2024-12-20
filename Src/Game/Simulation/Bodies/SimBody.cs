@@ -14,19 +14,19 @@ namespace SpatialGame
     {
         public Vector2[] vertexes;
         public int[] indices;
-        public Vector2 position; 
-        public float scale;
-        public float rotation;
         public Matrix3x2 modelMat;
+        
+        public SimRigidBody rigidBody;
 
         public SimBody()
         {
-            
+            rigidBody = new SimRigidBody();
         }
 
         //create a triangle
         public SimBody(Vector2 position, float scale, float rotation)
         {
+            rigidBody = new SimRigidBody();
             vertexes = new Vector2[3];
             vertexes[0] = new Vector2(-1.0f, -1.0f);
             vertexes[1] = new Vector2(1.0f, -1.0f);
@@ -37,23 +37,23 @@ namespace SpatialGame
             indices[1] = 1;
             indices[2] = 2;
             
-            this.position = position;
-            this.scale = scale;
-            this.rotation = rotation;
+            this.rigidBody.position = position;
+            this.rigidBody.scale = scale;
+            this.rigidBody.rotation = rotation;
         }
 
         float conv = MathF.PI / 180f;
         public void SetModelMatrix()
         {
             modelMat = Matrix3x2.Identity;
-            modelMat *= Matrix3x2.CreateTranslation(position);
-            modelMat *= Matrix3x2.CreateRotation(rotation * conv, position);
-            modelMat *= Matrix3x2.CreateScale(scale, scale, position);
+            modelMat *= Matrix3x2.CreateTranslation(rigidBody.position);
+            modelMat *= Matrix3x2.CreateRotation(rigidBody.rotation * conv, rigidBody.position);
+            modelMat *= Matrix3x2.CreateScale(rigidBody.scale, rigidBody.scale, rigidBody.position);
         }
 
         public void Update(float dt)
         {
-            for (int i = 0; i < indices.Length; i += 3)
+            /*for (int i = 0; i < indices.Length; i += 3)
             {
                 int index0 = indices[i];
                 int index1 = indices[i + 1];
@@ -67,11 +67,11 @@ namespace SpatialGame
                 RasterizeClear(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
                 RasterizeClear(new Vector2(posB.X, posB.Y), new Vector2(posC.X, posC.Y));
                 RasterizeClear(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
-            }
+            }*/
             
             SetModelMatrix();
 
-            for (int i = 0; i < indices.Length; i += 3)
+            /*for (int i = 0; i < indices.Length; i += 3)
             {
                 int index0 = indices[i];
                 int index1 = indices[i + 1];
@@ -85,10 +85,9 @@ namespace SpatialGame
                 RasterizeSpawn(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
                 RasterizeSpawn(new Vector2(posB.X, posB.Y), new Vector2(posC.X, posC.Y));
                 RasterizeSpawn(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
-            }
+            }*/
 
-            scale = MathF.Sin(Globals.totalTime) * 10f;
-
+            rigidBody.rotation += 1;
         }
 
         public void RasterizeSpawn(in Vector2 a, in Vector2 b)
@@ -105,9 +104,9 @@ namespace SpatialGame
             int step;
             
             if (Math.Abs(dir.X) > Math.Abs(dir.Y))
-                step = (int)Math.Abs(dir.X);
-            else
                 step = (int)Math.Abs(dir.Y);
+            else
+                step = (int)Math.Abs(dir.X);
 
             Vector2 increase = dir / step;
             
