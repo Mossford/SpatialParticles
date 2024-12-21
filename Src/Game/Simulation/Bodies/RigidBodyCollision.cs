@@ -66,10 +66,20 @@ namespace SpatialGame
                 Vector2 posB = Vector2.Transform(mesh.vertexes[index1], body.simModelMat);
                 Vector2 posC = Vector2.Transform(mesh.vertexes[index2], body.simModelMat);
                 
-                CollisionInfo collisionInfoA = CheckCollisionOnLine(posA, posB);
-                if (collisionInfoA.collision)
+                CollisionInfo collisionInfo = CheckCollisionOnLine(posA, posB);
+                if (collisionInfo.collision)
                 {
-                    Console.WriteLine("collision" + collisionInfoA.normal);
+                    body.rigidBody.position += collisionInfo.normal;
+                }
+                collisionInfo = CheckCollisionOnLine(posB, posC);
+                if (collisionInfo.collision)
+                {
+                    body.rigidBody.position += collisionInfo.normal;
+                }
+                collisionInfo = CheckCollisionOnLine(posC, posA);
+                if (collisionInfo.collision)
+                {
+                    body.rigidBody.position += collisionInfo.normal;
                 }
             }
         }
@@ -95,7 +105,8 @@ namespace SpatialGame
                 if (id != -1)
                 {
                     //we have collision
-                    Vector2 normal = new Vector2(dir.Y, dir.X);
+                    Vector2 direction = end - start;
+                    Vector2 normal = Vector2.Normalize(new Vector2(-direction.Y, direction.X));
                     return new CollisionInfo(true, position, normal, 1f);
                 }
                 

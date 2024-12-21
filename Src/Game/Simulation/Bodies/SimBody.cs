@@ -48,9 +48,9 @@ namespace SpatialGame
             mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
             mesh.scaleX = (float)Globals.window.Size.X / PixelColorer.width * rigidBody.scale;
             mesh.scaleY = (float)Globals.window.Size.Y / PixelColorer.height * rigidBody.scale;
-            mesh.color = new Vector3(255, 255, 255);
+            mesh.color = new Vector3(0, 0, 0);
             
-            for (int i = 0; i < mesh.indices.Length; i += 3)
+            /*for (int i = 0; i < mesh.indices.Length; i += 3)
             {
                 uint index0 = mesh.indices[i];
                 uint index1 = mesh.indices[i + 1];
@@ -64,12 +64,12 @@ namespace SpatialGame
                 RasterizeClear(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
                 RasterizeClear(new Vector2(posB.X, posB.Y), new Vector2(posC.X, posC.Y));
                 RasterizeClear(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
-            }
+            }*/
             
             SetModelMatrix();
-            //RigidBodyCollision.CollisionDetection(this);
+            RigidBodyCollision.CollisionDetection(this, mesh);
 
-            for (int i = 0; i < mesh.indices.Length; i += 3)
+            /*for (int i = 0; i < mesh.indices.Length; i += 3)
             {
                 uint index0 = mesh.indices[i];
                 uint index1 = mesh.indices[i + 1];
@@ -83,10 +83,10 @@ namespace SpatialGame
                 RasterizeSpawn(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
                 RasterizeSpawn(new Vector2(posB.X, posB.Y), new Vector2(posC.X, posC.Y));
                 RasterizeSpawn(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
-            }
+            }*/
 
-            rigidBody.rotation += 1;
-            rigidBody.position.X += 0.1f;
+              rigidBody.rotation += 1;
+            //rigidBody.position.X += 0.1f;
         }
 
         public void RasterizeSpawn(in Vector2 a, in Vector2 b)
