@@ -92,5 +92,25 @@ namespace SpatialGame
 
             return new SimMesh(vertexes, indices);
         }
+
+        public static SimMesh CreateTriangle()
+        {
+            Vector2[] vertexes = new Vector2[3];
+            vertexes[0] = new Vector2(-1.0f, -1.0f);
+            vertexes[1] = new Vector2(1.0f, -1.0f);
+            vertexes[2] = new Vector2(-1.0f, 1.0f);
+
+            uint[] indices = new uint[3];
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            
+            return new SimMesh(vertexes, indices);
+        }
+        
+        public static SimMesh CreateMesh(Vector2[] vertexes, uint[] indices)
+        {
+            return new SimMesh(vertexes, indices);
+        }
     }
 }

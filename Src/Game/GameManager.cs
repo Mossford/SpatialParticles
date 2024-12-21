@@ -45,8 +45,7 @@ namespace SpatialGame
 
             isInitalizing = false;
         }
-
-        static SimBody simBody;
+        
         public static void InitGame()
         {
             isInitalizing = true;
@@ -58,8 +57,9 @@ namespace SpatialGame
             ParticleSimulation.InitParticleSim();
             SimRenderer.Init();
             SimInput.Init();
+            RigidBodySimulation.Init();
             
-            simBody = new SimBody(new Vector2(100, 50), 10f, 0f);
+            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(100, 50), 10f, 0f));
 
             started = true;
             isInitalizing = false;
@@ -71,7 +71,15 @@ namespace SpatialGame
             SimRenderer.Update();
             //SimInput.Update();
             //SimRenderer.UpdateMeshes();
-            simBody.Update(dt);
+            RigidBodySimulation.Update(dt);
+        }
+
+        public static void RenderGame()
+        {
+            //renders the pixels and simulation
+            PixelColorer.Render();
+            //renders some simulation ui stuff
+            SimRenderer.Render();
         }
 
         public static void FixedUpdateGame(float dt)

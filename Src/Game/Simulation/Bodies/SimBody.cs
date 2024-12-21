@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
+using Silk.NET.SDL;
 using SpatialEngine;
 using static SpatialEngine.SpatialMath.MathS;
 
@@ -12,30 +13,17 @@ namespace SpatialGame
 {
     public class SimBody
     {
-        public Vector2[] vertexes;
-        public int[] indices;
-        public Matrix3x2 modelMat;
-        
-        public SimRigidBody rigidBody;
+        public Matrix4x4 simModelMat;
 
-        public SimBody()
-        {
-            rigidBody = new SimRigidBody();
-        }
+        public int meshIndex;
+        public SimRigidBody rigidBody;
 
         //create a triangle
         public SimBody(Vector2 position, float scale, float rotation)
         {
             rigidBody = new SimRigidBody();
-            vertexes = new Vector2[3];
-            vertexes[0] = new Vector2(-1.0f, -1.0f);
-            vertexes[1] = new Vector2(1.0f, -1.0f);
-            vertexes[2] = new Vector2(-1.0f, 1.0f);
-
-            indices = new int[3];
-            indices[0] = 0;
-            indices[1] = 1;
-            indices[2] = 2;
+            SimRenderer.meshes.Add(CreateSimShapes.CreateTriangle());
+            meshIndex = SimRenderer.meshes.Count - 1;
             
             this.rigidBody.position = position;
             this.rigidBody.scale = scale;
@@ -45,23 +33,32 @@ namespace SpatialGame
         float conv = MathF.PI / 180f;
         public void SetModelMatrix()
         {
-            modelMat = Matrix3x2.Identity;
-            modelMat *= Matrix3x2.CreateTranslation(rigidBody.position);
-            modelMat *= Matrix3x2.CreateRotation(rigidBody.rotation * conv, rigidBody.position);
-            modelMat *= Matrix3x2.CreateScale(rigidBody.scale, rigidBody.scale, rigidBody.position);
+            simModelMat = Matrix4x4.Identity;
+            simModelMat *= Matrix4x4.CreateScale(rigidBody.scale, rigidBody.scale, 1f);
+            simModelMat *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rigidBody.rotation * conv);
+            simModelMat *= Matrix4x4.CreateTranslation(new(rigidBody.position.X, rigidBody.position.Y, 0f));
+            
         }
 
         public void Update(float dt)
         {
-            for (int i = 0; i < indices.Length; i += 3)
+            SimMesh mesh = SimRenderer.meshes[meshIndex];
+            mesh.position = ((rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * (Vector2)Globals.window.Size) - (Vector2)Globals.window.Size / 2;
+            mesh.position.Y *= -1;
+            mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
+            mesh.scaleX = (float)Globals.window.Size.X / PixelColorer.width * rigidBody.scale;
+            mesh.scaleY = (float)Globals.window.Size.Y / PixelColorer.height * rigidBody.scale;
+            mesh.color = new Vector3(255, 255, 255);
+            
+            for (int i = 0; i < mesh.indices.Length; i += 3)
             {
-                int index0 = indices[i];
-                int index1 = indices[i + 1];
-                int index2 = indices[i + 2];
+                uint index0 = mesh.indices[i];
+                uint index1 = mesh.indices[i + 1];
+                uint index2 = mesh.indices[i + 2];
                 
-                Vector2 posA = Vector2.Transform(vertexes[index0], modelMat);
-                Vector2 posB = Vector2.Transform(vertexes[index1], modelMat);
-                Vector2 posC = Vector2.Transform(vertexes[index2], modelMat);
+                Vector2 posA = Vector2.Transform(mesh.vertexes[index0], simModelMat);
+                Vector2 posB = Vector2.Transform(mesh.vertexes[index1], simModelMat);
+                Vector2 posC = Vector2.Transform(mesh.vertexes[index2], simModelMat);
                 
                 
                 RasterizeClear(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
@@ -70,16 +67,17 @@ namespace SpatialGame
             }
             
             SetModelMatrix();
+            //RigidBodyCollision.CollisionDetection(this);
 
-            for (int i = 0; i < indices.Length; i += 3)
+            for (int i = 0; i < mesh.indices.Length; i += 3)
             {
-                int index0 = indices[i];
-                int index1 = indices[i + 1];
-                int index2 = indices[i + 2];
+                uint index0 = mesh.indices[i];
+                uint index1 = mesh.indices[i + 1];
+                uint index2 = mesh.indices[i + 2];
                 
-                Vector2 posA = Vector2.Transform(vertexes[index0], modelMat);
-                Vector2 posB = Vector2.Transform(vertexes[index1], modelMat);
-                Vector2 posC = Vector2.Transform(vertexes[index2], modelMat);
+                Vector2 posA = Vector2.Transform(mesh.vertexes[index0], simModelMat);
+                Vector2 posB = Vector2.Transform(mesh.vertexes[index1], simModelMat);
+                Vector2 posC = Vector2.Transform(mesh.vertexes[index2], simModelMat);
                 
                 
                 RasterizeSpawn(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
@@ -88,6 +86,7 @@ namespace SpatialGame
             }
 
             rigidBody.rotation += 1;
+            rigidBody.position.X += 0.1f;
         }
 
         public void RasterizeSpawn(in Vector2 a, in Vector2 b)

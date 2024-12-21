@@ -14,7 +14,7 @@ namespace SpatialGame
     //second mesh class of this engine holy shit
     public class SimMesh : IDisposable
     {
-        public Vector2[] vPos;
+        public Vector2[] vertexes;
         public uint[] indices;
         public Matrix4x4 model;
 
@@ -29,10 +29,15 @@ namespace SpatialGame
         public uint ebo;
 
         public bool show;
-
-        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices)
+        
+        public SimMesh()
         {
-            this.vPos = vPos;
+            
+        }
+
+        public unsafe SimMesh(in Vector2[] vertexes, in uint[] indices)
+        {
+            this.vertexes = vertexes;
             this.indices = indices;
             position = Vector2.Zero;
             rotation = 0;
@@ -48,8 +53,8 @@ namespace SpatialGame
             ebo = gl.GenBuffer();
             gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, ebo);
 
-            fixed (Vector2* buf = vPos)
-                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vPos.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
+            fixed (Vector2* buf = vertexes)
+                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vertexes.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
             fixed (uint* buf = indices)
                 gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(indices.Length * sizeof(uint)), buf, BufferUsageARB.StreamDraw);
 
@@ -59,9 +64,9 @@ namespace SpatialGame
             gl.BindVertexArray(0);
         }
 
-        public unsafe SimMesh(in Vector2[] vPos, in uint[] indices, Vector2 position, float rotation, float scaleX, float scaleY, Vector3 color)
+        public unsafe SimMesh(in Vector2[] vertexes, in uint[] indices, Vector2 position, float rotation, float scaleX, float scaleY, Vector3 color)
         {
-            this.vPos = vPos;
+            this.vertexes = vertexes;
             this.indices = indices;
             this.position = position;
             this.rotation = rotation;
@@ -77,8 +82,8 @@ namespace SpatialGame
             ebo = gl.GenBuffer();
             gl.BindBuffer(BufferTargetARB.ElementArrayBuffer, ebo);
 
-            fixed (Vector2* buf = vPos)
-                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vPos.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
+            fixed (Vector2* buf = vertexes)
+                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vertexes.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
             fixed (uint* buf = indices)
                 gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(indices.Length * sizeof(uint)), buf, BufferUsageARB.StreamDraw);
 
@@ -92,8 +97,8 @@ namespace SpatialGame
         {
             gl.BindVertexArray(id);
 
-            fixed (Vector2* buf = vPos)
-                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vPos.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
+            fixed (Vector2* buf = vertexes)
+                gl.BufferData(BufferTargetARB.ArrayBuffer, (nuint)(vertexes.Length * sizeof(Vector2)), buf, BufferUsageARB.StreamDraw);
             fixed (uint* buf = indices)
                 gl.BufferData(BufferTargetARB.ElementArrayBuffer, (nuint)(indices.Length * sizeof(uint)), buf, BufferUsageARB.StreamDraw);
 

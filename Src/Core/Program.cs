@@ -228,10 +228,7 @@ namespace SpatialEngine
             gl.DepthFunc(GLEnum.Lequal);
             gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
             
-            //renders the pixels and simulation
-            PixelColorer.Render();
-            //renders some simulation ui stuff
-            SimRenderer.Render();
+            GameManager.RenderGame();
             //renders other more generic ui stuff
             UiRenderer.Draw();
 
