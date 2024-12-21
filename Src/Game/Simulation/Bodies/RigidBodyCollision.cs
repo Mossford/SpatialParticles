@@ -141,14 +141,18 @@ namespace SpatialGame
                     if(collisions[i].collision)
                         collide = true;
                     Vector2 line = collisions[j].position - collisions[i].position;
-                    Vector2 normal = Vector2.Normalize(new Vector2(-line.Y, line.X));
+                    Vector2 normal = new Vector2(-line.Y, line.X);
                     normalCombine += normal;
                 }
             }
             
             if (collide)
             {
-                body.rigidBody.position += Vector2.Normalize(normalCombine);
+                if (normalCombine.LengthSquared() == 0f)
+                    return;
+                normalCombine = Vector2.Normalize(normalCombine);
+                Console.WriteLine(normalCombine);
+                body.rigidBody.position += normalCombine;
                 body.rigidBody.velocity = Vector2.Zero;
             }
         }

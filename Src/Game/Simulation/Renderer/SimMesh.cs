@@ -29,6 +29,7 @@ namespace SpatialGame
         public uint ebo;
 
         public bool show;
+        public bool wireFrame;
         
         public SimMesh()
         {
@@ -45,6 +46,7 @@ namespace SpatialGame
             scaleY = 1;
             color = Vector3.Zero;
             show = true;
+            wireFrame = false;
 
             id = gl.GenVertexArray();
             gl.BindVertexArray(id);
@@ -120,6 +122,9 @@ namespace SpatialGame
 
         public unsafe void Draw()
         {
+            gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
+            if(wireFrame)
+                gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
             gl.BindVertexArray(id);
             gl.DrawElements(GLEnum.Triangles, (uint)indices.Length, GLEnum.UnsignedInt, (void*)0);
             Globals.drawCallCount++;

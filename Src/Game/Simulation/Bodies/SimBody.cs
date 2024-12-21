@@ -22,7 +22,7 @@ namespace SpatialGame
         public SimBody(Vector2 position, float scale, float rotation)
         {
             rigidBody = new SimRigidBody();
-            SimRenderer.meshes.Add(CreateSimShapes.CreateTriangle());
+            SimRenderer.meshes.Add(CreateSimShapes.CreateSquare());
             meshIndex = SimRenderer.meshes.Count - 1;
             
             this.rigidBody.position = position;
@@ -43,6 +43,7 @@ namespace SpatialGame
         public void Update(float dt)
         {
             SimMesh mesh = SimRenderer.meshes[meshIndex];
+            mesh.wireFrame = true;
             mesh.position = ((rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * (Vector2)Globals.window.Size) - (Vector2)Globals.window.Size / 2;
             mesh.position.Y *= -1;
             mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 

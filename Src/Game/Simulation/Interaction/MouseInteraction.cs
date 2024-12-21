@@ -119,7 +119,7 @@ namespace SpatialGame
                         if (check > radius)
                             continue;
                         
-                        Vector2 pos = new Vector2(x, y);
+                        Vector2 pos = new Vector2(MathF.Floor(x), MathF.Floor(y));
                         int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
                         if(button == 0 && !mode)
@@ -132,6 +132,7 @@ namespace SpatialGame
                             {
                                 //replaced from queue delete may cause issues
                                 ParticleSimulation.particles[idToCheck].Delete();
+                                ParticleSimulation.AddParticle(pos, name);
                             }
                         }
                         else if (button == 0 && mode)
@@ -183,7 +184,7 @@ namespace SpatialGame
                         if (check > radius)
                             continue;
                         
-                        Vector2 pos = new Vector2(x, y);
+                        Vector2 pos = new Vector2(MathF.Floor(x), MathF.Floor(y));
                         int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
                         if(button == 0 && !mode)
@@ -196,6 +197,7 @@ namespace SpatialGame
                             {
                                 //replaced from queue delete may cause issues
                                 ParticleSimulation.particles[idToCheck].Delete();
+                                ParticleSimulation.AddParticle(pos, name);
                             }
                         }
                         else if (button == 0 && mode)
