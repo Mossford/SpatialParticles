@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using SpatialEngine;
 using static SpatialEngine.SpatialMath.MathS;
 
@@ -20,6 +21,8 @@ namespace SpatialGame
         public Vector2 normal;
         //distance at which the body should move
         public float distance;
+        //amount of intersections on a line
+        public int count;
 
         public CollisionInfo()
         {
@@ -52,10 +55,16 @@ namespace SpatialGame
             
             this is done by taking the line and getting a perpendicular line which is the direction to move
             
+            Get all contact points 
+            create pairs between each pair of points
+            n(n-1)/2 equals number of lines where n is number of points
+            average up all the perpendicular normals which then gives you distance plus direction
+            
         */
 
         public static void CollisionDetection(in SimBody body, in SimMesh mesh)
         {
+            Vector2 normalCombine = Vector2.Zero;
             for (int i = 0; i < mesh.indices.Length; i += 3)
             {
                 uint index0 = mesh.indices[i];
@@ -66,25 +75,18 @@ namespace SpatialGame
                 Vector2 posB = Vector2.Transform(mesh.vertexes[index1], body.simModelMat);
                 Vector2 posC = Vector2.Transform(mesh.vertexes[index2], body.simModelMat);
                 
-                CollisionInfo collisionInfo = CheckCollisionOnLine(posA, posB);
-                if (collisionInfo.collision)
-                {
-                    body.rigidBody.position += collisionInfo.normal;
-                }
-                collisionInfo = CheckCollisionOnLine(posB, posC);
-                if (collisionInfo.collision)
-                {
-                    body.rigidBody.position += collisionInfo.normal;
-                }
-                collisionInfo = CheckCollisionOnLine(posC, posA);
-                if (collisionInfo.collision)
-                {
-                    body.rigidBody.position += collisionInfo.normal;
-                }
+                List<CollisionInfo> contacts = new List<CollisionInfo>();
+                contacts.AddRange(CheckCollisionOnLine(posA,posB));
+                contacts.AddRange(CheckCollisionOnLine(posB,posC));
+                contacts.AddRange(CheckCollisionOnLine(posC,posA));
+                
+                ResolveCollisions(contacts.ToArray(), body, mesh);
+
             }
+            body.rigidBody.position += normalCombine;
         }
 
-        static CollisionInfo CheckCollisionOnLine(Vector2 a, Vector2 b)
+        static CollisionInfo[] CheckCollisionOnLine(Vector2 a, Vector2 b)
         {
             Vector2 start = new Vector2(MathF.Round(a.X), MathF.Round(a.Y));
             Vector2 end = new Vector2(MathF.Round(b.X), MathF.Round(b.Y));
@@ -98,6 +100,7 @@ namespace SpatialGame
             float err = dir.X - dir.Y;
             int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
 
+            List<CollisionInfo> contacts = new List<CollisionInfo>();
             for (int i = 0; i < steps; i++)
             {
                 Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
@@ -107,7 +110,7 @@ namespace SpatialGame
                     //we have collision
                     Vector2 direction = end - start;
                     Vector2 normal = Vector2.Normalize(new Vector2(-direction.Y, direction.X));
-                    return new CollisionInfo(true, position, normal, 1f);
+                    contacts.Add(new CollisionInfo(true, position, normal, 1f));
                 }
                 
                 float e2 = err * 2;
@@ -123,7 +126,31 @@ namespace SpatialGame
                 }
             }
 
-            return new CollisionInfo(false, start, Vector2.Zero, 0f);
+            return contacts.ToArray();
+        }
+
+        static void ResolveCollisions(in CollisionInfo[] collisions, in SimBody body, in SimMesh mesh)
+        {
+            //go through each pair of collisions
+            Vector2 normalCombine = Vector2.Zero;
+            bool collide = false;
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                for (int j = i + 1; j < collisions.Length; j++)
+                {
+                    if(collisions[i].collision)
+                        collide = true;
+                    Vector2 line = collisions[j].position - collisions[i].position;
+                    Vector2 normal = Vector2.Normalize(new Vector2(-line.Y, line.X));
+                    normalCombine += normal;
+                }
+            }
+            
+            if (collide)
+            {
+                body.rigidBody.position += Vector2.Normalize(normalCombine);
+                body.rigidBody.velocity = Vector2.Zero;
+            }
         }
         
     }

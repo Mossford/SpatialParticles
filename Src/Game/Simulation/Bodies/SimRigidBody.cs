@@ -18,6 +18,7 @@ namespace SpatialGame
         public Vector2 acceleration;
         public float rotation;
         public float scale;
+        public float mass;
 
         public SimRigidBody()
         {
