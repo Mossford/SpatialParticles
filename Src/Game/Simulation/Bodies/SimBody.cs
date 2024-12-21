@@ -53,7 +53,7 @@ namespace SpatialGame
 
         public void Update(float dt)
         {
-            /*for (int i = 0; i < indices.Length; i += 3)
+            for (int i = 0; i < indices.Length; i += 3)
             {
                 int index0 = indices[i];
                 int index1 = indices[i + 1];
@@ -67,11 +67,11 @@ namespace SpatialGame
                 RasterizeClear(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
                 RasterizeClear(new Vector2(posB.X, posB.Y), new Vector2(posC.X, posC.Y));
                 RasterizeClear(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
-            }*/
+            }
             
             SetModelMatrix();
 
-            /*for (int i = 0; i < indices.Length; i += 3)
+            for (int i = 0; i < indices.Length; i += 3)
             {
                 int index0 = indices[i];
                 int index1 = indices[i + 1];
@@ -85,7 +85,7 @@ namespace SpatialGame
                 RasterizeSpawn(new Vector2(posA.X, posA.Y), new Vector2(posB.X, posB.Y));
                 RasterizeSpawn(new Vector2(posB.X, posB.Y), new Vector2(posC.X, posC.Y));
                 RasterizeSpawn(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
-            }*/
+            }
 
             rigidBody.rotation += 1;
         }
@@ -94,28 +94,35 @@ namespace SpatialGame
         {
             //put particles around the edges of the triangles
             
-            //fucking line drawers 4th one I hate writing this bullshit
-            //find new position
-            Vector2 posMove = a + b;
-            posMove.X = MathF.Round(posMove.X);
-            posMove.Y = MathF.Round(posMove.Y);
-
-            Vector2 dir = b - a;
-            int step;
+            //fucking line drawers 4th one I hate writing this bullshit it never works
             
-            if (Math.Abs(dir.X) > Math.Abs(dir.Y))
-                step = (int)Math.Abs(dir.Y);
-            else
-                step = (int)Math.Abs(dir.X);
-
-            Vector2 increase = dir / step;
+            Vector2 start = new Vector2(MathF.Round(a.X), MathF.Round(a.Y));
+            Vector2 end = new Vector2(MathF.Round(b.X), MathF.Round(b.Y));
             
-            Vector2 newPos = a;
-            for (int i = 0; i < step; i++)
+            Vector2 dir = end - start;
+            dir = Vector2.Abs(dir);
+    
+            int sx = start.X < end.X ? 1 : -1;
+            int sy = start.Y < end.Y ? 1 : -1;
+            
+            float err = dir.X - dir.Y;
+            int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
+
+            for (int i = 0; i < steps; i++)
             {
-                newPos += increase;
-                newPos = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
-                ParticleSimulation.AddParticle(newPos, "Wall");
+                ParticleSimulation.AddParticle(new Vector2(MathF.Round(start.X), MathF.Round(start.Y)), "Wall");
+                
+                float e2 = err * 2;
+                if (e2 > -dir.Y)
+                {
+                    err -= dir.Y;
+                    start.X += sx;
+                }
+                if (e2 < dir.X)
+                {
+                    err += dir.X;
+                    start.Y += sy;
+                }
             }
         }
         
@@ -123,30 +130,38 @@ namespace SpatialGame
         {
             //put particles around the edges of the triangles
             
-            //fucking line drawers 4th one I hate writing this bullshit
+            //fucking line drawers 4th one I hate writing this bullshit it never works
             //find new position
-            Vector2 posMove = a + b;
-            posMove.X = MathF.Round(posMove.X);
-            posMove.Y = MathF.Round(posMove.Y);
-
-            Vector2 dir = b - a;
-            int step;
             
-            if (Math.Abs(dir.X) > Math.Abs(dir.Y))
-                step = (int)Math.Abs(dir.X);
-            else
-                step = (int)Math.Abs(dir.Y);
-
-            Vector2 increase = dir / step;
+            Vector2 start = new Vector2(MathF.Round(a.X), MathF.Round(a.Y));
+            Vector2 end = new Vector2(MathF.Round(b.X), MathF.Round(b.Y));
             
-            Vector2 newPos = a;
-            for (int i = 0; i < step; i++)
+            Vector2 dir = end - start;
+            dir = Vector2.Abs(dir);
+    
+            int sx = start.X < end.X ? 1 : -1;
+            int sy = start.Y < end.Y ? 1 : -1;
+            
+            float err = dir.X - dir.Y;
+            int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
+
+            for (int i = 0; i < steps; i++)
             {
-                newPos += increase;
-                newPos = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
-                int id = ParticleSimulation.SafeIdCheckGet(newPos);
+                int id = ParticleSimulation.SafeIdCheckGet(new Vector2(MathF.Round(start.X), MathF.Round(start.Y)));
                 if(id != -1)
                     ParticleSimulation.particles[id].QueueDelete();
+                
+                float e2 = err * 2;
+                if (e2 > -dir.Y)
+                {
+                    err -= dir.Y;
+                    start.X += sx;
+                }
+                if (e2 < dir.X)
+                {
+                    err += dir.X;
+                    start.Y += sy;
+                }
             }
         }
     }
