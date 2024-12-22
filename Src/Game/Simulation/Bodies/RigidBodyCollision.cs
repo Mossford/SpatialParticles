@@ -61,6 +61,8 @@ namespace SpatialGame
             average up all the perpendicular normals which then gives you distance plus direction
             
         */
+        
+        public const float restitution = 0.6f;
 
         public static void CollisionDetection(in SimBody body, in SimMesh mesh)
         {
@@ -86,11 +88,8 @@ namespace SpatialGame
             body.rigidBody.position += normalCombine;
         }
 
-        static CollisionInfo[] CheckCollisionOnLine(Vector2 a, Vector2 b)
+        static CollisionInfo[] CheckCollisionOnLine(Vector2 start, Vector2 end)
         {
-            Vector2 start = new Vector2(MathF.Round(a.X), MathF.Round(a.Y));
-            Vector2 end = new Vector2(MathF.Round(b.X), MathF.Round(b.Y));
-            
             Vector2 dir = end - start;
             dir = Vector2.Abs(dir);
     
@@ -101,28 +100,32 @@ namespace SpatialGame
             int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
 
             List<CollisionInfo> contacts = new List<CollisionInfo>();
+            Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
             for (int i = 0; i < steps; i++)
             {
-                Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
                 int id = ParticleSimulation.SafeIdCheckGet(position);
                 if (id != -1)
                 {
                     //we have collision
-                    Vector2 direction = end - start;
+                    Vector2 direction = Vector2.Normalize(end - start);
                     Vector2 normal = Vector2.Normalize(new Vector2(-direction.Y, direction.X));
-                    contacts.Add(new CollisionInfo(true, position, normal, 1f));
+                    Vector2 toPosition = position - start;
+                    Vector2 projectionOntoLine = Vector2.Dot(toPosition, direction) * direction;
+                    float distance = (toPosition - projectionOntoLine).Length();
+                    
+                    contacts.Add(new CollisionInfo(true, position, normal, distance));
                 }
                 
                 float e2 = err * 2;
                 if (e2 > -dir.Y)
                 {
                     err -= dir.Y;
-                    start.X += sx;
+                    position.X += sx;
                 }
                 if (e2 < dir.X)
                 {
                     err += dir.X;
-                    start.Y += sy;
+                    position.Y += sy;
                 }
             }
 
@@ -133,7 +136,10 @@ namespace SpatialGame
         {
             //go through each pair of collisions
             Vector2 normalCombine = Vector2.Zero;
+            Vector2 velocityCombine = Vector2.Zero;
+            float rotationCombine = 0;
             bool collide = false;
+            float distance = float.MinValue;
             for (int i = 0; i < collisions.Length; i++)
             {
                 for (int j = i + 1; j < collisions.Length; j++)
@@ -142,7 +148,20 @@ namespace SpatialGame
                         collide = true;
                     Vector2 line = collisions[j].position - collisions[i].position;
                     Vector2 normal = new Vector2(-line.Y, line.X);
+                    Vector2 velocityRelative = body.rigidBody.velocity;
+                    
+                    //use position that has higher depth
+                    Vector2 positionRelativeA = collisions[j].distance > collisions[i].distance ? collisions[j].position - body.rigidBody.position : collisions[i].position - body.rigidBody.position;
+                    //position of particle bassically
+                    Vector2 positionRelativeB = collisions[j].distance > collisions[i].distance ? collisions[j].position : collisions[i].position;
+                    
                     normalCombine += normal;
+                    //body.rigidBody.velocity = -body.rigidBody.velocity;
+
+                }
+                if(distance < collisions[i].distance)
+                {
+                    distance = collisions[i].distance;
                 }
             }
             
@@ -150,10 +169,12 @@ namespace SpatialGame
             {
                 if (normalCombine.LengthSquared() == 0f)
                     return;
+                
+                //calculate j value
                 normalCombine = Vector2.Normalize(normalCombine);
-                Console.WriteLine(normalCombine);
-                body.rigidBody.position += normalCombine;
-                body.rigidBody.velocity = Vector2.Zero;
+                body.rigidBody.position += normalCombine * distance;
+                //Console.WriteLine(velocityCombine / collisions.Length);
+                body.rigidBody.velocity *= -1;
             }
         }
         

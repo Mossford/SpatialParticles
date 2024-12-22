@@ -15,14 +15,19 @@ namespace SpatialGame
     {
         public Vector2 position;
         public Vector2 velocity;
+        public float angularVelocity;
         public Vector2 acceleration;
+        public float angularAcceleration;
         public float rotation;
         public float scale;
         public float mass;
+        public Vector2 centerOfMass;
+        public float[] inertia;
 
         public SimRigidBody()
         {
-            
+            mass = 1;
+            inertia = new float[4];
         }
 
         public void Update()

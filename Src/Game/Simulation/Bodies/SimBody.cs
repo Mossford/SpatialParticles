@@ -88,6 +88,7 @@ namespace SpatialGame
 
             rigidBody.velocity.Y += 9.81f * dt;
             rigidBody.position += rigidBody.velocity * dt;
+            rigidBody.rotation += rigidBody.angularVelocity * dt;
         }
 
         public void RasterizeSpawn(in Vector2 a, in Vector2 b)
@@ -108,20 +109,21 @@ namespace SpatialGame
             float err = dir.X - dir.Y;
             int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
 
+            Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
             for (int i = 0; i < steps; i++)
             {
-                ParticleSimulation.AddParticle(new Vector2(MathF.Round(start.X), MathF.Round(start.Y)), "Wall");
+                ParticleSimulation.AddParticle(position, "Wall");
                 
                 float e2 = err * 2;
                 if (e2 > -dir.Y)
                 {
                     err -= dir.Y;
-                    start.X += sx;
+                    position.X += sx;
                 }
                 if (e2 < dir.X)
                 {
                     err += dir.X;
-                    start.Y += sy;
+                    position.Y += sy;
                 }
             }
         }
@@ -145,9 +147,10 @@ namespace SpatialGame
             float err = dir.X - dir.Y;
             int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
 
+            Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
             for (int i = 0; i < steps; i++)
             {
-                int id = ParticleSimulation.SafeIdCheckGet(new Vector2(MathF.Round(start.X), MathF.Round(start.Y)));
+                int id = ParticleSimulation.SafeIdCheckGet(position);
                 if(id != -1)
                     ParticleSimulation.particles[id].QueueDelete();
                 
@@ -155,12 +158,12 @@ namespace SpatialGame
                 if (e2 > -dir.Y)
                 {
                     err -= dir.Y;
-                    start.X += sx;
+                    position.X += sx;
                 }
                 if (e2 < dir.X)
                 {
                     err += dir.X;
-                    start.Y += sy;
+                    position.Y += sy;
                 }
             }
         }
