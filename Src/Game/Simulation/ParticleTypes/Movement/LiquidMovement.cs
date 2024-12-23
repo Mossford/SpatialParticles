@@ -72,36 +72,18 @@ namespace SpatialGame
                 int moveDisp = ParticleSimulation.random.Next(0, particle.state.viscosity);
                 for (int i = 0; i < moveDisp; i++)
                 {
-                    if (i < 5)
-                    {
-                        Vector2 checkPos = new Vector2(particle.position.X - 1, particle.position.Y);
-                        if (!particle.BoundsCheck(checkPos))
-                            return;
+                    Vector2 checkPos = new Vector2(particle.position.X - 1, particle.position.Y);
+                    if (!particle.BoundsCheck(checkPos))
+                        return;
 
-                        if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte())
-                        {
-                            particle.MoveParticleOne(new Vector2(-1, 0));
-                        }
-                        else
-                        {
-                            break;
-                        }
+                    if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte()
+                        && ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X - 1, particle.position.Y + 1)) != ParticleBehaviorType.empty.ToByte())
+                    {
+                        particle.MoveParticleOne(new Vector2(-1, 0));
                     }
                     else
                     {
-                        Vector2 checkPos = new Vector2(particle.position.X - 1, particle.position.Y);
-                        if (!particle.BoundsCheck(checkPos))
-                            return;
-
-                        if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte()
-                            && ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X - 1, particle.position.Y + 1)) != ParticleBehaviorType.empty.ToByte())
-                        {
-                            particle.MoveParticleOne(new Vector2(-1, 0));
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -111,36 +93,18 @@ namespace SpatialGame
                 int moveDisp = ParticleSimulation.random.Next(0, particle.state.viscosity);
                 for (int i = 0; i < moveDisp; i++)
                 {
-                    if (i < 5)
-                    {
-                        Vector2 checkPos = new Vector2(particle.position.X + 1, particle.position.Y);
-                        if (!particle.BoundsCheck(checkPos))
-                            return;
+                    Vector2 checkPos = new Vector2(particle.position.X + 1, particle.position.Y);
+                    if (!particle.BoundsCheck(checkPos))
+                        return;
 
-                        if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte())
-                        {
-                            particle.MoveParticleOne(new Vector2(1, 0));
-                        }
-                        else
-                        {
-                            break;
-                        }
+                    if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte()
+                        && ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X + 1, particle.position.Y + 1)) != ParticleBehaviorType.empty.ToByte())
+                    {
+                        particle.MoveParticleOne(new Vector2(1, 0));
                     }
                     else
                     {
-                        Vector2 checkPos = new Vector2(particle.position.X + 1, particle.position.Y);
-                        if (!particle.BoundsCheck(checkPos))
-                            return;
-
-                        if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte()
-                            && ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X + 1, particle.position.Y + 1)) != ParticleBehaviorType.empty.ToByte())
-                        {
-                            particle.MoveParticleOne(new Vector2(1, 0));
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        break;
                     }
                 }
             }
