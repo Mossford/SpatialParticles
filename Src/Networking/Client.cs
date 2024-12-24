@@ -78,11 +78,6 @@ namespace SpatialEngine.Networking
         {
             if (!stopping && !disconnected)
             {
-                /*for (int i = 0; i < scene.SpatialObjects.Count; i++)
-                {
-                    SpatialObjectPacket packet = new SpatialObjectPacket(i, scene.SpatialObjects[i].SO_mesh.position, scene.SpatialObjects[i].SO_mesh.rotation);
-                    SendUnrelib(packet);
-                }*/
                 PlayerPacket packet = new PlayerPacket(Mouse.localPosition, Mouse.lastLocalPosition, SimInput.mouseSpawnRadius, SimInput.mousePressed, SimInput.mouseSelection, SimInput.mouseButtonPress, SimInput.selectionMode);
                 SendUnrelib(packet);
                 client.Update();
@@ -249,6 +244,13 @@ namespace SpatialEngine.Networking
                         packet.ByteToPacket(data);
                         break;
                     }
+                case (ushort)PacketType.ParticleSpawn:
+                {
+                        ParticleSpawnPacket packet = new ParticleSpawnPacket();
+                        packet.ByteToPacket(data);
+                        ParticleSimulation.AddParticle(packet.position, packet.name);
+                        break;
+                }
             }
         }
 

@@ -43,10 +43,7 @@ namespace SpatialGame
 
         public static void CleanUp()
         {
-            for (int i = 0; i < spawners.Count; i++)
-            {
-                spawners[i].elementText.Dispose();
-            }
+            
         }
 
         public static void DrawMouseElementsCircle(Vector2 positionMouse, int radius, bool pressed, int id)

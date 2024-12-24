@@ -129,8 +129,6 @@ namespace SpatialEngine
             gl.Enable(GLEnum.DebugOutput);
             gl.DebugMessageCallback(DebugProc, null);
             gl.DebugMessageControl(GLEnum.DontCare, GLEnum.DontCare, GLEnum.DebugSeverityNotification, 0, null, false);
-
-            UiRenderer.Init();
             
             //input stuffs
             Input.Init();

@@ -35,6 +35,7 @@ namespace SpatialGame
                 SimInput.CleanUp();
             }
 
+            UiRenderer.Init();
             ParticleResourceHandler.Init();
             SimTextHandler.Init();
             PixelColorer.Init(changeResolution);
@@ -53,6 +54,7 @@ namespace SpatialGame
         {
             isInitalizing = true;
             timeSinceLastInit = GetTime();
+            UiRenderer.Init();
             ParticleResourceHandler.Init();
             SimTextHandler.Init();
             PixelColorer.Init(false);
