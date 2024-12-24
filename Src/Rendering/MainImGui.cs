@@ -147,6 +147,7 @@ namespace SpatialEngine.Rendering
                 if(ImGui.Button("StartServer"))
                 {
                     NetworkManager.InitServer();
+                    NetworkManager.InitClient();
                 }
                 if (ImGui.Button("StartClient"))
                 {
@@ -182,6 +183,7 @@ namespace SpatialEngine.Rendering
                         if (ImGui.Button("Stop Server"))
                         {
                             NetworkManager.server.Stop();
+                            NetworkManager.client.Close();
                         }
                     }
                     else
@@ -189,10 +191,11 @@ namespace SpatialEngine.Rendering
                         if (ImGui.Button("StartServer"))
                         {
                             NetworkManager.InitServer();
+                            NetworkManager.InitClient();
                         }
                     }
                 }
-                else
+                if(NetworkManager.isClient)
                 {
                     if(NetworkManager.client.IsConnected())
                     {

@@ -65,6 +65,11 @@ namespace SpatialGame
 
         }
 
+        public static void DeleteMesh(int index)
+        {
+            meshes.RemoveAt(index);
+        }
+
         public static void CleanUp()
         {
             shader.Dispose();

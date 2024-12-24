@@ -60,9 +60,16 @@ namespace SpatialGame
             n(n-1)/2 equals number of lines where n is number of points
             average up all the perpendicular normals which then gives you distance plus direction
             
+            take points that collide with traingle
+            create mesh
+            run sat to get correct normals and depth
+            proft
+            
         */
         
         public const float restitution = 0.9f;
+        //for drawing the mesh and keeping track
+        static int contactDebugIndex = -1;
 
         public static void CollisionDetection(in SimBody body, in SimMesh mesh)
         {
@@ -127,7 +134,7 @@ namespace SpatialGame
                     position.Y += sy;
                 }
             }
-
+            
             return contacts.ToArray();
         }
 
@@ -168,6 +175,12 @@ namespace SpatialGame
             
             if (collide)
             {
+                if (contactDebugIndex != -1)
+                {
+                    SimRenderer.DeleteMesh(contactDebugIndex);
+                    contactDebugIndex = -1;
+                }
+                DebugDrawContactPoints(collisions, body);
                 if (normalCombine.LengthSquared() == 0f)
                     return;
                 
@@ -179,6 +192,36 @@ namespace SpatialGame
                 body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
             }
         }
+
+        static void DebugDrawContactPoints(in CollisionInfo[] collisions, in SimBody body)
+        {
+            List<uint> indices = new List<uint>();
+            List<Vector2> vertexes = new List<Vector2>();
+            
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                vertexes.Add(collisions[i].position - body.rigidBody.position);
+            }
+            
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                vertexes.Add((collisions[i].position + new Vector2(0, 10) - body.rigidBody.position));
+            }
+
+            
+            
+
+            if (contactDebugIndex == -1)
+            {
+                SimRenderer.meshes.Add(new SimMesh(vertexes.ToArray(), indices.ToArray()));
+                contactDebugIndex = SimRenderer.meshes.Count - 1;
+                SimRenderer.meshes[contactDebugIndex].position = ((body.rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * (Vector2)Globals.window.Size) - (Vector2)Globals.window.Size / 2;
+                SimRenderer.meshes[contactDebugIndex].position.Y *= -1;
+                SimRenderer.meshes[contactDebugIndex].scaleX = (float)Globals.window.Size.X / PixelColorer.width * 1;
+                SimRenderer.meshes[contactDebugIndex].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * 1;
+            }
+        }
+        
         
     }
 }

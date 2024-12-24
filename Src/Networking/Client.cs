@@ -220,6 +220,9 @@ namespace SpatialEngine.Networking
                     {
                         SceneSyncClear packet = new SceneSyncClear();
                         SendRelib(packet);
+                        
+                        //clear current sim
+                        GameManager.ReInitGame();
                         break;
                     }
                 case (ushort)PacketType.Player:

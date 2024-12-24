@@ -23,8 +23,7 @@ namespace SpatialEngine.Networking
         Player,
         PlayerJoin,
         PlayerLeave,
-        
-        TypeSpawner,
+        ParticleSpawn,
     }
 
     public abstract class Packet

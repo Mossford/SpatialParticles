@@ -13,6 +13,7 @@ namespace SpatialEngine.Networking
         public static SpatialClient client;
         public static SpatialServer server;
         public static bool isServer;
+        public static bool isClient;
         public static bool didInit;
         public static bool running;
 
@@ -26,7 +27,7 @@ namespace SpatialEngine.Networking
             client = new SpatialClient();
             client.Start("127.0.0.1", 58301);
             didInit = true;
-            isServer = false;
+            isClient = true;
             running = true;
         }
 

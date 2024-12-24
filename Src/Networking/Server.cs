@@ -9,6 +9,7 @@ using static SpatialEngine.Rendering.MeshUtils;
 using Riptide.Transports;
 using System.Collections;
 using SpatialEngine.Networking.Packets;
+using SpatialGame;
 
 namespace SpatialEngine.Networking
 {
@@ -104,7 +105,6 @@ namespace SpatialEngine.Networking
             PlayerLeavePacket packet = new PlayerLeavePacket();
 
             //using the algorithm for sending the player packets
-            Console.WriteLine(e.Client.Id + "Id");
             int currentId = (int)connectionIds[e.Client.Id];
 
             //start from one as we cannot access the client list as the client has been removed
@@ -126,10 +126,6 @@ namespace SpatialEngine.Networking
                 }
             }
             connectionIds.Remove(e.Client.Id);
-            foreach (var item in connectionIds)
-            {
-                Console.WriteLine(item.Key + " " + item.Value);
-            }
 
         }
 
@@ -259,6 +255,15 @@ namespace SpatialEngine.Networking
                     }
                 case (ushort)PacketType.SceneSyncClear:
                     {
+                        ParticleSpawnPacket packet = new ParticleSpawnPacket();
+                        for (int i = 0; i < ParticleSimulation.particles.Length; i++)
+                        {
+                            if(ParticleSimulation.particles[i].id == -1)
+                                continue;
+                            packet.position = ParticleSimulation.particles[i].position;
+                            packet.name = ParticleSimulation.particles[i].GetParticleProperties().name;
+                            SendRelib(packet, client.Id);
+                        }
                         
                         break;
                     }

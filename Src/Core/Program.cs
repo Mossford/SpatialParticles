@@ -199,8 +199,10 @@ namespace SpatialEngine
                 if(NetworkManager.isServer)
                 {
                     NetworkManager.server.Update(dt);
+                    GameManager.FixedUpdateGame(dt);
+                    NetworkManager.client.Update(dt);
                 }
-                else
+                else if(NetworkManager.isClient)
                 {
                     GameManager.FixedUpdateGame(dt);
                     NetworkManager.client.Update(dt);
