@@ -112,11 +112,11 @@ namespace SpatialGame
                         if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
                             continue;
 
-                        float check = (float)Math.Sqrt(((x - newPos.X) * (x - newPos.X)) + ((y - newPos.Y) * (y - newPos.Y)));
+                        float check = (float)Math.Sqrt(((x - newPos.X + 0.5f) * (x - newPos.X + 0.5f)) + ((y - newPos.Y + 0.5f) * (y - newPos.Y + 0.5f)));
                         if (check > radius)
                             continue;
                         
-                        Vector2 pos = new Vector2(MathF.Floor(x), MathF.Floor(y));
+                        Vector2 pos = new Vector2(MathF.Round(x), MathF.Round(y));
                         int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
                         if(button == 0 && !mode)
@@ -177,11 +177,11 @@ namespace SpatialGame
                         if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
                             continue;
 
-                        float check = (float)Math.Sqrt(((x - newPos.X) * (x - newPos.X)) + ((y - newPos.Y) * (y - newPos.Y)));
+                        float check = (float)Math.Sqrt(((x - newPos.X + 0.5f) * (x - newPos.X + 0.5f)) + ((y - newPos.Y + 0.5f) * (y - newPos.Y + 0.5f)));
                         if (check > radius)
                             continue;
                         
-                        Vector2 pos = new Vector2(MathF.Floor(x), MathF.Floor(y));
+                        Vector2 pos = new Vector2(MathF.Round(x), MathF.Round(y));
                         int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
                         if(button == 0 && !mode)
