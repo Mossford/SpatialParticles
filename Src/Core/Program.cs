@@ -231,6 +231,8 @@ namespace SpatialEngine
             GameManager.RenderGame();
             //renders other more generic ui stuff
             UiRenderer.Draw();
+            SetNeededDebug(Matrix4x4.CreateOrthographic(window.Size.X, window.Size.Y, -1, 1f), Matrix4x4.Identity);
+            Debugging.DrawDebugItems();
 
             if (showImguiDebug)
             {
