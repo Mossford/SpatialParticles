@@ -161,7 +161,6 @@ namespace SpatialGame
                     continue;
 
                 //reset its color before it moves
-                PixelColorer.SetColorAtPos(particles[i].position, 102, 178, 204);
                 particles[i].Update(delta);
                 particles[i].UpdateGeneralSecond();
                 if (particles[i].id != -1 || particles[i].BoundsCheck(particles[i].position))
@@ -237,6 +236,14 @@ namespace SpatialGame
             particles[id].state = ParticleResourceHandler.loadedParticles[index];
             SafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
             SafeIdCheckSet(id, pos);
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void ResetColorAtPos(Vector2 pos)
+        {
+            PixelColorer.SetColorAtPos(pos, 102, 178, 204);
         }
 
 #if RELEASE

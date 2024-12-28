@@ -151,7 +151,19 @@ namespace SpatialGame
         public static void SetColorAtPos(Vector2 pos, byte r, byte g, byte b)
         {
             int index = PosToIndex(pos);
-            pixelColors[index] = new Vector4Byte(r,g,b,255);
+            if(index != -1)
+                pixelColors[index] = new Vector4Byte(r,g,b,255);
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static Vector4Byte GetColorAtPos(Vector2 pos)
+        {
+            int index = PosToIndex(pos);
+            if (index != -1)
+                return pixelColors[index];
+            return new Vector4Byte();
         }
 
 #if RELEASE

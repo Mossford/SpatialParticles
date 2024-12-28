@@ -58,6 +58,8 @@ namespace SpatialGame
 
             pastVelocity = velocity;
             
+            ParticleSimulation.ResetColorAtPos(position);
+            
             switch (GetParticleMovementType())
             {
                 case ParticleMovementType.unmoving:
@@ -401,8 +403,15 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return position + " Position\n" + velocity + " Velocity\n" + pastVelocity + " PastVelocity\n" + id + " Id\n" + " ToBeDeleted\n" + deleteIndex + " DeleteIndex\n" + timeSpawned + " TimeSpawned\n" + propertyIndex +
-                " PropertyIndex\n" + state.ToString();
+            return "Position: " + position + "\n" +
+                   "Velocity: " + velocity + "\n" +
+                   "PastVelocity: " + pastVelocity + "\n" +
+                   "Id: " + id + "\n" +
+                   "ToBeDeleted: " + "\n" +
+                   "DeleteIndex: " + deleteIndex + "\n" +
+                   "TimeSpawned: " + timeSpawned + "\n" +
+                   "PropertyIndex: " + propertyIndex + "\n" +
+                   "State: " + state.ToString() + "\n";
         }
 
 

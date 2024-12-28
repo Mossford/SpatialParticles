@@ -21,7 +21,7 @@ namespace SpatialEngine.Rendering
 {
     public static class MainImGui
     {
-        static bool ShowConsoleViewerMenu, ShowNetworkViewerMenu;
+        static bool ShowConsoleViewerMenu, ShowNetworkViewerMenu, ShowSimMenu;
         static ImFontPtr font;
         static float fpsCount;
         static float fpsTotal;
@@ -103,6 +103,7 @@ namespace SpatialEngine.Rendering
                 {
                     ImGui.MenuItem("Console Viewer", null, ref ShowConsoleViewerMenu);
                     ImGui.MenuItem("Network Viewer", null, ref ShowNetworkViewerMenu);
+                    ImGui.MenuItem("Simulation Viewer", null, ref ShowSimMenu);
                     ImGui.EndMenu();
                 }
                 ImGui.EndMenuBar();
@@ -117,6 +118,42 @@ namespace SpatialEngine.Rendering
             {
                 NetworkViewer();
             }
+
+            if (ShowSimMenu)
+            {
+                SimViewer();
+            }
+        }
+
+        static Particle emptyParticle = new Particle();
+        static void SimViewer()
+        {
+            ImGui.Begin("Simulation Viewer");
+            ImGui.Text("Particle Info at Mouse Pos:");
+            Vector2 position = ((Mouse.localPosition / (Vector2)Globals.window.Size * new Vector2(PixelColorer.width, PixelColorer.height)) + (new Vector2(PixelColorer.width, PixelColorer.height) / 2));
+            ImGui.Text(String.Format("Pos {0:N1}", position));
+            Vector2 floorPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
+            int particleIndex = ParticleSimulation.SafeIdCheckGet(floorPosition);
+            Vector4Byte color = PixelColorer.GetColorAtPos(floorPosition);
+            ImGui.Text(String.Format("Color {0}", color));
+            Vector2 textSize = ImGui.CalcTextSize(String.Format("Color {0}", color));
+            Vector2 cursorPos = ImGui.GetCursorScreenPos();
+            ImGui.GetWindowDrawList().AddRectFilled(
+                new Vector2(cursorPos.X + textSize.X + 5, cursorPos.Y - 2), 
+                new Vector2(cursorPos.X + textSize.X + 25, cursorPos.Y - textSize.Y - 3), 
+                ImGui.ColorConvertFloat4ToU32((Vector4)color / 255f));
+            if (ImGui.CollapsingHeader("Particle"))
+            {
+                if (particleIndex != -1)
+                {
+                    ImGui.Text(String.Format("{0}", ParticleSimulation.particles[particleIndex]));
+                }
+                else
+                {
+                    ImGui.Text(String.Format("{0}", emptyParticle));
+                }
+            }
+            ImGui.End();
         }
 
         static void ConsoleViewer()

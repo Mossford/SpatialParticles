@@ -40,8 +40,16 @@ namespace SpatialGame
         }
         public override string ToString()
         {
-            return name + " : Name\n" + moveType.ToString() + " : MoveType\n" + behaveType.ToString() + " : BehaveType\n" + color.ToString() + " : Color\n" + viscosity + " : Viscosity\n" + xBounce + " : XBounce\n" + 
-                yBounce + " : YBounce\n" + canMove + " : CanMove\n" + heatingProperties.ToString() + " : Heating Properties\n" + explosiveProperties + " : Explosive Properties\n";
+            return "Name: " + name + "\n" + 
+                   "MoveType: " + moveType + "\n" + 
+                   "BehaveType: " + behaveType + "\n" + 
+                   "Color: " + color + "\n" + 
+                   "Viscosity: " + viscosity + "\n" + 
+                   "XBounce: " + xBounce + "\n" + 
+                   "YBounce: " + yBounce + "\n" + 
+                   "CanMove: " + canMove + "\n" + 
+                   "Heating Properties: " + heatingProperties + "\n" + 
+                   "Explosive Properties: " + explosiveProperties + "\n";
         }
     }
 
@@ -72,8 +80,14 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return temperature + " : Temperature\n" + autoIgnite + " : AutoIgnite\n" + heatTransferRate + " : HeatTransferRate\n" + canStateChange + " : CanStateChange\n" + string.Join(", ", stateChangeTemps) + " : StateChangeTemps\n" +
-                string.Join(", ", stateChangeViscosity) + " : StateChangeViscosity\n" + string.Join(", ", stateChangeColors) + " : StateChangeColors\n" + string.Join(", ", canColorChange) + " : CanColorChange\n";
+            return "Temperature: " + temperature + "\n" + 
+                   "AutoIgnite: " + autoIgnite + "\n" + 
+                   "HeatTransferRate: " + heatTransferRate + "\n" + 
+                   "CanStateChange: " + canStateChange + "\n" + 
+                   "StateChangeTemps: " + string.Join(", ", stateChangeTemps) + "\n" + 
+                   "StateChangeViscosity: " + string.Join(", ", stateChangeViscosity) + "\n" + 
+                   "StateChangeColors: " + string.Join(", ", stateChangeColors) + "\n" + 
+                   "CanColorChange: " + string.Join(", ", canColorChange) + "\n";
         }
     }
 
@@ -94,7 +108,10 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return range + " : Range\n" + power + " : Power\n" + flashPoint + " : FlashPoint\n" + heatOutput + " : HeatOutput\n";
+            return "Range: " + range + "\n" + 
+                   "Power: " + power + "\n" + 
+                   "FlashPoint: " + flashPoint + "\n" + 
+                   "HeatOutput: " + heatOutput + "\n";
         }
     }
 
@@ -142,8 +159,15 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return behaveType.ToString() + " BehaveType\n" + moveType + " MoveType\n" + color.ToString() + " Color\n" + viscosity + " Viscosity\n" + xBounce + " XBounce\n" + yBounce + " YBounce\n" + canMove + " CanMove\n" + temperature
-                + " Temperature\n" + temperatureTemp + " TemperatureTemp";
+            return "BehaveType: " + behaveType + "\n" + 
+                   "MoveType: " + moveType + "\n" + 
+                   "Color: " + color + "\n" + 
+                   "Viscosity: " + viscosity + "\n" + 
+                   "XBounce: " + xBounce + "\n" + 
+                   "YBounce: " + yBounce + "\n" + 
+                   "CanMove: " + canMove + "\n" + 
+                   "Temperature: " + temperature + "\n" + 
+                   "TemperatureTemp: " + temperatureTemp + "\n";
         }
 
 #if RELEASE

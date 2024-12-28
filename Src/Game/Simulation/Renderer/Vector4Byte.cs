@@ -102,7 +102,7 @@ namespace SpatialGame
 
         public override string ToString()
         {
-            return x + " x\n" + y + " y\n" + z + " z\n" + w + " w";
+            return "<" + x + ", " + y + ", " + z + ", " + w + ">";
         }
     }
 }
