@@ -35,11 +35,11 @@ namespace SpatialGame
                     
                     if (LUnder && num == 0 && posCheckLeft == ParticleBehaviorType.empty.ToByte())
                     {
-                        particle.MoveParticleOne(new Vector2(-1, 1));
+                        particle.MoveParticleOne(new Vector2(-1, -1));
                     }
                     else if (RUnder && num == 1 && posCheckRight == ParticleBehaviorType.empty.ToByte())
                     {
-                        particle.MoveParticleOne(new Vector2(1, 1));
+                        particle.MoveParticleOne(new Vector2(1, -1));
                     }
                 }
             }
