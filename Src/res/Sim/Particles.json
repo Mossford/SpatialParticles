@@ -221,8 +221,8 @@
   },
   {
     "name": "Smoke",
-    "moveType": 3, // Gas movement
-    "behaveType": 4, // Gas behavior
+    "moveType": 4, // Gas movement
+    "behaveType": 3, // Gas behavior
     "color": {
       "x": 80,
       "y": 80,
