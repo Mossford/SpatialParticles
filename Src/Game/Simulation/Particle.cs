@@ -69,21 +69,21 @@ namespace SpatialGame
                     }
                 case ParticleMovementType.particle:
                     {
-                        velocity += new Vector2(0,0.5f);
+                        velocity += new Vector2(0,1f);
                         MoveParticle();
                         ParticleMovementDefines.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.liquid:
                     {
-                        velocity += new Vector2(0,0.5f);
+                        velocity += new Vector2(0,1f);
                         MoveParticle();
                         LiquidMovement.Update(ref this);
                         break;
                     }
                 case ParticleMovementType.gas:
                     {
-                        velocity += new Vector2(0,-0.5f);
+                        velocity += new Vector2(0,-1f);
                         MoveParticle();
                         GasMovementDefines.Update(ref this);
                         break;
@@ -177,9 +177,9 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public bool BoundsCheck(Vector2 position)
+        public bool BoundsCheck(Vector2 pos)
         {
-            if (position.X < 0 || position.X >= PixelColorer.width || position.Y < 0 || position.Y >= PixelColorer.height)
+            if (pos.X < 0 || pos.X >= PixelColorer.width || pos.Y < 0 || pos.Y >= PixelColorer.height)
                 return false;
             return true;
         }
@@ -226,8 +226,8 @@ namespace SpatialGame
         {
             //find new position
             Vector2 posMove = position + velocity;
-            posMove.X = MathF.Round(posMove.X);
-            posMove.Y = MathF.Round(posMove.Y);
+            posMove.X = MathF.Floor(posMove.X);
+            posMove.Y = MathF.Floor(posMove.Y);
 
             Vector2 dir = posMove - position;
             int step;
@@ -242,7 +242,7 @@ namespace SpatialGame
             for (int i = 0; i < step; i++)
             {
                 Vector2 newPos = position + increase;
-                newPos = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
+                newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
                 int otherId = ParticleSimulation.SafeIdCheckGet(newPos);
                 if (otherId == -1)
                 {
@@ -281,8 +281,8 @@ namespace SpatialGame
         public void MoveParticleOne(Vector2 dir)
         {
             Vector2 posMove = position + dir;
-            posMove.X = MathF.Round(posMove.X);
-            posMove.Y = MathF.Round(posMove.Y);
+            posMove.X = MathF.Floor(posMove.X);
+            posMove.Y = MathF.Floor(posMove.Y);
             
             //push to simulation to be deleted
             if(!BoundsCheck(posMove))
@@ -411,7 +411,7 @@ namespace SpatialGame
                    "DeleteIndex: " + deleteIndex + "\n" +
                    "TimeSpawned: " + timeSpawned + "\n" +
                    "PropertyIndex: " + propertyIndex + "\n" +
-                   "State: " + state.ToString() + "\n";
+                   "State: " + state + "\n";
         }
 
 
