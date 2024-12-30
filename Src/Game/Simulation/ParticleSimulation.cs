@@ -49,7 +49,7 @@ namespace SpatialGame
             idsToDelete = new List<int>();
             random = new Random();
             particleCount = 0;
-            particleLightRange = 5;
+            particleLightRange = 2;
 
             //tell the queue that all spots are avaliable
             for (int i = 0; i < particles.Length; i++)

@@ -196,7 +196,7 @@ namespace SpatialGame
                                 ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where base type turns to liquid
-                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0])
+                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
                             {
                                 particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
                                 particle.state.behaveType = ParticleBehaviorType.liquid;
@@ -205,7 +205,7 @@ namespace SpatialGame
                                 ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //upper bound gas transition where liquid turns to gas
-                            if (particle.state.behaveType == ParticleBehaviorType.liquid && particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
+                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
                             {
                                 particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
                                 particle.state.behaveType = ParticleBehaviorType.gas;
