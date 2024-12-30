@@ -19,13 +19,13 @@ namespace SpatialGame
 
         public static void Init()
         {
-            temperatureColorCount = 10000;
+            temperatureColorCount = 50000;
             temperatureColors = new Vector4Byte[temperatureColorCount];
             suroundingIdOfParticle = new int[8];
 
-            for (int i = 0; i < temperatureColorCount; i++)
+            for (int i = -273; i < temperatureColorCount - 273; i++)
             {
-                float temp = i;
+                float temp = i + 273;
                 Vector3 color = new Vector3(255f, 255f, 255f);
                 color.X = 56100000.0f * MathF.Pow(temp, (-3.0f / 2.0f)) + 148.0f;
                 color.Y = 100.04f * MathF.Log(temp) - 623.6f;
@@ -36,7 +36,7 @@ namespace SpatialGame
                 if (temp < 1000.0f)
                     color *= temp / 1000.0f;
 
-                temperatureColors[i] = color * 255f;
+                temperatureColors[i + 273] = (color * 255f);
             }
         }
 
@@ -64,6 +64,7 @@ namespace SpatialGame
             idsSurroundCount++;
 
             //temperature transfers
+            float heatTransConst = particle.state.temperature / idsSurroundCount;
             for (int i = 0; i < 8; i++)
             {
                 if (suroundingIdOfParticle[i] == -1)
@@ -71,7 +72,7 @@ namespace SpatialGame
 
                 Particle other = ParticleSimulation.particles[suroundingIdOfParticle[i]];
                 
-                float heatTrans = particle.state.temperature * other.GetParticleProperties().heatingProperties.heatTransferRate / idsSurroundCount;
+                float heatTrans = heatTransConst * other.GetParticleProperties().heatingProperties.heatTransferRate;
                 particle.state.temperatureTemp -= heatTrans;
                 ParticleSimulation.particles[suroundingIdOfParticle[i]].state.temperatureTemp += heatTrans;
             }
@@ -254,9 +255,9 @@ namespace SpatialGame
                 {
                     int index = PixelColorer.PosToIndex(particle.position);
                     PixelColorer.particleLights[index].index = index;
-                    PixelColorer.particleLights[index].intensity = MathF.Min(color.Length() + 1f, 2f);
+                    PixelColorer.particleLights[index].intensity = MathF.Max(((Vector3)temperatureColors[temperatureColorCount - 1] / 255f).Length() / (1 / color.Length()), 1f);
                     PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
-                    PixelColorer.particleLights[index].range = 3;
+                    PixelColorer.particleLights[index].range = ParticleSimulation.particleLightRange;
                 }
             }
             else

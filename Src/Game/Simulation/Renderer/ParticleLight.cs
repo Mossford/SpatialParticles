@@ -28,5 +28,13 @@ namespace SpatialGame
         {
             return 16;
         }
+
+        public override string ToString()
+        {
+            return "Index: " + index + "\n" + 
+                   "Color: " + color + "\n" + 
+                   "Intensity: " + intensity + "\n" + 
+                   "Range: " + range + "\n" ;
+        }
     }
 }
