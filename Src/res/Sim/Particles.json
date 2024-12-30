@@ -174,7 +174,7 @@
       "z": 255,
       "w": 255
     },
-    "viscosity": 50,
+    "viscosity": 80,
     "xBounce": 0.6,
     "yBounce": 0.3,
     "canMove": true,
@@ -190,7 +190,7 @@
       ],
       "stateChangeViscosity": [
         0,
-        10
+        200
       ],
       "stateChangeColors": [
         {
@@ -229,7 +229,7 @@
       "z": 80,
       "w": 180
     },
-    "viscosity": 10,
+    "viscosity": 200,
     "xBounce": 0.0,
     "yBounce": 0.0,
     "canMove": true,
@@ -244,8 +244,8 @@
         -78.5 //will be gas above the same temp
       ],
       "stateChangeViscosity": [
-        10,
-        10
+        200,
+        100
       ],
       "stateChangeColors": [
         {
