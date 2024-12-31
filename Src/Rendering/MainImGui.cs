@@ -185,7 +185,6 @@ namespace SpatialEngine.Rendering
             ImGui.Checkbox("Enable ParticleLighting", ref Settings.SimulationSettings.EnableParticleLighting);
             ImGui.Checkbox("Enable Dark Lighting", ref Settings.SimulationSettings.EnableDarkLighting);
             ImGui.Checkbox("Enable Heat Simulation", ref Settings.SimulationSettings.EnableHeatSimulation);
-            ImGui.Checkbox("Enable Performance Testing", ref Settings.SimulationSettings.EnablePerfTestMode);
             ImGui.Text("Particle Light Range");
             ImGui.PushItemWidth(ImGui.CalcTextSize("Particle Light Range").X);
             ImGui.InputInt("##particleLight", ref Settings.SimulationSettings.particleLightRange);
