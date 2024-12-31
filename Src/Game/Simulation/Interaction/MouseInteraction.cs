@@ -136,11 +136,11 @@ namespace SpatialGame
                         {
                             if(idToCheck != -1 && selection == 0)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature += 1000f * Globals.deltaTime;
+                                ParticleSimulation.particles[idToCheck].state.temperature += Globals.fixedDeltaTime;
                             }
                             if (idToCheck != -1 && selection == 1)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature -= 1000f * Globals.deltaTime;
+                                ParticleSimulation.particles[idToCheck].state.temperature -=  Globals.fixedDeltaTime;
                             }
                         }
                         else if(button == 1)
@@ -152,67 +152,72 @@ namespace SpatialGame
                         }
                     }
                 }
-                
-                return;
             }
-
-            Vector2 tempPos = oldPositionMouse;
-            Vector2 dir = positionMouse - oldPositionMouse;
-
-            Vector2 increase = dir / radius;
-
-            for (int i = 0; i < radius; i++)
+            else
             {
-                tempPos += increase;
-                
-                Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (tempPos / (Vector2)Globals.window.Size);
-                newPos.X = MathF.Floor(newPos.X);
-                newPos.Y = MathF.Floor(newPos.Y);
-                
-                //create circle of particles
-                for (int x = (int)newPos.X - radius; x < newPos.X + radius; x++)
+                Vector2 tempPos = oldPositionMouse;
+                Vector2 dir = positionMouse - oldPositionMouse;
+
+                Vector2 increase = dir / radius;
+
+                for (int i = 0; i < radius; i++)
                 {
-                    for (int y = (int)newPos.Y - radius; y < newPos.Y + radius; y++)
+                    tempPos += increase;
+                    
+                    Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (tempPos / (Vector2)Globals.window.Size);
+                    newPos.X = MathF.Floor(newPos.X);
+                    newPos.Y = MathF.Floor(newPos.Y);
+                    
+                    //create circle of particles
+                    for (int x = (int)newPos.X - radius; x < newPos.X + radius; x++)
                     {
-                        if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
-                            continue;
+                        for (int y = (int)newPos.Y - radius; y < newPos.Y + radius; y++)
+                        {
+                            if (x < 0 || x >= PixelColorer.width || y < 0 || y >= PixelColorer.height)
+                                continue;
 
-                        float check = (float)Math.Sqrt(((x - newPos.X + 0.5f) * (x - newPos.X + 0.5f)) + ((y - newPos.Y + 0.5f) * (y - newPos.Y + 0.5f)));
-                        if (check > radius)
-                            continue;
-                        
-                        Vector2 pos = new Vector2(MathF.Round(x), MathF.Round(y));
-                        int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
+                            float check = (float)Math.Sqrt(((x - newPos.X + 0.5f) * (x - newPos.X + 0.5f)) + ((y - newPos.Y + 0.5f) * (y - newPos.Y + 0.5f)));
+                            if (check >= radius)
+                                continue;
+                            
+                            Vector2 pos = new Vector2(MathF.Round(x), MathF.Round(y));
+                            
+                            float distanceToOldPos = MathF.Sqrt((x - oldPositionMouse.X + 0.5f) * (x - oldPositionMouse.X + 0.5f) + (y - oldPositionMouse.Y + 0.5f) * (y - oldPositionMouse.Y + 0.5f));
+                            if (distanceToOldPos <= radius)
+                                continue;
+                            
+                            int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
 
-                        if(button == 0 && !mode)
-                        {
-                            if (idToCheck == -1)
+                            if(button == 0 && !mode)
                             {
-                                ParticleSimulation.AddParticle(pos, name);
+                                if (idToCheck == -1)
+                                {
+                                    ParticleSimulation.AddParticle(pos, name);
+                                }
+                                else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
+                                {
+                                    //replaced from queue delete may cause issues
+                                    ParticleSimulation.particles[idToCheck].Delete();
+                                    ParticleSimulation.AddParticle(pos, name);
+                                }
                             }
-                            else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
+                            else if (button == 0 && mode)
                             {
-                                //replaced from queue delete may cause issues
-                                ParticleSimulation.particles[idToCheck].Delete();
-                                ParticleSimulation.AddParticle(pos, name);
+                                if(idToCheck != -1 && selection == 0)
+                                {
+                                    ParticleSimulation.particles[idToCheck].state.temperature += Globals.fixedDeltaTime;
+                                }
+                                if (idToCheck != -1 && selection == 1)
+                                {
+                                    ParticleSimulation.particles[idToCheck].state.temperature -=  Globals.fixedDeltaTime;
+                                }
                             }
-                        }
-                        else if (button == 0 && mode)
-                        {
-                            if(idToCheck != -1 && selection == 0)
+                            else if(button == 1)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature += 1000f * Globals.deltaTime;
-                            }
-                            if (idToCheck != -1 && selection == 1)
-                            {
-                                ParticleSimulation.particles[idToCheck].state.temperature -= 1000f * Globals.deltaTime;
-                            }
-                        }
-                        else if(button == 1)
-                        {
-                            if (idToCheck != -1)
-                            {
-                                ParticleSimulation.particles[idToCheck].Delete();
+                                if (idToCheck != -1)
+                                {
+                                    ParticleSimulation.particles[idToCheck].Delete();
+                                }
                             }
                         }
                     }

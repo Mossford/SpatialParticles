@@ -37,6 +37,8 @@ namespace SpatialEngine
             /// (creates a glow effect)
             /// </summary>
             public static bool EnableParticleLighting = true;
+            public static bool EnableDarkLighting = false;
+            public static int particleLightRange = 5;
         }
     }
 }

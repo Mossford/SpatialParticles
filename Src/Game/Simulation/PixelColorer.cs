@@ -86,6 +86,9 @@ namespace SpatialGame
         public static void Render()
         {
             Globals.gl.UseProgram(shader.shader);
+            pixelBuffer.Bind();
+            lightBuffer.Bind();
+            SimLighting.lightingTexture.Bind();
             shader.setMat4("model", mat);
             shader.setVec2("resolution", (Vector2)Globals.window.Size);
             shader.setVec2("particleResolution", new Vector2(width, height));

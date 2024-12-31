@@ -42,6 +42,7 @@ namespace SpatialGame
             ParticleHeatSim.Init();
             ParticleSimulation.InitParticleSim();
             SimRenderer.Init();
+            SimLighting.Init();
             SimInput.Init();
             //RigidBodySimulation.Init();
             
@@ -61,6 +62,7 @@ namespace SpatialGame
             ParticleHeatSim.Init();
             ParticleSimulation.InitParticleSim();
             SimRenderer.Init();
+            SimLighting.Init();
             SimInput.Init();
             //RigidBodySimulation.Init();
             
@@ -80,6 +82,7 @@ namespace SpatialGame
 
         public static void RenderGame()
         {
+            SimLighting.Update();
             //renders the pixels and simulation
             PixelColorer.Render();
             //renders some simulation ui stuff

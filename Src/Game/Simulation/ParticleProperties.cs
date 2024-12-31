@@ -48,7 +48,7 @@ namespace SpatialGame
                    "XBounce: " + xBounce + "\n" + 
                    "YBounce: " + yBounce + "\n" + 
                    "CanMove: " + canMove + "\n" + 
-                   "Heating Properties: " + heatingProperties + "\n" + 
+                   "\nHeating Properties: " + heatingProperties + "\n" + 
                    "Explosive Properties: " + explosiveProperties + "\n";
         }
     }
@@ -57,7 +57,6 @@ namespace SpatialGame
     {
         public bool enableHeatSim { get; set; }
         public float temperature { get; set; }
-        public float autoIgnite { get; set; }
         public float heatTransferRate { get; set; }
         public bool canStateChange { get; set; }
         public float[] stateChangeTemps { get; set; }
@@ -69,7 +68,6 @@ namespace SpatialGame
         {
             enableHeatSim = false;
             temperature = 0;
-            autoIgnite = 0;
             heatTransferRate = 0;
             canStateChange = false;
             stateChangeTemps = new float[2];
@@ -81,7 +79,6 @@ namespace SpatialGame
         public override string ToString()
         {
             return "Temperature: " + temperature + "\n" + 
-                   "AutoIgnite: " + autoIgnite + "\n" + 
                    "HeatTransferRate: " + heatTransferRate + "\n" + 
                    "CanStateChange: " + canStateChange + "\n" + 
                    "StateChangeTemps: " + string.Join(", ", stateChangeTemps) + "\n" + 

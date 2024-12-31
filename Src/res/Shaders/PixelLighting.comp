@@ -1,37 +1,29 @@
 #version 460 core
 
-layout (std430, binding = 4) restrict buffer pixels
-{
-    vec4 Colors[];
-} pixelColors;
+layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
+layout(location = 0) uniform vec2 resolution;
+layout(location = 1) uniform vec2 particleResolution;
 layout (std430, binding = 5) restrict buffer lights
 {
-    //x is the index (convert float to int)
-    //y is the color (convert float to color)
-    //z is the intensity 
-    //w is the range
+//x is the index (convert float to int)
+//y is the color (convert float to color)
+//z is the intensity 
+//w is the range
     vec4 Lights[];
 } particleLights;
-
-out vec4 out_color;
-in vec2 TexCoords;
-uniform vec2 particleResolution;
-uniform vec2 resolution;
-uniform bool enableParticleLighting;
-uniform sampler2D lightingTex;
+layout(rgba32f, binding = 0) uniform image2D lightingTex;
 
 vec4 UnpackFloat(float data)
 {
     int ColorBits = floatBitsToInt(data);
     return vec4((ColorBits & 0xFF) / 255.0, ((ColorBits >> 8) & 0xFF) / 255.0, ((ColorBits >> 16) & 0xFF) / 255.0, ((ColorBits >> 24) & 0xFF) / 255.0);
 }
-
 vec4 CalculateLighting(vec2 particlePos, int index)
 {
     //check if there is a particle at this position
     if(floatBitsToInt(particleLights.Lights[index].x) == -1)
-        return vec4(1.0);
+    return vec4(1.0);
 
     int range = floatBitsToInt(particleLights.Lights[index].w);
 
@@ -47,11 +39,11 @@ vec4 CalculateLighting(vec2 particlePos, int index)
             int indexLight = int((lightPos.x * particleResolution.y) - lightPos.y + particleResolution.y - 1);
 
             if(indexLight < 0 || indexLight >= cornerPreCalc)
-                continue;
+            continue;
 
             //handle bleed over. X pos is handled by bounds checking
             if(lightPos.y > particleResolution.y || lightPos.y < 0)
-                continue;
+            continue;
 
             totalAccumLightCount++;
 
@@ -63,7 +55,7 @@ vec4 CalculateLighting(vec2 particlePos, int index)
         }
     }
 
-    if (totalAccumLightCount > 0) 
+    if (totalAccumLightCount > 0)
     {
         totalAccumLight /= float(totalAccumLightCount);
     }
@@ -73,20 +65,12 @@ vec4 CalculateLighting(vec2 particlePos, int index)
 
 void main()
 {
-    vec2 fragPos = vec2(gl_FragCoord.x / resolution.x, gl_FragCoord.y / resolution.y);
-    int x = int(fragPos.x * particleResolution.x);
-    int y = int(fragPos.y * particleResolution.y);
-    //get position index
+    ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+    vec2 fragPos = pixelCoords / resolution;
+    int x = int(pixelCoords.x);
+    int y = int(pixelCoords.y);
     int index = int((x * particleResolution.y) - y + particleResolution.y - 1);
-    //convert to index in the stored array
-    int indexQuart = int(floor(index / 4));
-    //get the component that has the color
-    int indexColor = int((x * particleResolution.y) - y + particleResolution.y - 1) % 4;
-    vec4 color = UnpackFloat(pixelColors.Colors[indexQuart][indexColor]);
-
     vec4 particleLighting = CalculateLighting(vec2(x,y), index);
-    if(!enableParticleLighting)
-        particleLighting = vec4(1);
-
-    out_color = color * texture(lightingTex, fragPos);
+    
+    imageStore(lightingTex, pixelCoords, particleLighting);
 }

@@ -57,7 +57,7 @@ namespace SpatialEngine
         public static uint drawCallCount = 0;
         public static float totalTime = 0.0f;
         public static float deltaTime = 0.0f;
-        public const float fixedUpdateTime = 16.667f;
+        public const float fixedDeltaTime = 16.667f;
 
         /// <summary>
         /// In Seconds
@@ -183,10 +183,10 @@ namespace SpatialEngine
             UiRenderer.Update();
 
             totalTimeUpdate += (float)dt * 1000;
-            while (totalTimeUpdate >= fixedUpdateTime)
+            while (totalTimeUpdate >= fixedDeltaTime)
             {
-                totalTimeUpdate -= fixedUpdateTime;
-                FixedUpdate(fixedUpdateTime);
+                totalTimeUpdate -= fixedDeltaTime;
+                FixedUpdate(fixedDeltaTime);
             }
         }
 

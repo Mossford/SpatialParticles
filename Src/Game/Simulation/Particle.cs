@@ -387,6 +387,8 @@ namespace SpatialGame
 #endif
         public ParticleProperties GetParticleProperties()
         {
+            if (propertyIndex < 0 || propertyIndex >= ParticleResourceHandler.loadedParticles.Count)
+                return new ParticleProperties();
             return ParticleResourceHandler.loadedParticles[propertyIndex];
         }
 

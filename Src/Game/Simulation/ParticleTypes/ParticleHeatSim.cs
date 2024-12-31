@@ -255,9 +255,12 @@ namespace SpatialGame
                 {
                     int index = PixelColorer.PosToIndex(particle.position);
                     PixelColorer.particleLights[index].index = index;
-                    PixelColorer.particleLights[index].intensity = MathF.Max(((Vector3)temperatureColors[temperatureColorCount - 1] / 255f).Length() / (1 / color.Length()), 1f);
+                    if(Settings.SimulationSettings.EnableDarkLighting)
+                        PixelColorer.particleLights[index].intensity = MathF.Max(((Vector3)temperatureColors[temperatureColorCount - 1] / 255f).Length() / (1 / color.Length()), 0f);
+                    else
+                        PixelColorer.particleLights[index].intensity = MathF.Max(((Vector3)temperatureColors[temperatureColorCount - 1] / 255f).Length() / (1 / color.Length()), 1f);
                     PixelColorer.particleLights[index].color = new Vector4Byte(lerpedColorLight, 255);
-                    PixelColorer.particleLights[index].range = ParticleSimulation.particleLightRange;
+                    PixelColorer.particleLights[index].range = Settings.SimulationSettings.particleLightRange;
                 }
             }
             else

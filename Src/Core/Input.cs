@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImGuiNET;
 
 namespace SpatialEngine
 {
@@ -22,6 +23,9 @@ namespace SpatialEngine
 
         public static void Update()
         {
+            if(Globals.showImguiDebug && ImGui.GetIO().WantCaptureKeyboard)
+                return;
+            
             for (int i = 0; i < keyboard.SupportedKeys.Count; i++)
             {
                 if (keyboard.IsKeyPressed(keyboard.SupportedKeys[i]))

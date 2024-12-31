@@ -11,7 +11,7 @@ namespace SpatialGame
 {
     public static class ParticleResourceHandler
     {
-        public static ParticleProperties[] loadedParticles;
+        public static List<ParticleProperties> loadedParticles;
         public static Dictionary<string, int> particleNameIndexes;
         public static int[] particleIndexes;
 
@@ -43,11 +43,11 @@ namespace SpatialGame
             {
                 Debugging.LogConsole("Found Particles file");
                 string text = File.ReadAllText(SpatialEngine.Resources.SimPath + "Particles.json");
-                loadedParticles = JsonSerializer.Deserialize<ParticleProperties[]>(text, options);
-                particleIndexes = new int[loadedParticles.Length];
+                loadedParticles = JsonSerializer.Deserialize<List<ParticleProperties>>(text, options);
+                particleIndexes = new int[loadedParticles.Count];
 
-                Debugging.LogConsole("Loaded particles of size " + loadedParticles.Length);
-                for (int i = 0; i < loadedParticles.Length; i++)
+                Debugging.LogConsole("Loaded particles of size " + loadedParticles.Count);
+                for (int i = 0; i < loadedParticles.Count; i++)
                 {
                     if(particleNameIndexes.TryAdd(loadedParticles[i].name, i))
                     {

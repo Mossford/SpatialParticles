@@ -36,8 +36,6 @@ namespace SpatialGame
         /// </summary>
         public static Random random;
         public static int particleCount;
-
-        public static int particleLightRange;
         
 
         public static void InitParticleSim()
@@ -49,7 +47,6 @@ namespace SpatialGame
             idsToDelete = new List<int>();
             random = new Random();
             particleCount = 0;
-            particleLightRange = 2;
 
             //tell the queue that all spots are avaliable
             for (int i = 0; i < particles.Length; i++)
@@ -144,9 +141,12 @@ namespace SpatialGame
                 if (Settings.SimulationSettings.EnableParticleLighting)
                 {
                     PixelColorer.particleLights[i].index = 0;
-                    PixelColorer.particleLights[i].intensity = 1;
+                    if(Settings.SimulationSettings.EnableDarkLighting)
+                        PixelColorer.particleLights[i].intensity = 0;
+                    else
+                        PixelColorer.particleLights[i].intensity = 1;
                     PixelColorer.particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
-                    PixelColorer.particleLights[i].range = particleLightRange;
+                    PixelColorer.particleLights[i].range = Settings.SimulationSettings.particleLightRange;
                 }
 
                 if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
