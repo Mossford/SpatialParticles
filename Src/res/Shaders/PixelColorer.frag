@@ -84,9 +84,9 @@ void main()
     int indexColor = int((x * particleResolution.y) - y + particleResolution.y - 1) % 4;
     vec4 color = UnpackFloat(pixelColors.Colors[indexQuart][indexColor]);
 
-    vec4 particleLighting = CalculateLighting(vec2(x,y), index);
-    if(!enableParticleLighting)
-        particleLighting = vec4(1);
+    //vec4 particleLighting = CalculateLighting(vec2(x,y), index);
+    //if(!enableParticleLighting)
+    //    particleLighting = vec4(1);
 
     out_color = color * texture(lightingTex, fragPos);
 }

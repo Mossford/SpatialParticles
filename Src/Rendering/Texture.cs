@@ -198,7 +198,7 @@ namespace SpatialEngine.Rendering
 
         public void BindImage()
         {
-            
+            gl.BindImageTexture(0, id, 0, false, 0, GLEnum.ReadOnly, internalFormat);
         }
 
         public void Dispose()
