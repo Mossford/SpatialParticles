@@ -75,7 +75,7 @@ namespace SpatialEngine.Rendering
             gl.TextureParameter(id, GLEnum.TextureWrapS, (int)GLEnum.MirroredRepeat);
             gl.TextureParameter(id, GLEnum.TextureWrapT, (int)GLEnum.MirroredRepeat);
             gl.TexImage2D(GLEnum.Texture2D, 0, internalFormat, (uint)width, (uint)height, 0, format, GLEnum.Float, null);
-            gl.BindImageTexture(0, id, 0, false, 0, GLEnum.ReadOnly, internalFormat);
+            //gl.BindImageTexture(0, id, 0, false, 0, GLEnum.ReadOnly, internalFormat);
         }
 
         public unsafe void LoadTexture(string location)
