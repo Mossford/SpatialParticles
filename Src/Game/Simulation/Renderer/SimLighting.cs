@@ -27,18 +27,16 @@ namespace SpatialGame
 
         public static void Update()
         {
-            gl.UseProgram(computeShader.shader);
-            computeShader.setVec2(0, (Vector2)Globals.window.Size);
-            computeShader.setVec2(1, new Vector2(PixelColorer.width, PixelColorer.height));
-            PixelColorer.lightBuffer.Bind();
-            lightingTexture.BindImage();
-            gl.DispatchCompute((uint)PixelColorer.width / 8,(uint)PixelColorer.height / 8,1);
-            gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
-        }
-
-        public static void Render()
-        {
-            
+            if (Settings.SimulationSettings.EnableGpuCompLighting)
+            {
+                gl.UseProgram(computeShader.shader);
+                computeShader.setVec2(0, (Vector2)Globals.window.Size);
+                computeShader.setVec2(1, new Vector2(PixelColorer.width, PixelColorer.height));
+                PixelColorer.lightBuffer.Bind();
+                lightingTexture.BindImage();
+                gl.DispatchCompute((uint)PixelColorer.width / 8,(uint)PixelColorer.height / 8,1);
+                gl.MemoryBarrier(MemoryBarrierMask.ShaderImageAccessBarrierBit);
+            }
         }
     }
 }

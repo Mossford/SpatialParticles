@@ -39,6 +39,12 @@ namespace SpatialEngine
             public static bool EnableParticleLighting = true;
             public static bool EnableDarkLighting = false;
             public static int particleLightRange = 5;
+            /// <summary>
+            /// Because mobile amd loves to break with opengl this is going to be here
+            /// because the compute shader just does not work on my mobile amd laptop
+            /// nvidia works though
+            /// </summary>
+            public static bool EnableGpuCompLighting = true;
         }
     }
 }

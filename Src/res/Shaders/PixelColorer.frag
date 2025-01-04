@@ -19,6 +19,7 @@ in vec2 TexCoords;
 uniform vec2 particleResolution;
 uniform vec2 resolution;
 uniform bool enableParticleLighting;
+uniform bool enableGpuComp;
 uniform sampler2D lightingTex;
 
 vec4 UnpackFloat(float data)
@@ -84,9 +85,13 @@ void main()
     int indexColor = int((x * particleResolution.y) - y + particleResolution.y - 1) % 4;
     vec4 color = UnpackFloat(pixelColors.Colors[indexQuart][indexColor]);
 
-    //vec4 particleLighting = CalculateLighting(vec2(x,y), index);
-    //if(!enableParticleLighting)
-    //    particleLighting = vec4(1);
+    vec4 particleLighting = vec4(1.0);
+    if(enableGpuComp)
+        particleLighting = texture(lightingTex, fragPos);
+    if(!enableGpuComp)
+        particleLighting = CalculateLighting(vec2(x,y), index);
+    if(!enableParticleLighting)
+        particleLighting = vec4(1);
 
-    out_color = color * texture(lightingTex, fragPos);
+    out_color = color * particleLighting;
 }
