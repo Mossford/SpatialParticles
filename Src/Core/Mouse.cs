@@ -23,7 +23,7 @@ namespace SpatialEngine
         {
             lastPosition = position;
             lastLocalPosition = ((lastPosition * 2) - Window.size) / 2;
-            position = mouse.Position * ((Vector2)Globals.snWindow.FramebufferSize / (Vector2)Globals.snWindow.Size);
+            position = mouse.Position * Window.windowScale;
             localPosition = ((position * 2) - Window.size) / 2;
         }
     }

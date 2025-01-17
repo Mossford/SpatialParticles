@@ -28,6 +28,7 @@ namespace SpatialEngine
         public static int MAX_SCR_WIDTH;
         public static int MAX_SCR_HEIGHT;
         public static Vector2 size;
+        public static Vector2 windowScale;
         
         public static void Init()
         {
@@ -93,6 +94,7 @@ namespace SpatialEngine
             MAX_SCR_HEIGHT = snWindow.GetFullSize().Y;
             snWindow.WindowState = WindowState.Normal;
             size = (Vector2)snWindow.FramebufferSize;
+            windowScale = size / (Vector2)snWindow.Size;
 
             input.Keyboards[0].KeyDown += KeyDown;
             
@@ -114,6 +116,7 @@ namespace SpatialEngine
         static void OnUpdate(double dt)
         {
             size = (Vector2)snWindow.FramebufferSize;
+            windowScale = size / (Vector2)snWindow.Size;
             
             totalTime += (float)dt;
             deltaTime = (float)dt;
