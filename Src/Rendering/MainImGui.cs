@@ -93,7 +93,7 @@ namespace SpatialEngine.Rendering
             
             if (ImGui.Checkbox("Vsync", ref vsync))
             {
-                window.VSync = vsync;
+                snWindow.VSync = vsync;
             }
 
             if (ImGui.BeginMenuBar())
@@ -141,7 +141,7 @@ namespace SpatialEngine.Rendering
         {
             ImGui.Begin("Simulation");
             ImGui.Text("Particle Info at Mouse Pos:");
-            Vector2 position = ((Mouse.localPosition / (Vector2)Globals.window.Size * new Vector2(PixelColorer.width, PixelColorer.height)) + (new Vector2(PixelColorer.width, PixelColorer.height) / 2));
+            Vector2 position = ((Mouse.localPosition / Window.size * new Vector2(PixelColorer.width, PixelColorer.height)) + (new Vector2(PixelColorer.width, PixelColorer.height) / 2));
             ImGui.Text($"Pos {position:N1}");
             Vector2 floorPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
             int particleIndex = ParticleSimulation.SafeIdCheckGet(floorPosition);

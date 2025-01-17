@@ -7,7 +7,7 @@ namespace SpatialGame
     {
         static Vector2 TransformPoint(Vector2 point)
         {
-            return ((point / new Vector2(PixelColorer.width, PixelColorer.height)) * (Vector2)Globals.window.Size) - (Vector2)Globals.window.Size / 2;
+            return ((point / new Vector2(PixelColorer.width, PixelColorer.height)) * Window.size) - Window.size / 2;
         }
         
         public static void DrawLine(Vector2 start, Vector2 end, Vector3 color, bool flipY = true)

@@ -278,10 +278,10 @@ namespace SpatialGame
             {
                 SimRenderer.meshes.Add(new SimMesh(vertexes.ToArray(), indices.ToArray()));
                 contactDebugIndex = SimRenderer.meshes.Count - 1;
-                SimRenderer.meshes[contactDebugIndex].position = ((body.rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * (Vector2)Globals.window.Size) - (Vector2)Globals.window.Size / 2;
+                SimRenderer.meshes[contactDebugIndex].position = ((body.rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * Window.size) - Window.size / 2;
                 SimRenderer.meshes[contactDebugIndex].position.Y *= -1;
-                SimRenderer.meshes[contactDebugIndex].scaleX = (float)Globals.window.Size.X / PixelColorer.width * 1;
-                SimRenderer.meshes[contactDebugIndex].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * 1;
+                SimRenderer.meshes[contactDebugIndex].scaleX = Window.size.X / PixelColorer.width * 1;
+                SimRenderer.meshes[contactDebugIndex].scaleY = Window.size.Y / PixelColorer.height * 1;
             }
         }
         

@@ -111,7 +111,7 @@ namespace SpatialEngine.Rendering
             matrix *= Matrix4x4.CreateScale(width * scale, height * scale, 1f);
             matrix *= Matrix4x4.CreateFromAxisAngle(Vector3.UnitZ, rotation * conv);
             matrix *= Matrix4x4.CreateTranslation(new(position.X, position.Y, 0f));
-            matrix *= Matrix4x4.CreateOrthographic(Globals.window.Size.X, Globals.window.Size.Y, -1, 1);
+            matrix *= Matrix4x4.CreateOrthographic(Window.size.X, Window.size.Y, -1, 1);
         }
 
         public void Dispose()

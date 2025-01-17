@@ -9,6 +9,8 @@ using Silk.NET.SDL;
 using SpatialEngine;
 using static SpatialEngine.SpatialMath.MathS;
 
+using Window = SpatialEngine.Window;
+
 namespace SpatialGame
 {
     public class SimBody
@@ -44,11 +46,11 @@ namespace SpatialGame
         {
             SimMesh mesh = SimRenderer.meshes[meshIndex];
             mesh.wireFrame = true;
-            mesh.position = ((rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * (Vector2)Globals.window.Size) - (Vector2)Globals.window.Size / 2;
+            mesh.position = ((rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * Window.size) - Window.size / 2;
             mesh.position.Y *= -1;
             mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
-            mesh.scaleX = (float)Globals.window.Size.X / PixelColorer.width * rigidBody.scale;
-            mesh.scaleY = (float)Globals.window.Size.Y / PixelColorer.height * rigidBody.scale;
+            mesh.scaleX = Window.size.X / PixelColorer.width * rigidBody.scale;
+            mesh.scaleY = Window.size.Y / PixelColorer.height * rigidBody.scale;
             mesh.color = new Vector3(0, 0, 0);
             
             /*for (int i = 0; i < mesh.indices.Length; i += 3)

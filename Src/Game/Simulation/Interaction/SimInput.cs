@@ -145,7 +145,7 @@ namespace SpatialGame
                 mouseSpawnRadius += (int)wheel.Y;
                 if (mouseSpawnRadius < 1)
                     mouseSpawnRadius = 1;
-                if (Globals.window.Size.Length / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Globals.window.Size.Y / 2)
+                if (Window.size.Length() / new Vector2(PixelColorer.width, PixelColorer.height).Length() * mouseSpawnRadius > Window.size.Y / 2)
                     mouseSpawnRadius -= 1;
             }
         }

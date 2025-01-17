@@ -91,7 +91,7 @@ namespace SpatialGame
             if(Settings.SimulationSettings.EnableGpuCompLighting)
                 SimLighting.lightingTexture.Bind();
             shader.setMat4("model", mat);
-            shader.setVec2("resolution", (Vector2)Globals.window.Size);
+            shader.setVec2("resolution", Window.size);
             shader.setVec2("particleResolution", new Vector2(width, height));
             shader.setBool("enableParticleLighting", Settings.SimulationSettings.EnableParticleLighting);
             shader.setBool("enableGpuComp", Settings.SimulationSettings.EnableGpuCompLighting);

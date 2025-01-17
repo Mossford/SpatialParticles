@@ -1,13 +1,7 @@
 ﻿using SpatialEngine;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace SpatialGame
 {
@@ -63,8 +57,8 @@ namespace SpatialGame
                 SimRenderer.meshes[spawners[id].idCircleMesh].show = true;
                 SimRenderer.meshes[spawners[id].idCircleMesh].position = positionMouse;
                 SimRenderer.meshes[spawners[id].idCircleMesh].position.Y *= -1;
-                SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
-                SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
+                SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = Window.size.X / PixelColorer.width * radius;
+                SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = Window.size.Y / PixelColorer.height * radius;
                 return;
             }
 
@@ -80,8 +74,8 @@ namespace SpatialGame
             SimRenderer.meshes[spawners[id].idCircleMesh].show = true;
             SimRenderer.meshes[spawners[id].idCircleMesh].position = positionMouse;
             SimRenderer.meshes[spawners[id].idCircleMesh].position.Y *= -1;
-            SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
-            SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
+            SimRenderer.meshes[spawners[id].idCircleMesh].scaleX = Window.size.X / PixelColorer.width * radius;
+            SimRenderer.meshes[spawners[id].idCircleMesh].scaleY = Window.size.Y / PixelColorer.height * radius;
         }
 
         /// <summary>
@@ -95,12 +89,12 @@ namespace SpatialGame
             }
             
             //put mouse position out of local window space
-            positionMouse = (positionMouse * 2 + (Vector2)Globals.window.Size) / 2;
-            oldPositionMouse = (oldPositionMouse * 2 + (Vector2)Globals.window.Size) / 2;
+            positionMouse = (positionMouse * 2 + Window.size) / 2;
+            oldPositionMouse = (oldPositionMouse * 2 + Window.size) / 2;
             
             if (positionMouse == oldPositionMouse || (positionMouse - oldPositionMouse).Length() < radius)
             {
-                Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / (Vector2)Globals.window.Size);
+                Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (positionMouse / Window.size);
                 newPos.X = MathF.Floor(newPos.X);
                 newPos.Y = MathF.Floor(newPos.Y);
                 
@@ -164,7 +158,7 @@ namespace SpatialGame
                 {
                     tempPos += increase;
                     
-                    Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (tempPos / (Vector2)Globals.window.Size);
+                    Vector2 newPos = new Vector2(PixelColorer.width, PixelColorer.height) * (tempPos / Window.size);
                     newPos.X = MathF.Floor(newPos.X);
                     newPos.Y = MathF.Floor(newPos.Y);
                     
@@ -227,14 +221,14 @@ namespace SpatialGame
 
         public static void DrawMouseElementSelect(Vector2 positionMouse, int radius, bool pressed, string name, bool mode, int selection, int id)
         {
-            float scaleX = (float)Globals.window.Size.X / PixelColorer.width * radius;
-            float scaleY = (float)Globals.window.Size.Y / PixelColorer.height * radius;
-            float scaleXInner = ((float)Globals.window.Size.X / PixelColorer.width - (0.35f * Globals.window.Size.X / PixelColorer.width)) * radius;
-            float scaleYInner = ((float)Globals.window.Size.Y / PixelColorer.height - (0.35f * Globals.window.Size.Y / PixelColorer.height)) * radius;
+            float scaleX = Window.size.X / PixelColorer.width * radius;
+            float scaleY = Window.size.Y / PixelColorer.height * radius;
+            float scaleXInner = (Window.size.X / PixelColorer.width - (0.35f * Window.size.X / PixelColorer.width)) * radius;
+            float scaleYInner = (Window.size.Y / PixelColorer.height - (0.35f * Window.size.Y / PixelColorer.height)) * radius;
             float boxDist = MathF.Sqrt((scaleX * scaleX) + (scaleY * scaleY));
             Vector2 BoxPos = positionMouse + new Vector2(1 * boxDist, -1 * boxDist);
             Vector2 textPos = positionMouse + new Vector2(2 * scaleX + 250, -1 * boxDist);
-            if (textPos.X - 125 > Globals.window.Size.X / 2f)
+            if (textPos.X - 125 > Window.size.X / 2f)
             {
                 textPos = positionMouse + new Vector2(-2 * scaleX + 250, -1 * boxDist);
             }

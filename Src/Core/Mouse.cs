@@ -22,9 +22,9 @@ namespace SpatialEngine
         public static void Update()
         {
             lastPosition = position;
-            lastLocalPosition = ((lastPosition * 2) - (Vector2)Globals.window.Size) / 2;
-            position = mouse.Position;
-            localPosition = ((position * 2) - (Vector2)Globals.window.Size) / 2;
+            lastLocalPosition = ((lastPosition * 2) - Window.size) / 2;
+            position = mouse.Position * ((Vector2)Globals.snWindow.FramebufferSize / (Vector2)Globals.snWindow.Size);
+            localPosition = ((position * 2) - Window.size) / 2;
         }
     }
 }
