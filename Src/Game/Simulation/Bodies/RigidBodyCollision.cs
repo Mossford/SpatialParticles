@@ -123,11 +123,14 @@ namespace SpatialGame
                 int id = ParticleSimulation.SafeIdCheckGet(roundPosition);
                 if (id != -1)
                 {
-                    Vector2 collisionPos = position;
+                    //roundPosition += new Vector2(0.5f, 0.5f);
+                    Vector2 collisionPos = roundPosition;
                     //we have collision
+                    
                     Vector2 toPosition = roundPosition - start;
-                    Vector2 projectionOntoLine = Vector2.Dot(toPosition, direction) * direction;
-                    float distance = (projectionOntoLine - toPosition).Length();
+                    //essentially a "vector rejection"
+                    Vector2 projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
+                    float distance = projectionOntoLine.Length();
                     //if distance is 0 then we either have a particle inside touching the line
                     //or outside where then 0 is a valid case
                     /*if (distance == 0f)

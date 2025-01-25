@@ -51,6 +51,15 @@ namespace SpatialEngine
         static unsafe void OnLoad() 
         {
             gl = snWindow.CreateOpenGL();
+            
+            //get the display size
+            snWindow.WindowState = WindowState.Fullscreen;
+            MAX_SCR_WIDTH = snWindow.GetFullSize().X;
+            MAX_SCR_HEIGHT = snWindow.GetFullSize().Y;
+            snWindow.WindowState = WindowState.Normal;
+            size = (Vector2)snWindow.FramebufferSize;
+            windowScale = size / (Vector2)snWindow.Size;
+            
             //gl = GL.GetApi(window);
             byte* text = gl.GetString(GLEnum.Renderer);
             int textLength = 0;
@@ -78,7 +87,6 @@ namespace SpatialEngine
             Mouse.Init();
             //imgui control stuff
             controller = new ImGuiController(gl, snWindow, input);
-            ImGui.SetWindowSize(new Vector2(850, 500));
 
             //Tests.RunTestMain();
 
@@ -87,14 +95,7 @@ namespace SpatialEngine
             MainImGui.Init();
             NetworkManager.Init();
             player = new Player(Vector2.Zero);
-
-            //get the display size
-            snWindow.WindowState = WindowState.Fullscreen;
-            MAX_SCR_WIDTH = snWindow.GetFullSize().X;
-            MAX_SCR_HEIGHT = snWindow.GetFullSize().Y;
-            snWindow.WindowState = WindowState.Normal;
-            size = (Vector2)snWindow.FramebufferSize;
-            windowScale = size / (Vector2)snWindow.Size;
+            
 
             input.Keyboards[0].KeyDown += KeyDown;
             
