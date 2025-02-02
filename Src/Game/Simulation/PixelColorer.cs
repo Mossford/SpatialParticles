@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Silk.NET.OpenGL;
 using SpatialEngine;
 using SpatialEngine.Rendering;
-
 using Shader = SpatialEngine.Rendering.Shader;
 
 namespace SpatialGame

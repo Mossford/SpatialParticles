@@ -16,7 +16,6 @@ using SpatialEngine.Rendering;
 using static SpatialEngine.Debugging;
 using static SpatialEngine.Input;
 using SpatialGame;
-
 using SilkNetWindow = Silk.NET.Windowing.Window;
 
 namespace SpatialEngine
