@@ -100,8 +100,8 @@ namespace SpatialGame
             Vector2 ap = perp - start;
             Vector2 normal = new Vector2(-se.Y, se.X);
             normal = Vector2.Normalize(normal);
-            //if (Vector2.Dot(normal, ap) < 0)
-            //    normal *= -1;
+            if (Vector2.Dot(normal, ap) < 0)
+                normal *= -1;
             
             Vector2 dir = end - start;
             Vector2 direction = Vector2.Normalize(dir);
