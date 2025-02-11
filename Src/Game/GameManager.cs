@@ -46,7 +46,7 @@ namespace SpatialGame
             SimInput.Init();
             RigidBodySimulation.Init();
             
-            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80, 56), 10f, 0f));
+            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             isInitalizing = false;
         }
@@ -66,7 +66,7 @@ namespace SpatialGame
             SimInput.Init();
             RigidBodySimulation.Init();
             
-            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80, 56), 10f, 0f));
+            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             started = true;
             isInitalizing = false;

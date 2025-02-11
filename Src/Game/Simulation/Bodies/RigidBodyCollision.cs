@@ -74,7 +74,7 @@ namespace SpatialGame
             
         */
         
-        public const float restitution = 0.9f;
+        public const float restitution = 0.5f;
         //for drawing the mesh and keeping track
         static int contactDebugIndex = -1;
 
@@ -82,22 +82,15 @@ namespace SpatialGame
         {
             Vector2 normalCombine = Vector2.Zero;
             List<CollisionInfo> contacts = new List<CollisionInfo>();
-            for (int i = 0; i < mesh.indices.Length; i += 3)
+            for (int i = 0; i < body.rigidBody.collisionHull.Length; i++)
             {
-                uint index0 = mesh.indices[i];
-                uint index1 = mesh.indices[i + 1];
-                uint index2 = mesh.indices[i + 2];
-                
-                Vector2 posA = Vector2.Transform(mesh.vertexes[index0], body.simModelMat);
-                Vector2 posB = Vector2.Transform(mesh.vertexes[index1], body.simModelMat);
-                Vector2 posC = Vector2.Transform(mesh.vertexes[index2], body.simModelMat);
-                
-                contacts.AddRange(CheckCollisionOnLine(posA,posB, posC));
-                contacts.AddRange(CheckCollisionOnLine(posB,posC, posA));
-                contacts.AddRange(CheckCollisionOnLine(posC,posA, posB));
-                
-
+                int indexA = i;
+                int indexB = (i + 1) % body.rigidBody.collisionHull.Length;
+                Vector2 posA = Vector2.Transform(body.rigidBody.collisionHull[indexA], body.simModelMat);
+                Vector2 posB = Vector2.Transform(body.rigidBody.collisionHull[indexB], body.simModelMat);
+                contacts.AddRange(CheckCollisionOnLine(posA, posB, body.rigidBody.position));
             }
+            
             ResolveCollisions(contacts.ToArray(), body, mesh);
         }
 
@@ -106,34 +99,49 @@ namespace SpatialGame
             Vector2 se = end - start;
             Vector2 ap = perp - start;
             Vector2 normal = new Vector2(-se.Y, se.X);
-            if (Vector2.Dot(normal, ap) < 0)
-                normal *= -1;
+            normal = Vector2.Normalize(normal);
+            //if (Vector2.Dot(normal, ap) < 0)
+            //    normal *= -1;
             
             Vector2 dir = end - start;
-            Vector2 direction = Vector2.Normalize(end - start);
+            Vector2 direction = Vector2.Normalize(dir);
             dir = Vector2.Abs(dir);
             
-            int steps = (int)MathF.Ceiling(MathF.Max(dir.X, dir.Y));
+            int steps = (int)MathF.Floor(MathF.Max(dir.X, dir.Y));
 
             List<CollisionInfo> contacts = new List<CollisionInfo>();
-            Vector2 position = start;
-            for (int i = 0; i < steps; i++)
+            Vector2 position = start + direction;
+            for (int i = 0; i < steps - 1; i++)
             {
                 Vector2 roundPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
                 int id = ParticleSimulation.SafeIdCheckGet(roundPosition);
                 if (id != -1)
                 {
+                    DebugDrawer.DrawSquare(start, 5f, new Vector3(255, 0, 0));
+                    DebugDrawer.DrawSquare(end, 5f, new Vector3(255, 255, 0));
+                    DebugDrawer.DrawSquare(roundPosition, 2f, new Vector3(0, 0, 255));
                     //roundPosition += new Vector2(0.5f, 0.5f);
                     Vector2 collisionPos = roundPosition;
                     //we have collision
-                    
                     Vector2 toPosition = roundPosition - start;
                     //essentially a "vector rejection"
                     Vector2 projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
                     float distance = projectionOntoLine.Length();
+                    //check to make sure we are getting the correct length on which side it is intersecting
+                    if (direction.Y < 0f || direction.X > 0f)
+                    {
+                        roundPosition = new Vector2(MathF.Ceiling(position.X), MathF.Ceiling(position.Y));
+                        collisionPos = roundPosition;
+                        toPosition = roundPosition - start;
+                        //essentially a "vector rejection"
+                        projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
+                        distance = projectionOntoLine.Length();
+                    }
+                    DebugDrawer.DrawLine(roundPosition, projectionOntoLine + roundPosition, new Vector3(255, 255, 0), true);
+                    DebugDrawer.DrawLine(((end - start) / 2) + start, (normal * 0.3f) + ((end - start) / 2) + start, new Vector3(255, 0, 0), true);
                     //if distance is 0 then we either have a particle inside touching the line
                     //or outside where then 0 is a valid case
-                    /*if (distance == 0f)
+                    if (distance == 0f)
                     {
                         //check by one pixel further inside the line
                         collisionPos.X += 1 * MathF.Sign(normal.X);
@@ -142,14 +150,25 @@ namespace SpatialGame
                         id = ParticleSimulation.SafeIdCheckGet(roundPosition);
                         if (id != -1)
                         {
-                            //we have a particle inside
-                            toPosition = collisionPos - start;
-                            projectionOntoLine = Vector2.Dot(toPosition, direction) * direction;
-                            DebugDrawer.DrawLine(toPosition + start, projectionOntoLine + start, new Vector3(255, 255, 0), true);
-                            distance = (projectionOntoLine - toPosition).Length();
+                            //check to make sure we are getting the correct length on which side it is intersecting
+                            if (direction.Y > 0f || direction.X > 0f)
+                            {
+                                roundPosition = new Vector2(MathF.Ceiling(position.X), MathF.Ceiling(position.Y));
+                                collisionPos = roundPosition;
+                                toPosition = roundPosition - start;
+                                //essentially a "vector rejection"
+                                projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
+                                distance = projectionOntoLine.Length();
+                            }
+                            else
+                            {
+                                toPosition = roundPosition - start;
+                                //essentially a "vector rejection"
+                                projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
+                                distance = projectionOntoLine.Length();
+                            }
                         }
-                        
-                    }*/
+                    }
                     
                     contacts.Add(new CollisionInfo(true, collisionPos, normal, distance));
                 }
@@ -170,8 +189,9 @@ namespace SpatialGame
             Vector2 velocityCombine = Vector2.Zero;
             float rotationCombine = 0;
             bool collide = false;
-            float distance = float.MinValue;
-
+            float distance = float.MaxValue;
+            
+            //interesting c# feature
             if (collisions.Length == 1)
             {
                 if (!collisions[0].collision)
@@ -228,7 +248,7 @@ namespace SpatialGame
                 }
                 if(collisions[i].collision)
                     collide = true;
-                if(distance < collisions[i].distance)
+                if(distance > collisions[i].distance)
                 {
                     distance = collisions[i].distance;
                 }
@@ -249,8 +269,8 @@ namespace SpatialGame
                     return;
                 
                 normalCombine = Vector2.Normalize(normalCombine);
-                DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
-                DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * distance, new Vector3(255, 0, 0), true);
+                //DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
+                //DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * distance, new Vector3(255, 0, 0), true);
                 
                 Vector2 relativeVelocity = -body.rigidBody.velocity;
                 float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
@@ -273,9 +293,6 @@ namespace SpatialGame
             {
                 vertexes.Add((collisions[i].position + new Vector2(0, 10) - body.rigidBody.position));
             }
-
-            
-            
 
             if (contactDebugIndex == -1)
             {

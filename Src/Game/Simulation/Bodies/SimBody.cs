@@ -25,6 +25,7 @@ namespace SpatialGame
         {
             rigidBody = new SimRigidBody();
             SimRenderer.meshes.Add(CreateSimShapes.CreateSquare());
+            rigidBody.CreateCollisionHull(SimRenderer.meshes[^1]);
             meshIndex = SimRenderer.meshes.Count - 1;
             
             this.rigidBody.position = position;

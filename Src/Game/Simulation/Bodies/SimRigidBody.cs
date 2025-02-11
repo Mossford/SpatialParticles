@@ -23,6 +23,7 @@ namespace SpatialGame
         public float mass;
         public Vector2 centerOfMass;
         public float[] inertia;
+        public Vector2[] collisionHull;
 
         public SimRigidBody()
         {
@@ -33,6 +34,49 @@ namespace SpatialGame
         public void Update()
         {
             
+        }
+
+        public void CreateCollisionHull(in SimMesh mesh)
+        {
+            if (mesh.vertexes.Length < 3)
+                return;
+
+            List<Vector2> hull = new List<Vector2>();
+
+            int leftIndex = 0;
+            for (int i = 1; i < mesh.vertexes.Length; i++)
+            {
+                if (mesh.vertexes[i].X < mesh.vertexes[leftIndex].X)
+                    leftIndex = i;
+            }
+
+            int a = leftIndex;
+            int b = 0;
+            Vector2 first = mesh.vertexes[a];
+
+            for (int i = 0; i < mesh.vertexes.Length; i++)
+            {
+                if (hull.Count > 0 && hull[0] == mesh.vertexes[a])
+                {
+                    break;
+                }
+                
+                hull.Add(mesh.vertexes[a]);
+
+                b = (a + 1) % mesh.vertexes.Length;
+
+                for (int j = 0; j < mesh.vertexes.Length; j++)
+                {
+                    if (ThreePointOrientation(mesh.vertexes[a], mesh.vertexes[j], mesh.vertexes[b]) == 2)
+                    {
+                        b = j;
+                    }
+                }
+
+                a = b;
+            }
+
+            collisionHull = hull.ToArray();
         }
     }
 }

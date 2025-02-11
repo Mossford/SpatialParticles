@@ -107,5 +107,16 @@ namespace SpatialEngine.SpatialMath
             float yaw = MathF.Atan2(t3, t4);
             return new Vector3(yaw, pitch, roll);
         }
+
+        public static int ThreePointOrientation(Vector2 a, Vector2 b, Vector2 c)
+        {
+            int val = (int)((b.Y - a.Y) * (c.X - b.X) - (b.X - a.X) * (c.Y - b.Y));
+     
+            //0 same direction
+            //1 clockwise
+            //2 counter
+            if (val == 0) return 0;
+            return (val > 0) ? 1 : 2;
+        }
     }
 }
