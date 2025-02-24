@@ -22,13 +22,12 @@ namespace SpatialGame
         public float scale;
         public float mass;
         public Vector2 centerOfMass;
-        public float[] inertia;
+        public float inertia;
         public Vector2[] collisionHull;
 
         public SimRigidBody()
         {
             mass = 1;
-            inertia = new float[4];
         }
 
         public void Update()

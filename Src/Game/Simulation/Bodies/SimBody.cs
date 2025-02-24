@@ -90,8 +90,16 @@ namespace SpatialGame
             }*/
 
             rigidBody.velocity.Y += 9.81f * dt;
+            rigidBody.velocity += rigidBody.acceleration * dt;
             rigidBody.position += rigidBody.velocity * dt;
+            rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
             rigidBody.rotation += rigidBody.angularVelocity * dt;
+
+            for (int i = 0; i < rigidBody.collisionHull.Length; i++)
+            {
+                Vector2 pos = Vector2.Transform(rigidBody.collisionHull[i], simModelMat);
+                DebugDrawer.DrawSquare(pos, 4f, new Vector3(255, 255, 255));
+            }
         }
 
         public void RasterizeSpawn(in Vector2 a, in Vector2 b)

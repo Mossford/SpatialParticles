@@ -107,11 +107,15 @@ namespace SpatialGame
             Vector2 direction = Vector2.Normalize(dir);
             dir = Vector2.Abs(dir);
             
+            int sx = start.X < end.X ? 1 : -1;
+            int sy = start.Y < end.Y ? 1 : -1;
+            float err = dir.X - dir.Y;
+            
             int steps = (int)MathF.Floor(MathF.Max(dir.X, dir.Y));
 
             List<CollisionInfo> contacts = new List<CollisionInfo>();
             Vector2 position = start + direction;
-            for (int i = 0; i < steps - 1; i++)
+            for (int i = 0; i < steps; i++)
             {
                 Vector2 roundPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
                 int id = ParticleSimulation.SafeIdCheckGet(roundPosition);
@@ -173,9 +177,17 @@ namespace SpatialGame
                     contacts.Add(new CollisionInfo(true, collisionPos, normal, distance));
                 }
 
-                position += direction;
-
-                //position = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
+                float e2 = err * 2;
+                if (e2 > -dir.Y)
+                {
+                    err -= dir.Y;
+                    position.X += sx;
+                }
+                if (e2 < dir.X)
+                {
+                    err += dir.X;
+                    position.Y += sy;
+                }
             }
             
             return contacts.ToArray();
@@ -190,9 +202,10 @@ namespace SpatialGame
             float rotationCombine = 0;
             bool collide = false;
             float distance = float.MaxValue;
+            float torqueCombine = 0f;
             
             //interesting c# feature
-            if (collisions.Length == 1)
+            /*if (collisions.Length == 1)
             {
                 if (!collisions[0].collision)
                     return;
@@ -210,51 +223,55 @@ namespace SpatialGame
                 if (normalCombine.LengthSquared() == 0f)
                     return;
                 
+                Vector2 contactPoint = collisions[0].position;
+                Vector2 centerOfMass = body.rigidBody.position;
+                Vector2 r = contactPoint - centerOfMass;  // Position vector from center of mass to the contact point
+                
                 normalCombine = Vector2.Normalize(normalCombine);
                 DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
                 
                 Vector2 relativeVelocity = -body.rigidBody.velocity;
                 float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
+                float torque = (r.X * collisions[0].normal.Y - r.Y * collisions[0].normal.X) * j;
                 body.rigidBody.position += normalCombine * distance;
                 body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
+                body.rigidBody.angularAcceleration = -torque / ((1f / 6f) * body.rigidBody.mass);
                 return;
-            }
+            }*/
             
             for (int i = 0; i < collisions.Length; i++)
             {
-                //not needed but will keep for lines between collision
                 for (int j = i + 1; j < collisions.Length; j++)
                 {
                     if(collisions[i].collision)
                         collide = true;
                     Vector2 line = collisions[j].position - collisions[i].position;
-                    //DebugDrawer.DrawLine(collisions[j].position, collisions[i].position, new Vector3(255, 0, 0), true);
                     Vector2 normal = new Vector2(-line.Y, line.X);
                     if (Vector2.Dot(normal, collisions[i].position - body.rigidBody.position) > 0)
                         normal *= -1;
-                    //Vector2 velocityRelative = body.rigidBody.velocity;
-                    //DebugDrawer.DrawLine(collisions[i].position, collisions[i].position + normal * 3f, new Vector3(255, 0, (float)j / collisions.Length), true);
-                    
-                    //use position that has higher depth
-                    //Vector2 positionRelativeA = collisions[j].distance > collisions[i].distance ? collisions[j].position - body.rigidBody.position : collisions[i].position - body.rigidBody.position;
-                    //position of particle bassically
-                    //Vector2 positionRelativeB = collisions[j].distance > collisions[i].distance ? collisions[j].position : collisions[i].position;
-                    
                     normalCombine += normal;
-                    //normalCombine2 += collisions[j].normal + collisions[i].normal;
-
-                    //body.rigidBody.velocity = -body.rigidBody.velocity;
-
                 }
-                if(collisions[i].collision)
+                
+                //normalCombine += collisions[i].normal;
+                
+                Vector2 contactPoint = collisions[i].position;
+                Vector2 centerOfMass = body.rigidBody.position;
+                Vector2 r = contactPoint - centerOfMass;
+                
+                Vector2 relativeVelocity = -body.rigidBody.velocity;
+                float jTemp = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, collisions[i].normal))) / ((Vector2.Dot(collisions[i].normal, collisions[i].normal)) * (1 / body.rigidBody.mass + 1));
+                
+                float torque = (r.X * collisions[i].normal.Y - r.Y * collisions[i].normal.X) * jTemp;
+                
+                torqueCombine += torque;
+
+                if (collisions[i].collision)
                     collide = true;
-                if(distance > collisions[i].distance)
+                
+                if (distance > collisions[i].distance)
                 {
                     distance = collisions[i].distance;
                 }
-
-                //normalCombine += collisions[i].normal;
-                //DebugDrawer.DrawLine(collisions[i].position, collisions[i].position + collisions[i].normal, new Vector3(255, 0, 0), true);
             }
 
             if (collide)
@@ -269,13 +286,14 @@ namespace SpatialGame
                     return;
                 
                 normalCombine = Vector2.Normalize(normalCombine);
-                //DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
+                DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
                 //DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * distance, new Vector3(255, 0, 0), true);
                 
                 Vector2 relativeVelocity = -body.rigidBody.velocity;
                 float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
                 body.rigidBody.position += normalCombine * distance;
                 body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
+                body.rigidBody.angularAcceleration = -torqueCombine / ((1f / 6f) * body.rigidBody.mass);
             }
         }
 
