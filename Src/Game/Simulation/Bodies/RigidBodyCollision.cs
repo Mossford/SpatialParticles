@@ -114,8 +114,8 @@ namespace SpatialGame
             int steps = (int)MathF.Floor(MathF.Max(dir.X, dir.Y));
 
             List<CollisionInfo> contacts = new List<CollisionInfo>();
-            Vector2 position = start + direction;
-            for (int i = 0; i < steps; i++)
+            Vector2 position = start;
+            for (int i = 0; i <= steps; i++)
             {
                 Vector2 roundPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
                 int id = ParticleSimulation.SafeIdCheckGet(roundPosition);

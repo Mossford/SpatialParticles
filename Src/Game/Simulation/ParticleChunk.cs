@@ -1,19 +1,14 @@
-﻿using Silk.NET.Input;
-using Silk.NET.Vulkan;
-using SpatialEngine;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Reflection;
 using System.Runtime.CompilerServices;
+using SpatialEngine;
 
 namespace SpatialGame
 {
-    public static class ParticleSimulation
+    public class ParticleChunk
     {
-        public static Particle[] particles;
-        public static Queue<int> freeParticleSpots;
+        public Particle[] particles;
+        public Queue<int> freeParticleSpots;
         /// <summary>
         /// the type of the particle at its position
         /// 0 is no pixel at position,
@@ -22,40 +17,30 @@ namespace SpatialGame
         /// 3 is movable gas at position,
         /// 100 is a unmovable at position
         /// </summary>
-        public static byte[] positionCheck;
+        public byte[] positionCheck;
         /// <summary>
         /// the ids of the particles at their position
         /// </summary>
-        public static int[] idCheck;
+        public int[] idCheck;
         /// <summary>
         /// Queue of particles that will be deleted
         /// </summary>
-        public static List<int> idsToDelete;
-        /// <summary>
-        /// Random that particles will use
-        /// </summary>
-        public static Random random;
-        public static int particleCount;
+        public List<int> idsToDelete;
+        public int particleCount;
 
-        /// <summary>
-        /// The size of the chunk should be a multiple of 2
-        /// </summary>
-        public static int chunkSize;
-        
+        //static as they are not different across chunks
+        public static int width;
+        public static int height;
 
-        public static void InitParticleSim()
+        public void Init()
         {
-            ParticleChunk.width = PixelColorer.width / chunkSize;
-            ParticleChunk.height = PixelColorer.height / chunkSize;
-            
-            particles = new Particle[PixelColorer.width * PixelColorer.height];
+            particles = new Particle[width * height];
             freeParticleSpots = new Queue<int>();
-            positionCheck = new byte[PixelColorer.width * PixelColorer.height];
-            idCheck = new int[PixelColorer.width * PixelColorer.height];
+            positionCheck = new byte[width * height];
+            idCheck = new int[width * height];
             idsToDelete = new List<int>();
-            random = new Random();
             particleCount = 0;
-
+            
             //tell the queue that all spots are avaliable
             for (int i = 0; i < particles.Length; i++)
             {
@@ -74,72 +59,10 @@ namespace SpatialGame
             {
                 particles[i] = temParticle;
             }
-            
-
-            for (int x = 0; x < PixelColorer.width; x++)
-            {
-                AddParticle(new Vector2(x, 0), "Wall");
-                AddParticle(new Vector2(x, PixelColorer.height - 1), "Wall");
-            }
-            
-            for (int y = 1; y < PixelColorer.height - 1; y++)
-            {
-                AddParticle(new Vector2(0, y), "Wall");
-                AddParticle(new Vector2(PixelColorer.width - 1, y), "Wall");
-            }
-
-            if(Settings.SimulationSettings.EnablePerfTestMode)
-            {
-                List<Vector2> coords = new List<Vector2>();
-
-                for (int x = 1; x < PixelColorer.width - 1; x++)
-                {
-                    for (int y = 1; y < PixelColorer.height - 1; y++)
-                    {
-                        coords.Add(new Vector2(x, y));
-                    }
-                }
-
-                int n = coords.Count;
-                while (n > 1)
-                {
-                    n--;
-                    int k = random.Next(n + 1);
-                    (coords[n], coords[k]) = (coords[k], coords[n]);
-                }
-
-                for (int i = 0; i < coords.Count; i++)
-                {
-                    AddParticle(coords[i], "Sand");
-                }
-            }
-
-            for (int i = 0; i < particles.Length; i++)
-            {
-                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
-                    continue;
-
-                particles[i].CheckDoubleOnPosition();
-            }
-
-            DeleteParticlesOnQueue();
-
-            for (int i = 0; i < particles.Length; i++)
-            {
-                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
-                    continue;
-                particleCount++;
-            }
-
-            Debugging.LogConsole("Initalized Particle Simulation");
-            Debugging.LogConsole(particleCount + " Partcles");
-
-            //DebugSimulation.Init();
         }
 
-        public static void RunParticleSim(float delta)
+        public void Update(float delta)
         {
-            //DebugSimulation.Update();
             //First pass calculations
             particleCount = 0;
             for (int i = 0; i < particles.Length; i++)
@@ -183,40 +106,9 @@ namespace SpatialGame
 
                 }
             }
-            
-            /*for (int i = 0; i < elements.Length; i++)
-            {
-                if (elements[i] is null || !elements[i].BoundsCheck(particles[i].position))
-                    continue;
-
-                elements[i].CheckDoubleOnPosition();
-            }*/
-
-            DeleteParticlesOnQueue();
-
-
         }
-
-        static void DeleteParticlesOnQueue()
-        {
-            if (idsToDelete.Count == 0)
-                return;
-
-            for (int i = 0; i < idsToDelete.Count; i++)
-            {
-                int id = idsToDelete[i];
-                if (particles[id].id == -1)
-                    continue;
-                if (id >= 0 && id < particles.Length)
-                {
-                    particles[id].Delete();
-                }
-            }
-
-            idsToDelete.Clear();
-        }
-
-        public static void AddParticle(Vector2 pos, string name)
+        
+        public void AddParticle(Vector2 pos, string name)
         {
             //check if in bounds
             if(!PixelColorer.BoundCheck(pos))
@@ -251,25 +143,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void ResetColorAtPos(Vector2 pos)
-        {
-            PixelColorer.SetColorAtPos(pos, 102, 178, 204);
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public static ParticleProperties GetPropertiesFromName(string name)
-        {
-            if (!ParticleResourceHandler.particleNameIndexes.ContainsKey(name))
-                return new ParticleProperties();
-            return ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleNameIndexes[name]];
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public static bool SafePositionCheckSet(byte type, Vector2 position)
+        public bool SafePositionCheckSet(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
             if(index == -1)
@@ -281,7 +155,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool SafeIdCheckSet(int id, Vector2 position)
+        public bool SafeIdCheckSet(int id, Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
             if (index == -1)
@@ -293,7 +167,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static byte SafePositionCheckGet(Vector2 position)
+        public byte SafePositionCheckGet(Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
             if (index == -1)
@@ -304,7 +178,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static int SafeIdCheckGet(Vector2 position)
+        public int SafeIdCheckGet(Vector2 position)
         {
             int index = PixelColorer.PosToIndex(position);
             if (index == -1)
@@ -315,7 +189,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool SafePositionCheckSetNoBc(byte type, Vector2 position)
+        public bool SafePositionCheckSetNoBc(byte type, Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
             if (index == -1)
@@ -327,7 +201,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool SafeIdCheckSetNoBc(int id, Vector2 position)
+        public bool SafeIdCheckSetNoBc(int id, Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
             if (index == -1)
@@ -339,7 +213,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static byte SafePositionCheckGetNoBc(Vector2 position)
+        public byte SafePositionCheckGetNoBc(Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
             if (index == -1)
@@ -350,13 +224,12 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static int SafeIdCheckGetNoBc(Vector2 position)
+        public int SafeIdCheckGetNoBc(Vector2 position)
         {
             int index = PixelColorer.PosToIndexNoBC(position);
             if (index == -1)
                 return -1;
             return idCheck[index];
         }
-        
     }
 }

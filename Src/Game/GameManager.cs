@@ -44,9 +44,9 @@ namespace SpatialGame
             SimRenderer.Init();
             SimLighting.Init();
             SimInput.Init();
-            RigidBodySimulation.Init();
+            //RigidBodySimulation.Init();
             
-            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
+            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             isInitalizing = false;
         }
@@ -64,9 +64,9 @@ namespace SpatialGame
             SimRenderer.Init();
             SimLighting.Init();
             SimInput.Init();
-            RigidBodySimulation.Init();
+            //RigidBodySimulation.Init();
             
-            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
+            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             started = true;
             isInitalizing = false;
@@ -94,7 +94,7 @@ namespace SpatialGame
             SimInput.Update();
             SimInput.FixedUpdate();
             ParticleSimulation.RunParticleSim(dt);
-            RigidBodySimulation.Update(dt / 1000f);
+            //RigidBodySimulation.Update(dt / 1000f);
         }
     }
 }
