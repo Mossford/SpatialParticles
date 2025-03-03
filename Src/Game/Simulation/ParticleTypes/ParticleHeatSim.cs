@@ -15,13 +15,13 @@ namespace SpatialGame
         static int temperatureColorCount;
         static Vector4Byte[] temperatureColors;
         //ids of the current particle being calculated
-        static int[] suroundingIdOfParticle;
+        static ChunkIndex[] suroundingIdOfParticle;
 
         public static void Init()
         {
             temperatureColorCount = 50000;
             temperatureColors = new Vector4Byte[temperatureColorCount];
-            suroundingIdOfParticle = new int[8];
+            suroundingIdOfParticle = new ChunkIndex[8];
 
             for (int i = -273; i < temperatureColorCount - 273; i++)
             {
@@ -53,8 +53,8 @@ namespace SpatialGame
             //get all particles around the current particle
             for (int i = 0; i < 8; i++)
             {
-                suroundingIdOfParticle[i] = ParticleSimulation.SafeIdCheckGet(particle.position + ParticleHelpers.surroundingPos[i]);
-                if (suroundingIdOfParticle[i] != -1)
+                suroundingIdOfParticle[i] = ParticleChunkManager.SafeGetIndexInChunksMap(particle.position + ParticleHelpers.surroundingPos[i]);
+                if (suroundingIdOfParticle[i].particleIndex != -1)
                 {
                     idsSurroundCount++;
                 }
@@ -67,14 +67,15 @@ namespace SpatialGame
             float heatTransConst = particle.state.temperature / idsSurroundCount;
             for (int i = 0; i < 8; i++)
             {
-                if (suroundingIdOfParticle[i] == -1)
+                if (suroundingIdOfParticle[i].particleIndex == -1)
                     continue;
 
-                Particle other = ParticleSimulation.particles[suroundingIdOfParticle[i]];
+                
+                ref Particle other = ref ParticleChunkManager.chunks[suroundingIdOfParticle[i].chunkIndex].particles[suroundingIdOfParticle[i].particleIndex];
                 
                 float heatTrans = heatTransConst * other.GetParticleProperties().heatingProperties.heatTransferRate;
                 particle.state.temperatureTemp -= heatTrans;
-                ParticleSimulation.particles[suroundingIdOfParticle[i]].state.temperatureTemp += heatTrans;
+                ParticleChunkManager.chunks[suroundingIdOfParticle[i].chunkIndex].particles[suroundingIdOfParticle[i].particleIndex].state.temperatureTemp += heatTrans;
             }
         }
 
@@ -129,7 +130,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.solid;
                                 particle.state.moveType = ParticleMovementType.particle;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[0];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where a liquid base type stays what it is
                             if (particle.state.temperature >= properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -138,7 +139,7 @@ namespace SpatialGame
                                 particle.state.color = properties.color;
                                 particle.state.behaveType = ParticleBehaviorType.liquid;
                                 particle.state.moveType = ParticleMovementType.liquid;
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //upper bound gas transition where liquid turns to gas
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
@@ -147,7 +148,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.gas;
                                 particle.state.moveType = ParticleMovementType.gas;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[2];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             break;
                         }
@@ -161,7 +162,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.solid;
                                 particle.state.moveType = ParticleMovementType.particle;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[0];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where a gas base type turns to liquid
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -170,7 +171,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.liquid;
                                 particle.state.moveType = ParticleMovementType.liquid;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[1];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //upper bound gas transition where a gas base stays a gas
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
@@ -179,7 +180,7 @@ namespace SpatialGame
                                 particle.state.color = properties.color;
                                 particle.state.behaveType = ParticleBehaviorType.gas;
                                 particle.state.moveType = ParticleMovementType.gas;
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             break;
                         }
@@ -193,7 +194,7 @@ namespace SpatialGame
                                 particle.state.color = properties.color;
                                 particle.state.behaveType = ParticleBehaviorType.solid;
                                 particle.state.moveType = properties.moveType;
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //middle bound transition where base type turns to liquid
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
@@ -202,7 +203,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.liquid;
                                 particle.state.moveType = ParticleMovementType.liquid;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[1];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             //upper bound gas transition where liquid turns to gas
                             if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
@@ -211,7 +212,7 @@ namespace SpatialGame
                                 particle.state.behaveType = ParticleBehaviorType.gas;
                                 particle.state.moveType = ParticleMovementType.gas;
                                 particle.state.color = properties.heatingProperties.stateChangeColors[2];
-                                ParticleSimulation.SafePositionCheckSetNoBc(particle.state.behaveType.ToByte(), particle.position);
+                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
                             }
                             break;
                         }

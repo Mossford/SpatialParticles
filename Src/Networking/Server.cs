@@ -256,13 +256,16 @@ namespace SpatialEngine.Networking
                 case (ushort)PacketType.SceneSyncClear:
                     {
                         ParticleSpawnPacket packet = new ParticleSpawnPacket();
-                        for (int i = 0; i < ParticleSimulation.particles.Length; i++)
+                        for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
                         {
-                            if(ParticleSimulation.particles[i].id == -1)
-                                continue;
-                            packet.position = ParticleSimulation.particles[i].position;
-                            packet.name = ParticleSimulation.particles[i].GetParticleProperties().name;
-                            SendRelib(packet, client.Id);
+                            for (int j = 0; j < ParticleChunkManager.chunks[i].particles.Length; j++)
+                            {
+                                if(ParticleChunkManager.chunks[i].particles[j].id.particleIndex == -1)
+                                    continue;
+                                packet.position = ParticleChunkManager.chunks[i].particles[j].position;
+                                packet.name = ParticleChunkManager.chunks[i].particles[j].GetParticleProperties().name;
+                                SendRelib(packet, client.Id);
+                            }
                         }
                         
                         break;

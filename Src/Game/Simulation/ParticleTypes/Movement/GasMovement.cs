@@ -54,8 +54,8 @@ namespace SpatialGame
                     if (!particle.BoundsCheck(checkPos))
                         return;
 
-                    if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte()
-                        && ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X - 1, particle.position.Y - 1)) != ParticleBehaviorType.empty.ToByte())
+                    if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleBehaviorType.empty.ToByte()
+                        && ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y - 1)) != ParticleBehaviorType.empty.ToByte())
                     {
                         particle.MoveParticleOne(new Vector2(-1, 0));
                     }
@@ -75,8 +75,8 @@ namespace SpatialGame
                     if (!particle.BoundsCheck(checkPos))
                         return;
 
-                    if (ParticleSimulation.SafePositionCheckGetNoBc(checkPos) == ParticleBehaviorType.empty.ToByte()
-                        && ParticleSimulation.SafePositionCheckGetNoBc(new Vector2(particle.position.X + 1, particle.position.Y - 1)) != ParticleBehaviorType.empty.ToByte())
+                    if (ParticleSimulation.SafePositionCheckGet(checkPos) == ParticleBehaviorType.empty.ToByte()
+                        && ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y - 1)) != ParticleBehaviorType.empty.ToByte())
                     {
                         particle.MoveParticleOne(new Vector2(1, 0));
                     }

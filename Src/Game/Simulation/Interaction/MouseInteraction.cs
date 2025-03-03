@@ -111,37 +111,42 @@ namespace SpatialGame
                             continue;
                         
                         Vector2 pos = new Vector2(MathF.Round(x), MathF.Round(y));
-                        int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
+                        ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
+                        
+                        if(idToCheck.chunkIndex == -1)
+                            continue;
+                        
+                        ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
 
                         if(button == 0 && !mode)
                         {
-                            if (idToCheck == -1)
+                            if (idToCheck.particleIndex == -1)
                             {
                                 ParticleSimulation.AddParticle(pos, name);
                             }
-                            else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
+                            else if (chunk.particles[idToCheck.particleIndex].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
                             {
                                 //replaced from queue delete may cause issues
-                                ParticleSimulation.particles[idToCheck].Delete();
+                                chunk.particles[idToCheck.particleIndex].Delete();
                                 ParticleSimulation.AddParticle(pos, name);
                             }
                         }
                         else if (button == 0 && mode)
                         {
-                            if(idToCheck != -1 && selection == 0)
+                            if(idToCheck.particleIndex != -1 && selection == 0)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature += Globals.fixedDeltaTime;
+                                chunk.particles[idToCheck.chunkIndex].state.temperature += Globals.fixedDeltaTime;
                             }
-                            if (idToCheck != -1 && selection == 1)
+                            if (idToCheck.particleIndex != -1 && selection == 1)
                             {
-                                ParticleSimulation.particles[idToCheck].state.temperature -=  Globals.fixedDeltaTime;
+                                chunk.particles[idToCheck.chunkIndex].state.temperature -=  Globals.fixedDeltaTime;
                             }
                         }
                         else if(button == 1)
                         {
-                            if (idToCheck != -1)
+                            if (idToCheck.particleIndex != -1)
                             {
-                                ParticleSimulation.particles[idToCheck].Delete();
+                                chunk.particles[idToCheck.chunkIndex].Delete();
                             }
                         }
                     }
@@ -180,37 +185,42 @@ namespace SpatialGame
                             if (distanceToOldPos <= radius)
                                 continue;
                             
-                            int idToCheck = ParticleSimulation.SafeIdCheckGet(pos);
+                            ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
+                        
+                            if(idToCheck.chunkIndex == -1)
+                                continue;
+
+                            ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
 
                             if(button == 0 && !mode)
                             {
-                                if (idToCheck == -1)
+                                if (idToCheck.particleIndex == -1)
                                 {
                                     ParticleSimulation.AddParticle(pos, name);
                                 }
-                                else if (ParticleSimulation.particles[idToCheck].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
+                                else if (chunk.particles[idToCheck.particleIndex].propertyIndex != ParticleResourceHandler.particleNameIndexes[name])
                                 {
                                     //replaced from queue delete may cause issues
-                                    ParticleSimulation.particles[idToCheck].Delete();
+                                    chunk.particles[idToCheck.particleIndex].Delete();
                                     ParticleSimulation.AddParticle(pos, name);
                                 }
                             }
                             else if (button == 0 && mode)
                             {
-                                if(idToCheck != -1 && selection == 0)
+                                if(idToCheck.particleIndex != -1 && selection == 0)
                                 {
-                                    ParticleSimulation.particles[idToCheck].state.temperature += Globals.fixedDeltaTime;
+                                    chunk.particles[idToCheck.particleIndex].state.temperature += Globals.fixedDeltaTime;
                                 }
-                                if (idToCheck != -1 && selection == 1)
+                                if (idToCheck.particleIndex != -1 && selection == 1)
                                 {
-                                    ParticleSimulation.particles[idToCheck].state.temperature -=  Globals.fixedDeltaTime;
+                                    chunk.particles[idToCheck.particleIndex].state.temperature -=  Globals.fixedDeltaTime;
                                 }
                             }
                             else if(button == 1)
                             {
-                                if (idToCheck != -1)
+                                if (idToCheck.particleIndex != -1)
                                 {
-                                    ParticleSimulation.particles[idToCheck].Delete();
+                                    chunk.particles[idToCheck.particleIndex].Delete();
                                 }
                             }
                         }

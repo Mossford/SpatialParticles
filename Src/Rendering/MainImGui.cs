@@ -87,7 +87,7 @@ namespace SpatialEngine.Rendering
             {
                 ImGui.Text($"Simulation has {mem:N2}MB of buffers");
             }
-            ImGui.Text($"Simulation has {SpatialGame.ParticleSimulation.particleCount} of particles Spawned");
+            ImGui.Text($"Simulation has {SpatialGame.ParticleSimulation.totalParticleCount} of particles Spawned");
             ImGui.Text($"Current resolution {SpatialGame.PixelColorer.width}, {SpatialGame.PixelColorer.height}");
             ImGui.Text($"Selected Particle {ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[SpatialGame.SimInput.mouseSelection]].name}");
             
@@ -143,8 +143,11 @@ namespace SpatialEngine.Rendering
             ImGui.Text("Particle Info at Mouse Pos:");
             Vector2 position = ((Mouse.localPosition / Window.size * new Vector2(PixelColorer.width, PixelColorer.height)) + (new Vector2(PixelColorer.width, PixelColorer.height) / 2));
             ImGui.Text($"Pos {position:N1}");
+            ImGui.Text($"Chunk Pos {(position / ParticleChunkManager.chunkSize):N1}");
+            ImGui.Text($"Particle Index {PixelColorer.PosToIndex(position):N0}");
+            ImGui.Text($"Chunk Index {ParticleChunkManager.SafeGetChunkIndexMap(position):N0}");
+            ImGui.Text($"Chunk Particle Index {ParticleChunkManager.SafeGetIndexInChunksMap(position):N0}");
             Vector2 floorPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
-            int particleIndex = ParticleSimulation.SafeIdCheckGet(floorPosition);
             Vector4Byte color = PixelColorer.GetColorAtPos(floorPosition);
             ImGui.Text($"Color {color}");
             Vector2 textSize = ImGui.CalcTextSize($"Color {color}");
@@ -156,9 +159,11 @@ namespace SpatialEngine.Rendering
             string particleName;
             if (ImGui.CollapsingHeader("Particle State"))
             {
-                if (particleIndex != -1)
+                ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                if (idToCheck.particleIndex != -1)
                 {
-                    ImGui.Text($"{ParticleSimulation.particles[particleIndex]}");
+                    ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
+                    ImGui.Text($"{chunk.particles[idToCheck.particleIndex]}");
                 }
                 else
                 {
@@ -167,9 +172,11 @@ namespace SpatialEngine.Rendering
             }
             if (ImGui.CollapsingHeader("Particle Properties"))
             {
-                if (particleIndex != -1)
+                ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                if (idToCheck.particleIndex != -1)
                 {
-                    ImGui.Text($"{ParticleSimulation.particles[particleIndex].GetParticleProperties()}");
+                    ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
+                    ImGui.Text($"{chunk.particles[idToCheck.particleIndex].GetParticleProperties()}");
                 }
                 else
                 {

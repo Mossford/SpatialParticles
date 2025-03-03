@@ -27,6 +27,8 @@ namespace SpatialGame
         /// </summary>
         public List<int> idsToDelete;
         public int particleCount;
+        public int chunkIndex;
+        public Vector2 position;
 
         //static as they are not different across chunks
         public static int width;
@@ -61,6 +63,17 @@ namespace SpatialGame
             }
         }
 
+        public void CheckDuplicate()
+        {
+            for (int i = 0; i < particles.Length; i++)
+            {
+                if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
+                    continue;
+
+                particles[i].CheckDoubleOnPosition();
+            }
+        }
+
         public void Update(float delta)
         {
             //First pass calculations
@@ -79,7 +92,7 @@ namespace SpatialGame
                     PixelColorer.particleLights[i].range = Settings.SimulationSettings.particleLightRange;
                 }
 
-                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 //reset its light color before it moves
@@ -90,13 +103,13 @@ namespace SpatialGame
 
             for (int i = 0; i < particles.Length; i++)
             {
-                if (particles[i].id == -1 || !particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
 
                 //reset its color before it moves
                 particles[i].Update(delta);
                 particles[i].UpdateGeneralSecond();
-                if (particles[i].id != -1 || particles[i].BoundsCheck(particles[i].position))
+                if (particles[i].id.chunkIndex != -1 || particles[i].BoundsCheck(particles[i].position))
                 {
                     //apply transparencys to particle
                     //blend with background by the alpha
@@ -126,110 +139,31 @@ namespace SpatialGame
                 Debugging.LogConsole("Ran out of spots to add more particles");
                 return;
             }
+            
             //check if there is a particle there because I somehow forgot this
-            if(SafeIdCheckGetNoBc(pos) != -1)
+            if(ParticleSimulation.SafeIdCheckGet(pos) != -1)
                 return;
             
             int id = freeParticleSpots.Dequeue();
-            particles[id].id = id;
+            particles[id].id = new ChunkIndex(chunkIndex, id);
             particles[id].position = pos;
             particles[id].timeSpawned = Globals.GetTime();
             particles[id].propertyIndex = index;
             particles[id].state = ParticleResourceHandler.loadedParticles[index];
-            SafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
-            SafeIdCheckSet(id, pos);
+            
+            ParticleSimulation.SafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
+            ParticleSimulation.SafeIdCheckSet(id, pos);
         }
-
+        
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public bool SafePositionCheckSet(byte type, Vector2 position)
+        public bool ChunkBounds(Vector2 pos)
         {
-            int index = PixelColorer.PosToIndex(position);
-            if(index == -1)
+            if (pos.X < position.X || pos.X > (position.X + width) || pos.Y < position.Y || pos.Y > (position.Y + height))
                 return false;
-            positionCheck[index] = type;
             return true;
         }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public bool SafeIdCheckSet(int id, Vector2 position)
-        {
-            int index = PixelColorer.PosToIndex(position);
-            if (index == -1)
-                return false;
-            idCheck[index] = id;
-            return true;
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public byte SafePositionCheckGet(Vector2 position)
-        {
-            int index = PixelColorer.PosToIndex(position);
-            if (index == -1)
-                return 0;
-            return positionCheck[index];
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public int SafeIdCheckGet(Vector2 position)
-        {
-            int index = PixelColorer.PosToIndex(position);
-            if (index == -1)
-                return -1;
-            return idCheck[index];
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public bool SafePositionCheckSetNoBc(byte type, Vector2 position)
-        {
-            int index = PixelColorer.PosToIndexNoBC(position);
-            if (index == -1)
-                return false;
-            positionCheck[index] = type;
-            return true;
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public bool SafeIdCheckSetNoBc(int id, Vector2 position)
-        {
-            int index = PixelColorer.PosToIndexNoBC(position);
-            if (index == -1)
-                return false;
-            idCheck[index] = id;
-            return true;
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public byte SafePositionCheckGetNoBc(Vector2 position)
-        {
-            int index = PixelColorer.PosToIndexNoBC(position);
-            if (index == -1)
-                return 0;
-            return positionCheck[index];
-        }
-
-#if RELEASE
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
-        public int SafeIdCheckGetNoBc(Vector2 position)
-        {
-            int index = PixelColorer.PosToIndexNoBC(position);
-            if (index == -1)
-                return -1;
-            return idCheck[index];
-        }
+        
     }
 }

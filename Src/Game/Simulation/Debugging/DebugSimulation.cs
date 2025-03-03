@@ -26,7 +26,7 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSim()
         {
-            int size = ParticleSimulation.particles.Length;
+            int size = ParticleChunkManager.chunks.Length * ParticleChunk.width * ParticleChunk.height;
             size *= Particle.GetSize();
             return size / 1024f / 1024f;
         }
@@ -37,8 +37,8 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSimGPU()
         {
-            int size = ParticleSimulation.particles.Length;
-            size *= 4 + 16;
+            int size = ParticleChunkManager.chunks.Length * ParticleChunk.width * ParticleChunk.height;
+            size *= Vector4Byte.GetSize() + ParticleLight.getSize();
             return size / 1024f / 1024f;
         }
 
@@ -49,29 +49,32 @@ namespace SpatialGame
         static void CheckLostParticles()
         {
 
-            int count = 0;
-
-            for (int i = 0; i < ParticleSimulation.particles.Length; i++)
+            for (int c = 0; c < ParticleChunkManager.chunks.Length; c++)
             {
-                if (ParticleSimulation.particles[i].id == -1)
-                    continue;
+                int count = 0;
 
-                count++;
-            }
+                for (int i = 0; i < ParticleChunkManager.chunks[c].particles.Length; i++)
+                {
+                    if (ParticleChunkManager.chunks[c].particles[i].id.particleIndex == -1)
+                        continue;
 
-            int totalElementCount = 0;
-            for (int i = 0; i < ParticleSimulation.positionCheck.Length; i++)
-            {
-                int type = ParticleSimulation.positionCheck[i];
-                if (type == 0)
-                    continue;
-                totalElementCount++;
-            }
+                    count++;
+                }
 
-            if (ParticleSimulation.particles.Length - ParticleSimulation.freeParticleSpots.Count != totalElementCount)
-            {
-                Console.WriteLine(totalElementCount + " vis " + count + " nn " + (ParticleSimulation.particles.Length - ParticleSimulation.freeParticleSpots.Count) + " qd");
-                //throw new Exception("Weird bullshit has happened there are more elements than on screen");
+                int totalElementCount = 0;
+                for (int i = 0; i < ParticleChunkManager.chunks[c].positionCheck.Length; i++)
+                {
+                    int type = ParticleChunkManager.chunks[c].positionCheck[i];
+                    if (type == 0)
+                        continue;
+                    totalElementCount++;
+                }
+
+                if (ParticleChunkManager.chunks[c].particles.Length - ParticleChunkManager.chunks[c].freeParticleSpots.Count != totalElementCount)
+                {
+                    Console.WriteLine(totalElementCount + " vis " + count + " nn " + (ParticleChunkManager.chunks[c].particles.Length - ParticleChunkManager.chunks[c].freeParticleSpots.Count) + " qd");
+                    //throw new Exception("Weird bullshit has happened there are more elements than on screen");
+                }
             }
         }
     }

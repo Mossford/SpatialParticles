@@ -30,6 +30,11 @@ namespace SpatialGame
             this.w = w;
         }
 
+        public static int GetSize()
+        {
+            return 4;
+        }
+
         public static implicit operator Vector4(Vector4Byte v)
         {
             return new Vector4(v.x, v.y, v.z, v.w);

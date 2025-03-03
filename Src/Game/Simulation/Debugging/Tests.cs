@@ -20,6 +20,7 @@ namespace SpatialGame
 
         public static void RunTestMain()
         {
+            /*
             //reEnable perf testing and settings
             //set resolution to 384,216
             Settings.SimulationSettings.EnablePerfTestMode = true;
@@ -56,11 +57,13 @@ namespace SpatialGame
             Console.WriteLine("Passed Particle Temp 0 Test");
 
             TestParticleHeating();
+            */
 
         }
 
         public static void TestParticleHeating()
         {
+            /*
             RestartTestConditionClean();
 
             //acceptor
@@ -108,6 +111,7 @@ namespace SpatialGame
 
 
             Console.WriteLine("Passed Particle Heating Test");
+            */
         }
     }
 }

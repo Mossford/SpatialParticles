@@ -18,7 +18,7 @@ namespace SpatialGame
         public static void Update(ref Particle particle)
         {
             ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.wall.ToByte(), particle.position);
-            ParticleSimulation.SafeIdCheckSet(particle.id, particle.position);
+            ParticleSimulation.SafeIdCheckSet(particle.id.particleIndex, particle.position);
 
             ParticleProperties properties = particle.GetParticleProperties();
 
@@ -36,8 +36,14 @@ namespace SpatialGame
                     {
                         newPos += dir;
                         Vector2 position = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
-                        int particleID = ParticleSimulation.SafeIdCheckGet(position);
-                        if (particleID == -1)
+                        ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                        
+                        if(idToCheck.chunkIndex == -1)
+                            continue;
+
+                        ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
+                        
+                        if (idToCheck.particleIndex == -1)
                         {
                             ParticleSimulation.AddParticle(position, "Fire");
                             continue;
@@ -50,17 +56,17 @@ namespace SpatialGame
                         
                         //make deteriministic
                         int rand = ParticleSimulation.random.Next(0, 10);
-                        if (rand == 0 && ParticleSimulation.particles[particleID].GetParticleBehaviorType() != ParticleBehaviorType.wall)
+                        if (rand == 0 && chunk.particles[idToCheck.particleIndex].GetParticleBehaviorType() != ParticleBehaviorType.wall)
                         {
-                            ParticleSimulation.particles[particleID].Delete();
+                            chunk.particles[idToCheck.particleIndex].Delete();
                         }
                         else
                         {
                             continue;
                         }
                         
-                        ParticleSimulation.particles[particleID].state.temperature += properties.explosiveProperties.heatOutput * powerScale;
-                        ParticleSimulation.particles[particleID].velocity = dir * 2 * properties.explosiveProperties.power;
+                        chunk.particles[idToCheck.particleIndex].state.temperature += properties.explosiveProperties.heatOutput * powerScale;
+                        chunk.particles[idToCheck.particleIndex].velocity = dir * 2 * properties.explosiveProperties.power;
                     }
                 }
 
