@@ -147,6 +147,7 @@ namespace SpatialEngine.Rendering
             ImGui.Text($"Particle Index {PixelColorer.PosToIndex(position):N0}");
             ImGui.Text($"Chunk Index {ParticleChunkManager.SafeGetChunkIndexMap(position):N0}");
             ImGui.Text($"Chunk Particle Index {ParticleChunkManager.SafeGetIndexInChunksMap(position):N0}");
+            ImGui.Text($"IdCheck {ParticleSimulation.SafeIdCheckGet(position):N0}");
             Vector2 floorPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
             Vector4Byte color = PixelColorer.GetColorAtPos(floorPosition);
             ImGui.Text($"Color {color}");
@@ -159,7 +160,7 @@ namespace SpatialEngine.Rendering
             string particleName;
             if (ImGui.CollapsingHeader("Particle State"))
             {
-                ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                ChunkIndex idToCheck = ParticleSimulation.SafeChunkIdCheckGet(position);
                 if (idToCheck.particleIndex != -1)
                 {
                     ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
@@ -172,7 +173,7 @@ namespace SpatialEngine.Rendering
             }
             if (ImGui.CollapsingHeader("Particle Properties"))
             {
-                ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                ChunkIndex idToCheck = ParticleSimulation.SafeChunkIdCheckGet(position);
                 if (idToCheck.particleIndex != -1)
                 {
                     ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);

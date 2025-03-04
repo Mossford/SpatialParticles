@@ -53,7 +53,7 @@ namespace SpatialGame
             //get all particles around the current particle
             for (int i = 0; i < 8; i++)
             {
-                suroundingIdOfParticle[i] = ParticleChunkManager.SafeGetIndexInChunksMap(particle.position + ParticleHelpers.surroundingPos[i]);
+                suroundingIdOfParticle[i] = ParticleSimulation.SafeChunkIdCheckGet(particle.position + ParticleHelpers.surroundingPos[i]);
                 if (suroundingIdOfParticle[i].particleIndex != -1)
                 {
                     idsSurroundCount++;

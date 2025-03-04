@@ -36,7 +36,7 @@ namespace SpatialGame
                     {
                         newPos += dir;
                         Vector2 position = new Vector2(MathF.Round(newPos.X), MathF.Round(newPos.Y));
-                        ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                        ChunkIndex idToCheck = ParticleSimulation.SafeChunkIdCheckGet(position);
                         
                         if(idToCheck.chunkIndex == -1)
                             continue;

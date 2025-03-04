@@ -111,7 +111,7 @@ namespace SpatialGame
                             continue;
                         
                         Vector2 pos = new Vector2(MathF.Round(x), MathF.Round(y));
-                        ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
+                        ChunkIndex idToCheck = ParticleSimulation.SafeChunkIdCheckGet(pos);
                         
                         if(idToCheck.chunkIndex == -1)
                             continue;
@@ -185,7 +185,7 @@ namespace SpatialGame
                             if (distanceToOldPos <= radius)
                                 continue;
                             
-                            ChunkIndex idToCheck = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
+                            ChunkIndex idToCheck = ParticleSimulation.SafeChunkIdCheckGet(pos);
                         
                             if(idToCheck.chunkIndex == -1)
                                 continue;

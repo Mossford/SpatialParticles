@@ -161,7 +161,7 @@ namespace SpatialGame
             Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
             for (int i = 0; i < steps; i++)
             {
-                ChunkIndex id = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+                ChunkIndex id = ParticleSimulation.SafeChunkIdCheckGet(position);
                 if(id.particleIndex != -1)
                     ParticleChunkManager.chunks[id.chunkIndex].particles[id.particleIndex].QueueDelete();
                 

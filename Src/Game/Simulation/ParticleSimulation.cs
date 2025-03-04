@@ -105,7 +105,7 @@ namespace SpatialGame
         public static void AddParticle(Vector2 pos, string name)
         {
             //just going to be a wrapper for the chunk version of it as it makes this a little cleaner
-            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunks(pos);
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
             if (index.chunkIndex != -1)
             {
                 ParticleChunkManager.chunks[index.chunkIndex].AddParticle(pos, name);
@@ -179,6 +179,17 @@ namespace SpatialGame
                 return -1;
             return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
         }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static ChunkIndex SafeChunkIdCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return new ChunkIndex(-1, -1);
+            return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+        }
 
         //      Unsafe checks so no bounds checking
         //----------------------------------------------------------------------------------------------------------
@@ -219,6 +230,15 @@ namespace SpatialGame
         {
             ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
             return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static ChunkIndex UnsafeChunkIdCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+            return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
         }
 
 

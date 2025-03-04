@@ -23,6 +23,8 @@ namespace SpatialGame
             for (int i = 0; i < chunks.Length; i++)
             {
                 chunks[i] = new ParticleChunk();
+                chunks[i].position = new Vector2((float)Math.Floor((double)(i % chunkHeightAmount)), (float)Math.Floor((double)i / chunkHeightAmount)) * chunkSize;
+                chunks[i].chunkIndex = i;
                 chunks[i].Init();
             }
         }
@@ -126,10 +128,12 @@ namespace SpatialGame
             //calculate index
             //may have issue where require the y size than the width size
             int index = (int)((chunkHeightAmount * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
-            Console.WriteLine(index + " "+ chunks.Length + " " + chunkHeightAmount);
             return index;
         }
 
+        /// <summary>
+        /// will return the index of the position but this is not the id of a particle that may be on that position
+        /// </summary>
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -151,6 +155,9 @@ namespace SpatialGame
             return new ChunkIndex(chunkIndex, particleIndex);
         }
         
+        /// <summary>
+        /// will return the index of the position but this is not the id of a particle that may be on that position
+        /// </summary>
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -197,6 +204,9 @@ namespace SpatialGame
             return index;
         }
 
+        /// <summary>
+        /// will return the index of the position but this is not the id of a particle that may be on that position
+        /// </summary>
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
@@ -211,6 +221,9 @@ namespace SpatialGame
             return new ChunkIndex(chunkIndex, particleIndex);
         }
 
+        /// <summary>
+        /// will return the index of the position but this is not the id of a particle that may be on that position
+        /// </summary>
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
