@@ -13,8 +13,6 @@ namespace SpatialGame
         
         public static void Init()
         {
-            ParticleChunk.width = chunkSize;
-            ParticleChunk.height = chunkSize;
             chunkWidthAmount = PixelColorer.width / chunkSize;
             chunkHeightAmount = PixelColorer.height / chunkSize;
 
@@ -23,7 +21,7 @@ namespace SpatialGame
             for (int i = 0; i < chunks.Length; i++)
             {
                 chunks[i] = new ParticleChunk();
-                chunks[i].position = new Vector2((float)Math.Floor((double)(i % chunkHeightAmount)), (float)Math.Floor((double)i / chunkHeightAmount)) * chunkSize;
+                chunks[i].position = new Vector2((float)Math.Floor((double)(i % chunkWidthAmount)), (float)Math.Floor((double)i / chunkWidthAmount)) * chunkSize;
                 chunks[i].chunkIndex = i;
                 chunks[i].Init();
             }

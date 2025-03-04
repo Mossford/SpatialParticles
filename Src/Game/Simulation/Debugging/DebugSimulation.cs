@@ -26,7 +26,7 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSim()
         {
-            int size = ParticleChunkManager.chunks.Length * ParticleChunk.width * ParticleChunk.height;
+            int size = ParticleChunkManager.chunks.Length * ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize;
             size *= Particle.GetSize();
             return size / 1024f / 1024f;
         }
@@ -37,7 +37,7 @@ namespace SpatialGame
         /// <returns></returns>
         public static float GetCurrentMemoryOfSimGPU()
         {
-            int size = ParticleChunkManager.chunks.Length * ParticleChunk.width * ParticleChunk.height;
+            int size = ParticleChunkManager.chunks.Length * ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize;
             size *= Vector4Byte.GetSize() + ParticleLight.getSize();
             return size / 1024f / 1024f;
         }

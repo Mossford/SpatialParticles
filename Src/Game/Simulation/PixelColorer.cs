@@ -175,7 +175,7 @@ namespace SpatialGame
 #endif
         public static Vector2 IndexToPos(int index)
         {
-            return new Vector2((float)Math.Floor((double)(index % height)), (float)Math.Floor((double)index / height));
+            return new Vector2((float)Math.Floor((double)(index % width)), (float)Math.Floor((double)index / width));
         }
 
 #if RELEASE

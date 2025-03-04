@@ -23,7 +23,7 @@ namespace SpatialGame
         {
             random = new Random();
 
-            ParticleChunkManager.chunkSize = 8;
+            ParticleChunkManager.chunkSize = 24;
             ParticleChunkManager.Init();
 
             for (int x = 0; x < PixelColorer.width; x++)

@@ -252,7 +252,7 @@ namespace SpatialGame
                         QueueDelete();
                         return;
                     }
-                    if (ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos) == false)
+                    /*if (ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos) == false)
                     {
                         string name = GetParticleProperties().name;
                         ParticleState state = this.state;
@@ -269,7 +269,7 @@ namespace SpatialGame
                         ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
                         ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                         return;
-                    }
+                    }*/
                 }
                 else
                 {
@@ -282,14 +282,18 @@ namespace SpatialGame
                 //------safe to access the arrays directly------
 
                 ChunkIndex index = ParticleSimulation.UnsafeChunkIdCheckGet(position);
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
-                ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;
+                ParticleSimulation.UnsafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), position);
+                ParticleSimulation.UnsafeIdCheckSet(-1, position);
+                //ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
+                //ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;
                 position = newPos;
                 //has to be floor other than round because round can go up and move the element
                 //into a position where it is now intersecting another element
                 index = ParticleSimulation.UnsafeChunkIdCheckGet(position);
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
-                ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id.particleIndex;
+                //ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
+                //ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id.particleIndex;
+                ParticleSimulation.UnsafePositionCheckSet(GetParticleBehaviorType().ToByte(), position);
+                ParticleSimulation.UnsafeIdCheckSet(id.particleIndex, position);
             }
         }
 
@@ -309,18 +313,39 @@ namespace SpatialGame
                 QueueDelete();
                 return;
             }
+            /*if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
+            {
+                string name = GetParticleProperties().name;
+                ParticleState state = this.state;
+                QueueDelete();
+                ParticleSimulation.AddParticle(newPos, name);
+                //check if it got added and if it did not then an issue and no particle has been spawned
+                if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
+                {
+                    return;
+                }
+                ChunkIndex newChunk = ParticleSimulation.UnsafeChunkIdCheckGet(newPos);
+                Console.WriteLine(newChunk.chunkIndex + " " + newChunk.particleIndex);
+                ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
+                ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
+                return;
+            }*/
 
             //------safe to access the arrays directly------
 
             ChunkIndex index = ParticleSimulation.UnsafeChunkIdCheckGet(position);
-            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
-            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;
+            ParticleSimulation.UnsafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), position);
+            ParticleSimulation.UnsafeIdCheckSet(-1, position);
+            //ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
+            //ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;
             position = newPos;
             //has to be floor other than round because round can go up and move the element
             //into a position where it is now intersecting another element
             index = ParticleSimulation.UnsafeChunkIdCheckGet(position);
-            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
-            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id.particleIndex;
+            //ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
+            //ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id.particleIndex;
+            ParticleSimulation.UnsafePositionCheckSet(GetParticleBehaviorType().ToByte(), position);
+            ParticleSimulation.UnsafeIdCheckSet(id.particleIndex, position);
         }
 
         /// <summary>

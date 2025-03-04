@@ -31,16 +31,12 @@ namespace SpatialGame
         public int chunkIndex;
         public Vector2 position;
 
-        //static as they are not different across chunks
-        public static int width;
-        public static int height;
-
         public void Init()
         {
-            particles = new Particle[width * height];
+            particles = new Particle[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
             freeParticleSpots = new Queue<int>();
-            positionCheck = new byte[width * height];
-            idCheck = new int[width * height];
+            positionCheck = new byte[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
+            idCheck = new int[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
             idsToDelete = new List<int>();
             particleCount = 0;
             
@@ -77,6 +73,7 @@ namespace SpatialGame
 
         public void Update(float delta)
         {
+            DebugDrawer.DrawSquare(position, 4, Vector3.One);
             //First pass calculations
             particleCount = 0;
             for (int i = 0; i < particles.Length; i++)
@@ -161,7 +158,7 @@ namespace SpatialGame
 #endif
         public bool ChunkBounds(Vector2 pos)
         {
-            if (pos.X < position.X || pos.X > (position.X + width) || pos.Y < position.Y || pos.Y > (position.Y + height))
+            if (pos.X < position.X || pos.X >= (position.X + ParticleChunkManager.chunkSize) || pos.Y < position.Y || pos.Y >= (position.Y + ParticleChunkManager.chunkSize))
                 return false;
             return true;
         }
