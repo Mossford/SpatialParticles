@@ -252,11 +252,9 @@ namespace SpatialGame
                         QueueDelete();
                         return;
                     }
-                    /*if (ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos) == false)
+                    if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
                     {
                         string name = GetParticleProperties().name;
-                        ParticleState state = this.state;
-                        Vector2 position = newPos;
                         QueueDelete();
                         ParticleSimulation.AddParticle(newPos, name);
                         //check if it got added and if it did not then an issue and no particle has been spawned
@@ -264,12 +262,11 @@ namespace SpatialGame
                         {
                             return;
                         }
-                        ChunkIndex newChunk = ParticleSimulation.UnsafeChunkIdCheckGet(newPos);
-                        Console.WriteLine(newChunk.chunkIndex + " " + newChunk.particleIndex);
+                        ChunkIndex newChunk = ParticleSimulation.SafeChunkIdCheckGet(newPos);
                         ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
                         ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                         return;
-                    }*/
+                    }
                 }
                 else
                 {
@@ -313,10 +310,9 @@ namespace SpatialGame
                 QueueDelete();
                 return;
             }
-            /*if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
+            if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
             {
                 string name = GetParticleProperties().name;
-                ParticleState state = this.state;
                 QueueDelete();
                 ParticleSimulation.AddParticle(newPos, name);
                 //check if it got added and if it did not then an issue and no particle has been spawned
@@ -325,11 +321,10 @@ namespace SpatialGame
                     return;
                 }
                 ChunkIndex newChunk = ParticleSimulation.UnsafeChunkIdCheckGet(newPos);
-                Console.WriteLine(newChunk.chunkIndex + " " + newChunk.particleIndex);
                 ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
                 ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                 return;
-            }*/
+            }
 
             //------safe to access the arrays directly------
 
@@ -396,7 +391,6 @@ namespace SpatialGame
             ParticleSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
             PixelColorer.SetColorAtPos(position, 102, 178, 204);
-            Console.WriteLine(id.chunkIndex);
             ParticleChunkManager.chunks[id.chunkIndex].freeParticleSpots.Enqueue(id.particleIndex);
             int positionIndex = PixelColorer.PosToIndexUnsafe(position);
             PixelColorer.particleLights[positionIndex].index = -1;

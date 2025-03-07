@@ -72,7 +72,12 @@ namespace SpatialGame
 
         public static void RunParticleSim(float delta)
         {
+            totalParticleCount = 0;
             ParticleChunkManager.Update(delta);
+            for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
+            {
+                totalParticleCount += ParticleChunkManager.chunks[i].particleCount;
+            }
             //we still need to do this once instead of on each chunk as that will cause issues
             DeleteParticlesOnQueue();
         }
@@ -199,7 +204,7 @@ namespace SpatialGame
 #endif
         public static bool UnsafePositionCheckSet(byte type, Vector2 position)
         {
-            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
             ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
             return true;
         }
@@ -209,7 +214,7 @@ namespace SpatialGame
 #endif
         public static bool UnsafeIdCheckSet(int id, Vector2 position)
         {
-            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
             ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
             return true;
         }
@@ -219,7 +224,7 @@ namespace SpatialGame
 #endif
         public static byte UnsafePositionCheckGet(Vector2 position)
         {
-            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
             return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
         }
 
@@ -228,7 +233,7 @@ namespace SpatialGame
 #endif
         public static int UnsafeIdCheckGet(Vector2 position)
         {
-            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
             return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
         }
         
@@ -237,7 +242,7 @@ namespace SpatialGame
 #endif
         public static ChunkIndex UnsafeChunkIdCheckGet(Vector2 position)
         {
-            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunks(position);
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
             return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
         }
 

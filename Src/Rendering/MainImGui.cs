@@ -148,8 +148,9 @@ namespace SpatialEngine.Rendering
             ImGui.Text($"Chunk Index {ParticleChunkManager.SafeGetChunkIndexMap(position):N0}");
             ImGui.Text($"Chunk Particle Index {ParticleChunkManager.SafeGetIndexInChunksMap(position)}");
             ImGui.Text($"IdCheck {ParticleSimulation.SafeIdCheckGet(position):N0}");
-            ImGui.Text($"Chunk Particle Count {ParticleChunkManager.GetChunkReference(position).particleCount:N0}");
-            ImGui.Text($"In chunk {ParticleChunkManager.GetChunkReference(position).ChunkBounds(position)}");
+            ref ParticleChunk testChunk = ref ParticleChunkManager.GetChunkReference(position);
+            ImGui.Text($"Chunk Particle Count {testChunk.particleCount:N0}");
+            ImGui.Text($"In chunk {testChunk.ChunkBounds(position)}");
             Vector2 floorPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
             Vector4Byte color = PixelColorer.GetColorAtPos(floorPosition);
             ImGui.Text($"Color {color}");

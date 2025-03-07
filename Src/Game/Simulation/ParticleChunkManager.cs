@@ -84,7 +84,7 @@ namespace SpatialGame
 #endif
         public static Vector2 MapPositionToChunks(Vector2 pos)
         {
-            return pos / chunkSize;
+            return new Vector2(MathF.Floor(pos.X / chunkSize), MathF.Floor(pos.Y / chunkSize));
         }
         
         /// <summary>
@@ -185,7 +185,7 @@ namespace SpatialGame
             
             //calculate index
             //may have issue where require the y size than the width size
-            int index = (int)((chunkHeightAmount * pos.X) + pos.Y);
+            int index = (int)((chunkHeightAmount * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
             return index;
         }
         
@@ -194,11 +194,9 @@ namespace SpatialGame
 #endif
         public static int UnsafeGetChunkIndex(Vector2 pos)
         {
-            pos = MapPositionToChunks(pos);
-            
             //calculate index
             //may have issue where require the y size than the width size
-            int index = (int)((chunkHeightAmount * pos.X) + pos.Y);
+            int index = (int)((chunkHeightAmount * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
             return index;
         }
 
@@ -208,12 +206,11 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static ChunkIndex UnsafeGetIndexInChunks(Vector2 pos)
+        public static ChunkIndex UnsafeGetIndexInChunksMap(Vector2 pos)
         {
             int chunkIndex = UnsafeGetChunkIndexMap(pos);
 
             //map position to size of chunks
-            //pos -= new Vector2(chunks[chunkIndex].position.X , chunks[chunkIndex].position.Y);
             pos = MapPositionToChunk(pos);
             int particleIndex = (int)((chunkSize * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
             return new ChunkIndex(chunkIndex, particleIndex);
@@ -225,10 +222,11 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static ChunkIndex UnsafeGetIndexInChunks(Vector2 pos, int chunk)
+        public static ChunkIndex UnsafeGetIndexInChunksMap(Vector2 pos, int chunk)
         {
             //map position to size of chunks
             //pos -= new Vector2(chunks[chunk].position.X, chunks[chunk].position.Y);
+            pos = MapPositionToChunk(pos);
             int particleIndex = (int)((chunkSize * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
             return new ChunkIndex(chunk, particleIndex);
         }
