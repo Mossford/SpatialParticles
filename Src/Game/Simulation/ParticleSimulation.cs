@@ -40,6 +40,7 @@ namespace SpatialGame
 
             if(Settings.SimulationSettings.EnablePerfTestMode)
             {
+                //randomizes positions to test cache speeds and how good my structuring of the data is
                 List<Vector2> coords = new List<Vector2>();
 
                 for (int x = 1; x < PixelColorer.width - 1; x++)

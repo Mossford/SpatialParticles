@@ -244,35 +244,32 @@ namespace SpatialGame
                 Vector2 newPos = position + increase;
                 newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
                 int otherId = ParticleSimulation.SafeIdCheckGet(newPos);
-                if (otherId == -1)
+                
+                if (otherId != -1)
                 {
-                    if (!BoundsCheck(newPos))
-                    {
-                        velocity = dir;
-                        QueueDelete();
-                        return;
-                    }
-                    if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
-                    {
-                        string name = GetParticleProperties().name;
-                        QueueDelete();
-                        ParticleSimulation.AddParticle(newPos, name);
-                        //check if it got added and if it did not then an issue and no particle has been spawned
-                        if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
-                        {
-                            return;
-                        }
-                        ChunkIndex newChunk = ParticleSimulation.SafeChunkIdCheckGet(newPos);
-                        ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
-                        ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
-                        return;
-                    }
+                    return;
                 }
-                else
+                
+                if (!BoundsCheck(newPos))
                 {
-                    //hit something so transfer velocity
-                    //ParticleSimulation.particles[otherId].velocity = velocity;
-                    //velocity = velocity;
+                    velocity = dir;
+                    QueueDelete();
+                    return;
+                }
+                
+                if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
+                {
+                    string name = GetParticleProperties().name;
+                    QueueDelete();
+                    ParticleSimulation.AddParticle(newPos, name);
+                    //check if it got added and if it did not then an issue and no particle has been spawned
+                    if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
+                    {
+                        return;
+                    }
+                    ChunkIndex newChunk = ParticleSimulation.SafeChunkIdCheckGet(newPos);
+                    ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
+                    ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                     return;
                 }
                 
@@ -310,7 +307,7 @@ namespace SpatialGame
                 QueueDelete();
                 return;
             }
-            if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
+            /*if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
             {
                 string name = GetParticleProperties().name;
                 QueueDelete();
@@ -324,7 +321,7 @@ namespace SpatialGame
                 ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
                 ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                 return;
-            }
+            }*/
 
             //------safe to access the arrays directly------
 
