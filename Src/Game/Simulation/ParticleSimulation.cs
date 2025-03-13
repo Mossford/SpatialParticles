@@ -243,7 +243,9 @@ namespace SpatialGame
 #endif
         public static ChunkIndex UnsafeChunkIdCheckGet(Vector2 position)
         {
-            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return new ChunkIndex(-1, -1);
             return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
         }
 

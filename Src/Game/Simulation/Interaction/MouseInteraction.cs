@@ -89,8 +89,8 @@ namespace SpatialGame
             }
             
             //put mouse position out of local window space
-            positionMouse = (positionMouse * 2 + Window.size) / 2;
-            oldPositionMouse = (oldPositionMouse * 2 + Window.size) / 2;
+            positionMouse = positionMouse + (Window.size / 2);
+            oldPositionMouse = oldPositionMouse + (Window.size / 2);
             
             if (positionMouse == oldPositionMouse || (positionMouse - oldPositionMouse).Length() < radius)
             {
@@ -135,18 +135,18 @@ namespace SpatialGame
                         {
                             if(idToCheck.particleIndex != -1 && selection == 0)
                             {
-                                chunk.particles[idToCheck.chunkIndex].state.temperature += Globals.fixedDeltaTime;
+                                chunk.particles[idToCheck.particleIndex].state.temperature += Globals.fixedDeltaTime;
                             }
                             if (idToCheck.particleIndex != -1 && selection == 1)
                             {
-                                chunk.particles[idToCheck.chunkIndex].state.temperature -=  Globals.fixedDeltaTime;
+                                chunk.particles[idToCheck.particleIndex].state.temperature -=  Globals.fixedDeltaTime;
                             }
                         }
                         else if(button == 1)
                         {
                             if (idToCheck.particleIndex != -1)
                             {
-                                chunk.particles[idToCheck.chunkIndex].Delete();
+                                chunk.particles[idToCheck.particleIndex].Delete();
                             }
                         }
                     }

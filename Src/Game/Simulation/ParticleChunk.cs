@@ -73,7 +73,6 @@ namespace SpatialGame
 
         public void Update(float delta)
         {
-            DebugDrawer.DrawSquare(position, 4, Vector3.One);
             //First pass calculations
             particleCount = 0;
             for (int i = 0; i < particles.Length; i++)
@@ -81,13 +80,14 @@ namespace SpatialGame
                 //reset all lights
                 if (Settings.SimulationSettings.EnableParticleLighting)
                 {
-                    PixelColorer.particleLights[i].index = 0;
+                    int lightIndex = (chunkIndex * particles.Length) + i;
+                    PixelColorer.particleLights[lightIndex].index = 0;
                     if(Settings.SimulationSettings.EnableDarkLighting)
-                        PixelColorer.particleLights[i].intensity = 0;
+                        PixelColorer.particleLights[lightIndex].intensity = 0;
                     else
-                        PixelColorer.particleLights[i].intensity = 1;
-                    PixelColorer.particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
-                    PixelColorer.particleLights[i].range = Settings.SimulationSettings.particleLightRange;
+                        PixelColorer.particleLights[lightIndex].intensity = 1;
+                    PixelColorer.particleLights[lightIndex].color = new Vector4Byte(255, 255, 255, 255);
+                    PixelColorer.particleLights[lightIndex].range = Settings.SimulationSettings.particleLightRange;
                 }
 
                 if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))

@@ -21,9 +21,17 @@ namespace SpatialGame
             for (int i = 0; i < chunks.Length; i++)
             {
                 chunks[i] = new ParticleChunk();
-                chunks[i].position = new Vector2((float)Math.Floor((double)(i % chunkWidthAmount)), (float)Math.Floor((double)i / chunkWidthAmount)) * chunkSize;
                 chunks[i].chunkIndex = i;
                 chunks[i].Init();
+            }
+
+            for (int i = 0; i < chunkWidthAmount; i++)
+            {
+                for (int j = 0; j < chunkHeightAmount; j++)
+                {
+                    int index = (i * chunkHeightAmount) + j;
+                    chunks[index].position = new Vector2(i, j) * chunkSize;
+                }
             }
         }
 

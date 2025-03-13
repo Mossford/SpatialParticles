@@ -93,7 +93,7 @@ namespace SpatialGame
         {
             SimInput.Update();
             SimInput.FixedUpdate();
-            ParticleSimulation.RunParticleSim(dt / 1000f);
+            ParticleSimulation.RunParticleSim(dt);
             //RigidBodySimulation.Update(dt / 1000f);
         }
     }
