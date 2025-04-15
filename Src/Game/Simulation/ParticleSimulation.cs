@@ -108,7 +108,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void AddParticle(Vector2 pos, string name)
+        public static ChunkIndex AddParticle(Vector2 pos, string name)
         {
             //just going to be a wrapper for the chunk version of it as it makes this a little cleaner
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
@@ -116,6 +116,8 @@ namespace SpatialGame
             {
                 ParticleChunkManager.chunks[index.chunkIndex].AddParticle(pos, name);
             }
+
+            return index;
         }
 
 #if RELEASE
@@ -193,7 +195,7 @@ namespace SpatialGame
         {
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
-                return new ChunkIndex(-1, -1);
+                return index;
             return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
         }
 
@@ -245,7 +247,7 @@ namespace SpatialGame
         {
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
-                return new ChunkIndex(-1, -1);
+                return index;
             return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
         }
 

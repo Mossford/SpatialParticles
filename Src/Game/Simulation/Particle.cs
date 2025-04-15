@@ -290,6 +290,7 @@ namespace SpatialGame
                     return;
                 }
                 
+                //check bounds of particle
                 if (!BoundsCheck(newPos))
                 {
                     velocity = dir;
@@ -297,17 +298,18 @@ namespace SpatialGame
                     return;
                 }
                 
+                //check chunk bounds of particle
                 if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
                 {
                     string name = GetParticleProperties().name;
                     QueueDelete();
                     ParticleSimulation.AddParticle(newPos, name);
                     //check if it got added and if it did not then an issue and no particle has been spawned
-                    if (ParticleSimulation.SafeIdCheckGet(newPos) == -1)
+                    ChunkIndex newChunk = ParticleSimulation.SafeChunkIdCheckGet(newPos);
+                    if (newChunk.particleIndex == -1)
                     {
                         return;
                     }
-                    ChunkIndex newChunk = ParticleSimulation.SafeChunkIdCheckGet(newPos);
                     ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].state = state;
                     ParticleChunkManager.chunks[newChunk.chunkIndex].particles[newChunk.particleIndex].id = newChunk;
                     return;

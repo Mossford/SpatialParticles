@@ -131,11 +131,11 @@ namespace SpatialGame
         
         public void AddParticle(Vector2 pos, string name)
         {
-            //check if in bounds
-            if(!PixelColorer.BoundCheck(pos))
+            //check if there is a particle there because I somehow forgot this and also check bounds
+            if (ParticleSimulation.SafeIdCheckGet(pos) != -1)
                 return;
             //check if valid particle
-            if(!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out int index))
+            if (!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out int index))
             {
                 Debugging.LogConsole("Could not find particle of " + name);
                 //failed to find particle with that name so do nothing
@@ -148,10 +148,6 @@ namespace SpatialGame
                 return;
             }
             
-            //check if there is a particle there because I somehow forgot this
-            if(ParticleSimulation.SafeIdCheckGet(pos) != -1)
-                return;
-            
             int id = freeParticleSpots.Dequeue();
             particles[id].id = new ChunkIndex(chunkIndex, id);
             particles[id].position = pos;
@@ -159,8 +155,8 @@ namespace SpatialGame
             particles[id].propertyIndex = index;
             particles[id].state = ParticleResourceHandler.loadedParticles[index];
             
-            ParticleSimulation.SafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
-            ParticleSimulation.SafeIdCheckSet(id, pos);
+            ParticleSimulation.UnsafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
+            ParticleSimulation.UnsafeIdCheckSet(id, pos);
         }
         
 #if RELEASE
