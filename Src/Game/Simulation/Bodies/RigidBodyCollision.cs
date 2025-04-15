@@ -293,7 +293,7 @@ namespace SpatialGame
                 float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
                 body.rigidBody.position += normalCombine * distance;
                 body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
-                body.rigidBody.angularAcceleration = -torqueCombine / ((1f / 6f) * body.rigidBody.mass);
+                //body.rigidBody.angularAcceleration = -torqueCombine / ((1f / 6f) * body.rigidBody.mass);
             }
         }
 

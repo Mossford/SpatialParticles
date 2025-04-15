@@ -27,7 +27,7 @@ namespace SpatialGame
         public static Shader shader;
         public static Matrix4x4 mat;
 
-        public static int resSwitcher = 2;
+        public static int resSwitcher = 1;
         public static int resSwitcherDir = -1;
         public static Vector2[] resolutions = new Vector2[]
         {
@@ -36,7 +36,8 @@ namespace SpatialGame
             new Vector2(384, 216),
             new Vector2(512, 288),
             new Vector2(640, 360),
-            new Vector2(960, 540),
+            new Vector2(896, 504),
+            new Vector2(1280, 720),
         };
 
         public static unsafe void Init(bool resChange)
@@ -71,7 +72,7 @@ namespace SpatialGame
             pixelBuffer = new BufferObject<Vector4Byte>(pixelColors, 4, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
             lightBuffer = new BufferObject<ParticleLight>(particleLights, 5, BufferTargetARB.ShaderStorageBuffer, BufferUsageARB.StreamDraw);
 
-            Debugging.LogConsole("Initalized PixelColorer");
+            Debugging.LogConsole("Initialized PixelColorer");
             Debugging.LogConsole("Resolution: " + width + " " + height);
         }
 

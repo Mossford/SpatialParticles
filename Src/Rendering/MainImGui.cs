@@ -51,6 +51,7 @@ namespace SpatialEngine.Rendering
             ImGui.Text($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
             ImGui.Text($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
             ImGui.Text($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
+            ImGui.Text($"Particles per ms: ({(SpatialGame.ParticleSimulation.totalParticleCount / (1000.0f / ImGui.GetIO().Framerate)):N1}p/ms)");
 
             fpsTotal += ImGui.GetIO().Framerate;
             msTotal += 1.0f / ImGui.GetIO().Framerate * 1000f;

@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace SpatialGame
 {
@@ -42,7 +43,7 @@ namespace SpatialGame
                 chunks[i].Update(delta);
             }
             
-            DrawDebugGrid();
+            //DrawDebugGrid();
         }
 
         public static void DrawDebugGrid()

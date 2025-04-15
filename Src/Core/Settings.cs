@@ -29,7 +29,7 @@ namespace SpatialEngine
             /// </summary>
             public static bool EnableHeatSimulation = true;
             /// <summary>
-            /// Fills with sand
+            /// Fills with sand in random order (Mainly tests memory access speed)
             /// </summary>
             public static bool EnablePerfTestMode = false;
             /// <summary>
@@ -38,13 +38,19 @@ namespace SpatialEngine
             /// </summary>
             public static bool EnableParticleLighting = true;
             public static bool EnableDarkLighting = false;
-            public static int particleLightRange = 5;
+            public static int particleLightRange = 4;
             /// <summary>
             /// Because mobile amd loves to break with opengl this is going to be here
             /// because the compute shader just does not work on my mobile amd laptop
             /// nvidia works though
             /// </summary>
             public static bool EnableGpuCompLighting = true;
+            /// <summary>
+            /// This will stop chunks from updating if nearby chunks have not updated in some determined time
+            /// or condition
+            /// This is only a temporary fix and does not speed up how much particles can be calculated per ms
+            /// </summary>
+            public static bool EnableChunkIslanding = false;
         }
     }
 }

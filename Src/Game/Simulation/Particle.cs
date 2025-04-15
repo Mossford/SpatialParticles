@@ -21,6 +21,7 @@ namespace SpatialGame
         public int deleteIndex { get; set; }
         public float timeSpawned { get; set; }
         public byte lastMoveDirection { get; set; }
+        public bool updated { get; set; }
 
         public int propertyIndex;
         public ParticleState state;
@@ -54,7 +55,7 @@ namespace SpatialGame
         /// </summary>
         public void Update(float delta)
         {
-            if (!state.canMove)
+            if (!state.canMove || updated)
                 return;
 
             pastVelocity = velocity;
@@ -450,7 +451,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 41 + ParticleState.GetSize();
+            return 42 + ParticleState.GetSize();
         }
 
 #if RELEASE

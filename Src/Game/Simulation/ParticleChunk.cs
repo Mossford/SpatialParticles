@@ -94,8 +94,11 @@ namespace SpatialGame
                     continue;
 
                 //reset its light color before it moves
-
-                particles[i].UpdateGeneralFirst();
+                
+                if (!particles[i].updated)
+                {
+                    particles[i].UpdateGeneralFirst();
+                }
                 particleCount++;
             }
 
@@ -105,8 +108,15 @@ namespace SpatialGame
                     continue;
 
                 //reset its color before it moves
-                particles[i].Update(delta);
-                particles[i].UpdateGeneralSecond();
+                if (!particles[i].updated)
+                {
+                    particles[i].Update(delta);
+                    particles[i].UpdateGeneralSecond();
+                }
+                else
+                {
+                    particles[i].updated = false;
+                }
                 if (particles[i].id.chunkIndex != -1 || particles[i].BoundsCheck(particles[i].position))
                 {
                     //apply transparencys to particle

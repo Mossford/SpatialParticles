@@ -39,11 +39,11 @@ vec4 CalculateLighting(vec2 particlePos, int index)
             int indexLight = int((lightPos.x * particleResolution.y) - lightPos.y + particleResolution.y - 1);
 
             if(indexLight < 0 || indexLight >= cornerPreCalc)
-            continue;
+                continue;
 
             //handle bleed over. X pos is handled by bounds checking
             if(lightPos.y > particleResolution.y || lightPos.y < 0)
-            continue;
+                continue;
 
             totalAccumLightCount++;
 
