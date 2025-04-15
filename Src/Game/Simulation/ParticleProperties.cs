@@ -121,9 +121,6 @@ namespace SpatialGame
         public ParticleBehaviorType behaveType { get; set; } // 1 bytes
         public Vector4Byte color { get; set; } // 4 bytes
         public ushort viscosity { get; set; } // 2 bytes
-        public float xBounce { get; set; } // 4 bytes
-        public float yBounce { get; set; } // 4 bytes
-        public bool canMove { get; set; } // 1 byte
         public float temperature { get; set; } // 4 bytes
         public float temperatureTemp { get; set; } // 4 bytes
 
@@ -133,9 +130,6 @@ namespace SpatialGame
             behaveType = ParticleBehaviorType.empty;
             color = new Vector4Byte(0, 0, 0, 0);
             viscosity = 0;
-            xBounce = 0;
-            yBounce = 0;
-            canMove = false;
             temperature = 0;
         }
 
@@ -147,9 +141,6 @@ namespace SpatialGame
                 behaveType = properties.behaveType,
                 color = properties.color,
                 viscosity = properties.viscosity,
-                xBounce = properties.xBounce,
-                yBounce = properties.yBounce,
-                canMove = properties.canMove,
                 temperature = properties.heatingProperties.temperature,
             };
         }
@@ -160,9 +151,6 @@ namespace SpatialGame
                    "MoveType: " + moveType + "\n" + 
                    "Color: " + color + "\n" + 
                    "Viscosity: " + viscosity + "\n" + 
-                   "XBounce: " + xBounce + "\n" + 
-                   "YBounce: " + yBounce + "\n" + 
-                   "CanMove: " + canMove + "\n" + 
                    "Temperature: " + temperature + "\n" + 
                    "TemperatureTemp: " + temperatureTemp + "\n";
         }
@@ -172,7 +160,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 25;
+            return 16;
         }
     }
 

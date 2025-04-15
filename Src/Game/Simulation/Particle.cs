@@ -15,7 +15,6 @@ namespace SpatialGame
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
-        public Vector2 pastVelocity { get; set; }
         ///the id of the particle probably will not match the actual position in the array due to performance reasons
         public ChunkIndex id { get; set; }
         public int deleteIndex { get; set; }
@@ -30,7 +29,6 @@ namespace SpatialGame
         {
             position = Vector2.Zero;
             velocity = Vector2.Zero;
-            pastVelocity = Vector2.Zero;
             id = new ChunkIndex(-1, -1);
             deleteIndex = -1;
             timeSpawned = 0;
@@ -42,7 +40,6 @@ namespace SpatialGame
         {
             position = Vector2.Zero;
             velocity = Vector2.Zero;
-            pastVelocity = Vector2.Zero;
             id = new ChunkIndex(-1, -1);
             deleteIndex = -1;
             timeSpawned = 0;
@@ -55,10 +52,10 @@ namespace SpatialGame
         /// </summary>
         public void Update(float delta)
         {
-            if (!state.canMove || updated)
+            if (updated)
                 return;
 
-            pastVelocity = velocity;
+            Vector2 pastVelocity = velocity;
             
             ParticleSimulation.ResetColorAtPos(position);
             
@@ -73,21 +70,21 @@ namespace SpatialGame
                     {
                         velocity += new Vector2(0,1f);
                         MoveParticle();
-                        ParticleMovementDefines.Update(ref this);
+                        ParticleMovementDefines.Update(ref this, pastVelocity);
                         break;
                     }
                 case ParticleMovementType.liquid:
                     {
                         velocity += new Vector2(0,1f);
                         MoveParticle();
-                        LiquidMovement.Update(ref this);
+                        LiquidMovement.Update(ref this, pastVelocity);
                         break;
                     }
                 case ParticleMovementType.gas:
                     {
                         velocity += new Vector2(0,-1f);
                         MoveParticle();
-                        GasMovementDefines.Update(ref this);
+                        GasMovementDefines.Update(ref this, pastVelocity);
                         break;
                     }
             }
@@ -209,7 +206,6 @@ namespace SpatialGame
                 //this will be a performance hit here though
                 ref Particle otherParticle = ref ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
                 Vector2 otherVelocity = otherParticle.velocity;
-                Vector2 otherPastVelocity = otherParticle.pastVelocity;
                 float otherTimeSpawned = otherParticle.timeSpawned;
                 byte otherLastMoveDir = otherParticle.lastMoveDirection;
                 int otherPropertyIndex = otherParticle.propertyIndex;
@@ -217,7 +213,6 @@ namespace SpatialGame
 
                 //set the other particle to equal the current particle
                 otherParticle.velocity = velocity;
-                otherParticle.pastVelocity = velocity;
                 otherParticle.timeSpawned = timeSpawned;
                 otherParticle.lastMoveDirection = lastMoveDirection;
                 otherParticle.propertyIndex = propertyIndex;
@@ -228,7 +223,6 @@ namespace SpatialGame
                 
                 //set the current particle to equal the other particle
                 velocity = otherVelocity;
-                pastVelocity = otherPastVelocity;
                 timeSpawned = otherTimeSpawned;
                 lastMoveDirection = otherLastMoveDir;
                 propertyIndex = otherPropertyIndex;
@@ -453,7 +447,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 42 + ParticleState.GetSize();
+            return 35 + ParticleState.GetSize();
         }
 
 #if RELEASE
@@ -481,7 +475,6 @@ namespace SpatialGame
         {
             return "Position: " + position + "\n" +
                    "Velocity: " + velocity + "\n" +
-                   "PastVelocity: " + pastVelocity + "\n" +
                    "Id: " + id + "\n" +
                    "ToBeDeleted: " + "\n" +
                    "DeleteIndex: " + deleteIndex + "\n" +

@@ -8,7 +8,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void Update(ref Particle particle)
+        public static void Update(ref Particle particle, Vector2 pastVelocity)
         {
             particle.lastMoveDirection %= 2;
             int num = ParticleSimulation.random.Next(0, 2);
@@ -22,10 +22,10 @@ namespace SpatialGame
             int posCheckR = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
             
             bool inAir = posCheckBelow == ParticleBehaviorType.empty.ToByte();
-            float velocityMag = particle.pastVelocity.Length();
+            float velocityMag = pastVelocity.Length();
             if (inAir == false)
             {
-                particle.velocity = new Vector2(0, -velocityMag * particle.state.yBounce);
+                particle.velocity = new Vector2(0, -velocityMag * particle.GetParticleProperties().yBounce);
                 if (particle.velocity.Length() < 0.01f)
                 {
                     bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
