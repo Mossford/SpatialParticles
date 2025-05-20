@@ -135,7 +135,6 @@ namespace SpatialEngine
                 totalTimeUpdate -= fixedDeltaTime;
                 FixedUpdate(fixedDeltaTime);
             }
-            
         }
         
         static void FixedUpdate(float dt)

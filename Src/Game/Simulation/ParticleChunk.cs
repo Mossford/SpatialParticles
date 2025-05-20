@@ -31,6 +31,11 @@ namespace SpatialGame
         public int chunkIndex;
         public Vector2 position;
 
+        /// <summary>
+        /// Use for the heat simulation
+        /// </summary>
+        ChunkIndex[] suroundingIdOfParticle;
+
         public void Init()
         {
             particles = new Particle[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
@@ -39,6 +44,7 @@ namespace SpatialGame
             idCheck = new int[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
             idsToDelete = new List<int>();
             particleCount = 0;
+            suroundingIdOfParticle = new ChunkIndex[8];
             
             //tell the queue that all spots are avaliable
             for (int i = 0; i < particles.Length; i++)
@@ -71,37 +77,25 @@ namespace SpatialGame
             }
         }
 
-        public void Update(float delta)
+        public void UpdateFirstPass(float delta)
         {
             //First pass calculations
             particleCount = 0;
             for (int i = 0; i < particles.Length; i++)
             {
-                //reset all lights
-                if (Settings.SimulationSettings.EnableParticleLighting)
-                {
-                    int lightIndex = (chunkIndex * particles.Length) + i;
-                    PixelColorer.particleLights[lightIndex].index = 0;
-                    if(Settings.SimulationSettings.EnableDarkLighting)
-                        PixelColorer.particleLights[lightIndex].intensity = 0;
-                    else
-                        PixelColorer.particleLights[lightIndex].intensity = 1;
-                    PixelColorer.particleLights[lightIndex].color = new Vector4Byte(255, 255, 255, 255);
-                    PixelColorer.particleLights[lightIndex].range = Settings.SimulationSettings.particleLightRange;
-                }
-
                 if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                     continue;
-
-                //reset its light color before it moves
                 
                 if (!particles[i].updated)
                 {
-                    particles[i].UpdateGeneralFirst();
+                    particles[i].UpdateGeneralFirst(suroundingIdOfParticle);
                 }
                 particleCount++;
             }
+        }
 
+        public void UpdateSecondPass(float delta)
+        {
             for (int i = 0; i < particles.Length; i++)
             {
                 if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
@@ -117,15 +111,33 @@ namespace SpatialGame
                 {
                     particles[i].updated = false;
                 }
-                if (particles[i].id.chunkIndex != -1 || particles[i].BoundsCheck(particles[i].position))
-                {
-                    //apply transparencys to particle
-                    //blend with background by the alpha
-                    float alphaScale = 1f - (particles[i].state.color.w / 255f);
-                    Vector3 color = Vector3.Lerp((Vector3)particles[i].state.color / 255f, new Vector3(102 / 255f, 178 / 255f, 204 / 255f), alphaScale) * 255f;
-                    PixelColorer.SetColorAtPos(particles[i].position, (byte)color.X, (byte)color.Y, (byte)color.Z);
+            }
+        }
 
+        public void UpdateLighting()
+        {
+            for (int i = 0; i < particles.Length; i++)
+            {
+                if (Settings.SimulationSettings.EnableParticleLighting)
+                {
+                    int lightIndex = (chunkIndex * particles.Length) + i;
+                    PixelColorer.particleLights[lightIndex].index = 0;
+                    if(Settings.SimulationSettings.EnableDarkLighting)
+                        PixelColorer.particleLights[lightIndex].intensity = 0;
+                    else
+                        PixelColorer.particleLights[lightIndex].intensity = 1;
+                    PixelColorer.particleLights[lightIndex].color = new Vector4Byte(255, 255, 255, 255);
+                    PixelColorer.particleLights[lightIndex].range = Settings.SimulationSettings.particleLightRange;
                 }
+                
+                if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
+                    continue;
+                
+                //apply transparencys to particle
+                //blend with background by the alpha
+                float alphaScale = 1f - (particles[i].state.color.w / 255f);
+                Vector3 color = Vector3.Lerp((Vector3)particles[i].state.color / 255f, new Vector3(102 / 255f, 178 / 255f, 204 / 255f), alphaScale) * 255f;
+                PixelColorer.SetColorAtPos(particles[i].position, (byte)color.X, (byte)color.Y, (byte)color.Z);
             }
         }
         

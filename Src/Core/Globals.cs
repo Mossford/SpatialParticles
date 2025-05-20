@@ -27,6 +27,7 @@ namespace SpatialEngine
         public static float totalTime = 0.0f;
         public static float deltaTime = 0.0f;
         public const float fixedDeltaTime = 16.667f;
+        public const float fixedParticleDeltaTime = fixedDeltaTime;
 
         /// <summary>
         /// In Seconds

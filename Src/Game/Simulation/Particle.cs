@@ -154,13 +154,13 @@ namespace SpatialGame
         /// All particles have this behavior and first pass for any precalculations
         /// Heat simulation requires two passes for storing calculated temperatures and then applying
         /// </summary>
-        public void UpdateGeneralFirst()
+        public void UpdateGeneralFirst(in ChunkIndex[] suroundingIdOfParticle)
         {
             //Heat simulation
 
             if(Settings.SimulationSettings.EnableHeatSimulation)
             {
-                ParticleHeatSim.CalculateParticleTemp(ref this);
+                ParticleHeatSim.CalculateParticleTemp(ref this, in suroundingIdOfParticle);
             }
         }
 

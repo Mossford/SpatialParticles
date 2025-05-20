@@ -51,7 +51,7 @@ namespace SpatialEngine.Rendering
             ImGui.Text($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
             ImGui.Text($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
             ImGui.Text($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
-            ImGui.Text($"Particles per ms: ({(SpatialGame.ParticleSimulation.totalParticleCount / (1000.0f / ImGui.GetIO().Framerate)):N1}p/ms)");
+            ImGui.Text($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / ( 1.0f / ImGui.GetIO().Framerate * 1000.0f)):N1}p/ms)");
 
             fpsTotal += ImGui.GetIO().Framerate;
             msTotal += 1.0f / ImGui.GetIO().Framerate * 1000f;
@@ -89,6 +89,7 @@ namespace SpatialEngine.Rendering
                 ImGui.Text($"Simulation has {mem:N2}MB of buffers");
             }
             ImGui.Text($"Simulation has {SpatialGame.ParticleSimulation.totalParticleCount} of particles Spawned");
+            ImGui.Text($"Simulation has {SpatialGame.ParticleChunkManager.chunkThreads.Length} of Chunk Threads");
             ImGui.Text($"Current resolution {SpatialGame.PixelColorer.width}, {SpatialGame.PixelColorer.height}");
             ImGui.Text($"Selected Particle {ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[SpatialGame.SimInput.mouseSelection]].name}");
             

@@ -15,13 +15,11 @@ namespace SpatialGame
         static int temperatureColorCount;
         static Vector4Byte[] temperatureColors;
         //ids of the current particle being calculated
-        static ChunkIndex[] suroundingIdOfParticle;
 
         public static void Init()
         {
             temperatureColorCount = 50000;
             temperatureColors = new Vector4Byte[temperatureColorCount];
-            suroundingIdOfParticle = new ChunkIndex[8];
 
             for (int i = -273; i < temperatureColorCount - 273; i++)
             {
@@ -39,15 +37,17 @@ namespace SpatialGame
                 temperatureColors[i + 273] = (color * 255f);
             }
         }
-
-
+        
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void CalculateParticleTemp(ref Particle particle)
+        public static void CalculateParticleTemp(ref Particle particle, in ChunkIndex[] suroundingIdOfParticle)
         {
+            
             if (!particle.GetParticleProperties().heatingProperties.enableHeatSim)
                 return;
+            
+            //maybe move this into the chunk?
 
             int idsSurroundCount = 0;
             //get all particles around the current particle
@@ -59,7 +59,8 @@ namespace SpatialGame
                     idsSurroundCount++;
                 }
             }
-
+            
+            
             //add one to include this particle
             idsSurroundCount++;
 
@@ -69,13 +70,13 @@ namespace SpatialGame
             {
                 if (suroundingIdOfParticle[i].particleIndex == -1)
                     continue;
-
                 
-                ref Particle other = ref ParticleChunkManager.chunks[suroundingIdOfParticle[i].chunkIndex].particles[suroundingIdOfParticle[i].particleIndex];
+                ref ParticleChunk chunk = ref ParticleChunkManager.chunks[suroundingIdOfParticle[i].chunkIndex];
+                ref Particle other = ref chunk.particles[suroundingIdOfParticle[i].particleIndex];
                 
                 float heatTrans = heatTransConst * other.GetParticleProperties().heatingProperties.heatTransferRate;
                 particle.state.temperatureTemp -= heatTrans;
-                ParticleChunkManager.chunks[suroundingIdOfParticle[i].chunkIndex].particles[suroundingIdOfParticle[i].particleIndex].state.temperatureTemp += heatTrans;
+                chunk.particles[suroundingIdOfParticle[i].particleIndex].state.temperatureTemp += heatTrans;
             }
         }
 

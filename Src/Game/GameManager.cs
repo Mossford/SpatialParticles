@@ -21,6 +21,7 @@ namespace SpatialGame
         public static bool started;
         public static bool isInitalizing;
         public static float timeSinceLastInit;
+        static float totalTimeUpdate;
 
         public static void ReInitGame()
         {
@@ -78,6 +79,13 @@ namespace SpatialGame
             SimRenderer.Update();
             //SimInput.Update();
             //SimRenderer.UpdateMeshes();
+            
+            totalTimeUpdate += dt * 1000;
+            while (totalTimeUpdate >= fixedParticleDeltaTime)
+            {
+                totalTimeUpdate -= fixedParticleDeltaTime;
+                FixedParticleUpdate(fixedParticleDeltaTime);
+            }
         }
 
         public static void RenderGame()
@@ -93,8 +101,12 @@ namespace SpatialGame
         {
             SimInput.Update();
             SimInput.FixedUpdate();
-            ParticleSimulation.RunParticleSim(dt);
             //RigidBodySimulation.Update(dt / 1000f);
+        }
+
+        public static void FixedParticleUpdate(float dt)
+        {
+            ParticleSimulation.RunParticleSim(dt);
         }
     }
 }
