@@ -248,7 +248,7 @@ namespace SpatialEngine.Networking
                 {
                         ParticleSpawnPacket packet = new ParticleSpawnPacket();
                         packet.ByteToPacket(data);
-                        ParticleSimulation.AddParticle(packet.position, packet.name);
+                        ParticleSimulation.AddParticleThreadUnsafe(packet.position, packet.name);
                         break;
                 }
             }

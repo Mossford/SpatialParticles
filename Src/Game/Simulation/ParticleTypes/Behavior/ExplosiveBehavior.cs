@@ -45,7 +45,7 @@ namespace SpatialGame
                         
                         if (idToCheck.particleIndex == -1)
                         {
-                            ParticleSimulation.AddParticle(position, "Fire");
+                            ParticleSimulation.AddParticleThreadUnsafe(position, "Fire");
                             continue;
                         }
 

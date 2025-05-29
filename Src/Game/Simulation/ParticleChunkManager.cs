@@ -47,105 +47,129 @@ namespace SpatialGame
 
         public static void Update(float dt)
         {
-            int chunksUpdateSection = 0;
-
-            while (chunksUpdateSection < 8)
+            if (Settings.SimulationSettings.EnableMultiThreading)
             {
-                bool chunksDone = true;
-                for (int i = 0; i < chunkThreads.Length; i++)
-                {
-                    //if any are still alive we have not finished updating the chunks
-                    if (!chunkThreads[i].finished)
-                        chunksDone = false;
-                }
+                int chunksUpdateSection = 0;
 
-                if (chunksDone)
+                while (chunksUpdateSection < 8)
                 {
-                    switch (chunksUpdateSection)
+                    bool chunksDone = true;
+                    for (int i = 0; i < chunkThreads.Length; i++)
                     {
-                        case 0:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
-                            {
-                                chunkThreads[i].Start(i * 2, i * 2, 1, 0);
-                            }
+                        //if any are still alive we have not finished updating the chunks
+                        if (!chunkThreads[i].finished)
+                            chunksDone = false;
+                    }
 
-                            break;
-                        }
-                        case 1:
+                    if (chunksDone)
+                    {
+                        switch (chunksUpdateSection)
                         {
-                            for (int i = 0; i < chunkThreads.Length; i++)
+                            case 0:
                             {
-                                chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 2, 0);
-                            }
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2, i * 2, 1, 0);
+                                }
 
-                            break;
+                                break;
+                            }
+                            case 1:
+                            {
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 2, 0);
+                                }
+
+                                break;
+                                
+                            }
+                            case 2:
+                            {
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 1, 0);
+                                }
+
+                                break;
+                            }
+                            case 3:
+                            {
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2, i * 2, 2, 0);
+                                }
+
+                                break;
+                            }
                             
-                        }
-                        case 2:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
+                            case 4:
                             {
-                                chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 1, 0);
-                            }
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2, i * 2, 1, 1);
+                                }
 
-                            break;
-                        }
-                        case 3:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
+                                break;
+                            }
+                            case 5:
                             {
-                                chunkThreads[i].Start(i * 2, i * 2, 2, 0);
-                            }
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 2, 1);
+                                }
 
-                            break;
-                        }
+                                break;
+                                
+                            }
+                            case 6:
+                            {
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 1, 1);
+                                }
+
+                                break;
+                            }
+                            case 7:
+                            {
+                                for (int i = 0; i < chunkThreads.Length; i++)
+                                {
+                                    chunkThreads[i].Start(i * 2, i * 2, 2, 1);
+                                }
+
+                                break;
+                            }
                         
-                        case 4:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
-                            {
-                                chunkThreads[i].Start(i * 2, i * 2, 1, 1);
-                            }
-
-                            break;
-                        }
-                        case 5:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
-                            {
-                                chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 2, 1);
-                            }
-
-                            break;
-                            
-                        }
-                        case 6:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
-                            {
-                                chunkThreads[i].Start(i * 2 + 1, i * 2 + 1, 1, 1);
-                            }
-
-                            break;
-                        }
-                        case 7:
-                        {
-                            for (int i = 0; i < chunkThreads.Length; i++)
-                            {
-                                chunkThreads[i].Start(i * 2, i * 2, 2, 1);
-                            }
-
-                            break;
                         }
                     
+                        chunksUpdateSection++;
                     }
+                }
                 
-                    chunksUpdateSection++;
+                for (int i = 0; i < chunks.Length; i++)
+                {
+                    chunks[i].UpdateAddParticleQueue();
+                    chunks[i].UpdateParticleQueuedAddChanges();
+                    chunks[i].DeleteParticlesOnQueue();
                 }
             }
+            else
+            {
+                for (int i = 0; i < chunks.Length; i++)
+                {
+                    chunks[i].UpdateFirstPass(dt);
+                }
             
-            //DrawDebugGrid();
+                for (int i = 0; i < chunks.Length; i++)
+                {
+                    chunks[i].UpdateSecondPass(dt);
+                    chunks[i].UpdateLighting();
+                    chunks[i].UpdateAddParticleQueue();
+                    chunks[i].UpdateParticleQueuedAddChanges();
+                    chunks[i].DeleteParticlesOnQueue();
+                }
+            }
         }
 
         public static void DrawDebugGrid()

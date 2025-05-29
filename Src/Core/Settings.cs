@@ -51,6 +51,10 @@ namespace SpatialEngine
             /// This is only a temporary fix and does not speed up how much particles can be calculated per ms
             /// </summary>
             public static bool EnableChunkIslanding = false;
+            /// <summary>
+            /// Enables multithreading
+            /// </summary>
+            public static bool EnableMultiThreading = false;
         }
     }
 }

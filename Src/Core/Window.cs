@@ -135,6 +135,8 @@ namespace SpatialEngine
                 totalTimeUpdate -= fixedDeltaTime;
                 FixedUpdate(fixedDeltaTime);
             }
+            
+            GameManager.FixedUpdateGameThreaded((float)dt);
         }
         
         static void FixedUpdate(float dt)

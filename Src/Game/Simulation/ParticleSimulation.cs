@@ -28,14 +28,14 @@ namespace SpatialGame
 
             for (int x = 0; x < PixelColorer.width; x++)
             {
-                AddParticle(new Vector2(x, 0), "Wall");
-                AddParticle(new Vector2(x, PixelColorer.height - 1), "Wall");
+                AddParticleThreadUnsafe(new Vector2(x, 0), "Wall");
+                AddParticleThreadUnsafe(new Vector2(x, PixelColorer.height - 1), "Wall");
             }
             
             for (int y = 1; y < PixelColorer.height - 1; y++)
             {
-                AddParticle(new Vector2(0, y), "Wall");
-                AddParticle(new Vector2(PixelColorer.width - 1, y), "Wall");
+                AddParticleThreadUnsafe(new Vector2(0, y), "Wall");
+                AddParticleThreadUnsafe(new Vector2(PixelColorer.width - 1, y), "Wall");
             }
 
             if(Settings.SimulationSettings.EnablePerfTestMode)
@@ -61,7 +61,7 @@ namespace SpatialGame
 
                 for (int i = 0; i < coords.Count; i++)
                 {
-                    AddParticle(coords[i], "Sand");
+                    AddParticleThreadUnsafe(coords[i], "Sand");
                 }
             }
 
@@ -102,7 +102,23 @@ namespace SpatialGame
                 }
 
                 ParticleChunkManager.chunks[i].idsToDelete.Clear();
+                ParticleChunkManager.chunks[i].idsToDeleteInfo.Clear();
             }
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static ChunkIndex AddParticleThreadUnsafe(Vector2 pos, string name)
+        {
+            //just going to be a wrapper for the chunk version of it as it makes this a little cleaner
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
+            if (index.chunkIndex != -1)
+            {
+                ParticleChunkManager.chunks[index.chunkIndex].AddParticle(pos, name);
+            }
+
+            return index;
         }
         
 #if RELEASE
@@ -114,7 +130,7 @@ namespace SpatialGame
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(pos);
             if (index.chunkIndex != -1)
             {
-                ParticleChunkManager.chunks[index.chunkIndex].AddParticle(pos, name);
+                ParticleChunkManager.chunks[index.chunkIndex].AddParticleQueue(pos, name);
             }
 
             return index;

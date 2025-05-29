@@ -15,6 +15,7 @@ namespace SpatialGame
             public SimText elementText;
             public string nameBefore;
             public int selectionBefore;
+            public bool modeBefore;
 
             public Spawner()
             {
@@ -269,13 +270,14 @@ namespace SpatialGame
             //particle spawn mode
             if (!mode)
             {
-                if (spawners[id].nameBefore != name)
+                if (spawners[id].nameBefore != name || spawners[id].modeBefore != mode)
                 {
                     Vector3 color = (Vector3)Particle.GetParticleColor(name) / 255f;
                     spawners[id].elementText.UpdateTextFull(name, textPos,500, 75, 0.5f, 0f, 64, 1);
                     spawners[id].elementText.color = color;
                     SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = color;
                     spawners[id].nameBefore = name;
+                    spawners[id].modeBefore = mode;
                 }
             }
             //function mode
@@ -284,23 +286,25 @@ namespace SpatialGame
                 //heating
                 if (selection == 0)
                 {
-                    if (selection != spawners[id].selectionBefore)
+                    if (selection != spawners[id].selectionBefore || spawners[id].modeBefore != mode)
                     {
                         spawners[id].elementText.UpdateTextFull("Heat", textPos,500, 75, 0.5f, 0f, 64, 1);
                         spawners[id].elementText.color = new Vector3(1f, 100 / 255f, 0);
                         SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
                         spawners[id].selectionBefore = selection;
+                        spawners[id].modeBefore = mode;
                     }
                 }
                 //cooling
                 if (selection == 1)
                 {
-                    if (selection != spawners[id].selectionBefore)
+                    if (selection != spawners[id].selectionBefore || spawners[id].modeBefore != mode)
                     {
                         spawners[id].elementText.UpdateTextFull("Cool", textPos, 500, 75, 0.5f, 0f, 64, 1);
                         spawners[id].elementText.color = new Vector3(0, 100 / 255f, 1f);
                         SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
                         spawners[id].selectionBefore = selection;
+                        spawners[id].modeBefore = mode;
                     }
                 }
             }

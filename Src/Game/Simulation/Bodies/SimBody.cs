@@ -123,7 +123,7 @@ namespace SpatialGame
             Vector2 position = new Vector2(MathF.Round(start.X), MathF.Round(start.Y));
             for (int i = 0; i < steps; i++)
             {
-                ParticleSimulation.AddParticle(position, "Wall");
+                ParticleSimulation.AddParticleThreadUnsafe(position, "Wall");
                 
                 float e2 = err * 2;
                 if (e2 > -dir.Y)

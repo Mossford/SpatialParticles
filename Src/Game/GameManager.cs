@@ -79,13 +79,6 @@ namespace SpatialGame
             SimRenderer.Update();
             //SimInput.Update();
             //SimRenderer.UpdateMeshes();
-            
-            totalTimeUpdate += dt * 1000;
-            while (totalTimeUpdate >= fixedParticleDeltaTime)
-            {
-                totalTimeUpdate -= fixedParticleDeltaTime;
-                FixedParticleUpdate(fixedParticleDeltaTime);
-            }
         }
 
         public static void RenderGame()
@@ -102,6 +95,16 @@ namespace SpatialGame
             SimInput.Update();
             SimInput.FixedUpdate();
             //RigidBodySimulation.Update(dt / 1000f);
+        }
+
+        public static void FixedUpdateGameThreaded(float dt)
+        {
+            totalTimeUpdate += dt * 1000;
+            while (totalTimeUpdate >= fixedParticleDeltaTime)
+            {
+                totalTimeUpdate -= fixedParticleDeltaTime;
+                FixedParticleUpdate(fixedParticleDeltaTime);
+            }
         }
 
         public static void FixedParticleUpdate(float dt)

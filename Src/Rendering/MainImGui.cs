@@ -200,6 +200,7 @@ namespace SpatialEngine.Rendering
             ImGui.Checkbox("Enable Gpu Light PreCalculation", ref Settings.SimulationSettings.EnableGpuCompLighting);
             ImGui.Checkbox("Enable Dark Lighting", ref Settings.SimulationSettings.EnableDarkLighting);
             ImGui.Checkbox("Enable Heat Simulation", ref Settings.SimulationSettings.EnableHeatSimulation);
+            ImGui.Checkbox("Enable Multithreading", ref Settings.SimulationSettings.EnableMultiThreading);
             ImGui.Text("Particle Light Range");
             ImGui.PushItemWidth(ImGui.CalcTextSize("Particle Light Range").X);
             ImGui.InputInt("##particleLight", ref Settings.SimulationSettings.particleLightRange);

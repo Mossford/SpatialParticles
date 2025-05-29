@@ -86,12 +86,13 @@ void main()
     vec4 color = UnpackFloat(pixelColors.Colors[indexQuart][indexColor]);
 
     vec4 particleLighting = vec4(1.0);
-    if(enableGpuComp)
+    if(enableParticleLighting)
+    {
+        if(enableGpuComp)
         particleLighting = texture(lightingTex, fragPos);
-    if(!enableGpuComp)
+        if(!enableGpuComp)
         particleLighting = CalculateLighting(vec2(x,y), index);
-    if(!enableParticleLighting)
-        particleLighting = vec4(1);
+    }
 
     out_color = color * particleLighting;
 }

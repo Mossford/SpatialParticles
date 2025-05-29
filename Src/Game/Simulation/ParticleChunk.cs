@@ -27,6 +27,18 @@ namespace SpatialGame
         /// Queue of particles that will be deleted
         /// </summary>
         public List<int> idsToDelete;
+        /// <summary>
+        /// Stores info of the particles to delete as it can be overwritten
+        /// </summary>
+        public List<(Vector2, ChunkIndex)> idsToDeleteInfo;
+        /// <summary>
+        /// Queued particles to add
+        /// </summary>
+        public List<(string, Vector2)> particlesToAdd;
+        /// <summary>
+        /// Adds Queued particle with changes to index, the id to swap, and the state to change
+        /// </summary>
+        public List<(Vector2, string, ParticleState)> particleAddChangeQueue;
         public int particleCount;
         public int chunkIndex;
         public Vector2 position;
@@ -43,6 +55,9 @@ namespace SpatialGame
             positionCheck = new byte[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
             idCheck = new int[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
             idsToDelete = new List<int>();
+            idsToDeleteInfo = new List<(Vector2, ChunkIndex)>();
+            particlesToAdd = new List<(string, Vector2)>();
+            particleAddChangeQueue = new List<(Vector2, string, ParticleState)>();
             particleCount = 0;
             suroundingIdOfParticle = new ChunkIndex[8];
             
@@ -114,6 +129,28 @@ namespace SpatialGame
             }
         }
 
+        public void UpdateAddParticleQueue()
+        {
+            for (int i = 0; i < particlesToAdd.Count; i++)
+            {
+                AddParticle(particlesToAdd[i].Item2, particlesToAdd[i].Item1);
+            }
+            
+            particlesToAdd.Clear();
+        }
+
+        public void UpdateParticleQueuedAddChanges()
+        {
+            for (int i = 0; i < particleAddChangeQueue.Count; i++)
+            {
+                ChunkIndex index = AddParticle(particleAddChangeQueue[i].Item1, particleAddChangeQueue[i].Item2);
+                if(index.particleIndex != -1)
+                    particles[index.particleIndex].state = particleAddChangeQueue[i].Item3;
+            }
+            
+            particleAddChangeQueue.Clear();
+        }
+
         public void UpdateLighting()
         {
             for (int i = 0; i < particles.Length; i++)
@@ -141,23 +178,43 @@ namespace SpatialGame
             }
         }
         
-        public void AddParticle(Vector2 pos, string name)
+        public void DeleteParticlesOnQueue()
+        {
+            for (int g = 0; g < idsToDelete.Count; g++)
+            {
+                int id = idsToDelete[g];
+                if (particles[id].id.chunkIndex == -1)
+                    continue;
+                if (id >= 0 && id < particles.Length)
+                {
+                    particles[id].Delete();
+                }
+            }
+
+            idsToDelete.Clear();
+            idsToDeleteInfo.Clear();
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public ChunkIndex AddParticle(Vector2 pos, string name)
         {
             //check if there is a particle there because I somehow forgot this and also check bounds
             if (ParticleSimulation.SafeIdCheckGet(pos) != -1)
-                return;
+                return new ChunkIndex(-1, -1);
             //check if valid particle
             if (!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out int index))
             {
                 Debugging.LogConsole("Could not find particle of " + name);
                 //failed to find particle with that name so do nothing
-                return;
+                return new ChunkIndex(-1, -1);
             }
             //we have reached where we dont have any more spots so we skip
             if (freeParticleSpots.Count == 0)
             {
                 Debugging.LogConsole("Ran out of spots to add more particles");
-                return;
+                return new ChunkIndex(-1, -1);
             }
             
             int id = freeParticleSpots.Dequeue();
@@ -169,6 +226,24 @@ namespace SpatialGame
             
             ParticleSimulation.UnsafePositionCheckSet(particles[id].GetParticleBehaviorType().ToByte(), pos);
             ParticleSimulation.UnsafeIdCheckSet(id, pos);
+
+            return new ChunkIndex(chunkIndex, id);
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public void AddParticleQueue(Vector2 pos, string name)
+        {
+            particlesToAdd.Add(new ValueTuple<string, Vector2>(name, pos));
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public void QueueParticleAddChange(Vector2 pos, string name, in ParticleState state)
+        {
+            particleAddChangeQueue.Add(new ValueTuple<Vector2, string, ParticleState>(pos, name, state));
         }
         
 #if RELEASE
