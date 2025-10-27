@@ -61,6 +61,11 @@ namespace SpatialGame
             
             switch (GetParticleMovementType())
             {
+                default:
+                {
+                    UnmovingMovementDefines.Update(ref this);
+                    break;
+                }
                 case ParticleMovementType.unmoving:
                     {
                         UnmovingMovementDefines.Update(ref this);
@@ -91,6 +96,11 @@ namespace SpatialGame
 
             switch (GetParticleBehaviorType())
             {
+                default:
+                {
+                    SolidBehaviorDefines.Update(ref this);
+                    break;
+                }
                 case ParticleBehaviorType.solid:
                     {
                         SolidBehaviorDefines.Update(ref this);
@@ -199,12 +209,17 @@ namespace SpatialGame
                 return;
             
             //check if we are swapping on a chunk border
-            if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
+            if (swapid.chunkIndex != id.chunkIndex)
             {
+                ref Particle otherParticle = ref ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
+                
+                ParticleChunkManager.chunks[swapid.chunkIndex].QueueParticleChange(swapid, state);
+                ParticleChunkManager.chunks[id.chunkIndex].QueueParticleChange(id, otherParticle.state);
+                
                 //for here since each particle are in seperate arrays we need to copy over data,
                 //most of what needs to be copied is state, and type, and other small things
                 //this will be a performance hit here though
-                ref Particle otherParticle = ref ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
+                /*ref Particle otherParticle = ref ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
                 Vector2 otherVelocity = otherParticle.velocity;
                 float otherTimeSpawned = otherParticle.timeSpawned;
                 byte otherLastMoveDir = otherParticle.lastMoveDirection;
@@ -229,12 +244,12 @@ namespace SpatialGame
                 state = otherState;
                 index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
                 //set the type to the new position to our current element
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = otherState.behaveType.ToByte();
+                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = otherState.behaveType.ToByte();*/
             }
             else
             {
                 //This logic only works in cases where we swap inside a chunk
-            
+                
                 //------safe to access the arrays directly------
                 ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
                 ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type.ToByte();
@@ -293,15 +308,29 @@ namespace SpatialGame
                 }
                 
                 //check chunk bounds of particle
+                ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
                 if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
                 {
                     string name = GetParticleProperties().name;
                     QueueDelete();
                     //check if it got added and if it did not then an issue and no particle has been spawned
-                    ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
                     ParticleChunkManager.chunks[newChunk.chunkIndex].QueueParticleAddChange(newPos, name, state);
                     return;
                 }
+                
+                //quick check to make sure we dont move into a queued particle 
+                bool canMove = true;
+                for (int g = 0; g < ParticleChunkManager.chunks[newChunk.chunkIndex].particleAddChangeQueue.Count; g++)
+                {
+                    if (ParticleChunkManager.chunks[newChunk.chunkIndex].particleAddChangeQueue[g].Item1 == newPos)
+                    {
+                        canMove = false;
+                        break;
+                    }
+                }
+            
+                if(!canMove)
+                    return;
                 
                 //------safe to access the arrays directly------
 
@@ -341,15 +370,29 @@ namespace SpatialGame
                 return;
             }
             
+            ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
             if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
             {
                 string name = GetParticleProperties().name;
                 QueueDelete();
                 //check if it got added and if it did not then an issue and no particle has been spawned
-                ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
                 ParticleChunkManager.chunks[newChunk.chunkIndex].QueueParticleAddChange(newPos, name, state);
                 return;
             }
+            
+            //quick check to make sure we dont move into a queded particle 
+            bool canMove = true;
+            for (int i = 0; i < ParticleChunkManager.chunks[newChunk.chunkIndex].particleAddChangeQueue.Count; i++)
+            {
+                if (ParticleChunkManager.chunks[newChunk.chunkIndex].particleAddChangeQueue[i].Item1 == newPos)
+                {
+                    canMove = false;
+                    break;
+                }
+            }
+            
+            if(!canMove)
+                return;
 
             //------safe to access the arrays directly------
 
@@ -394,6 +437,10 @@ namespace SpatialGame
 #endif
         public void QueueDelete()
         {
+            //called queueDelete a second time on a deleted particle
+            if(id.chunkIndex == -1 || id.particleIndex == -1)
+                return;
+            
             ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Add(id.particleIndex);
             ParticleChunkManager.chunks[id.chunkIndex].idsToDeleteInfo.Add(new ValueTuple<Vector2, ChunkIndex>(position, id));
             deleteIndex = ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Count - 1;
@@ -410,46 +457,38 @@ namespace SpatialGame
             if(id.chunkIndex == -1 || id.particleIndex == -1)
                 return;
 
-            if (deleteIndex == -1)
-            {
-                //QueueDelete has not been run
-                
-                //set its position to nothing
-                ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), position);
-                //set its id at its position to nothing
-                ParticleSimulation.SafeIdCheckSet(-1, position);
-                //set the color to empty
-                PixelColorer.SetColorAtPos(position, 102, 178, 204);
-                ParticleChunkManager.chunks[id.chunkIndex].freeParticleSpots.Enqueue(id.particleIndex);
-                int positionIndex = PixelColorer.PosToIndexUnsafe(position);
-                PixelColorer.particleLights[positionIndex].index = -1;
-                PixelColorer.particleLights[positionIndex].intensity = 1f;
-                PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
-                //might create cache issues?
-                //try setting the default values instead
-                ParticleChunkManager.chunks[id.chunkIndex].particles[id.particleIndex].Reset();
-            }
-            else
-            {
-                Vector2 deletePosition = ParticleChunkManager.chunks[id.chunkIndex].idsToDeleteInfo[deleteIndex].Item1;
-                ChunkIndex deleteId = ParticleChunkManager.chunks[id.chunkIndex].idsToDeleteInfo[deleteIndex].Item2;
-                
-                //set its position to nothing
-                ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), deletePosition);
-                //set its id at its position to nothing
-                ParticleSimulation.SafeIdCheckSet(-1, deletePosition);
-                //set the color to empty
-                PixelColorer.SetColorAtPos(deletePosition, 102, 178, 204);
-                ParticleChunkManager.chunks[deleteId.chunkIndex].freeParticleSpots.Enqueue(deleteId.particleIndex);
-                int positionIndex = PixelColorer.PosToIndexUnsafe(deletePosition);
-                PixelColorer.particleLights[positionIndex].index = -1;
-                PixelColorer.particleLights[positionIndex].intensity = 1f;
-                PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
-                //might create cache issues?
-                //try setting the default values instead
-                ParticleChunkManager.chunks[deleteId.chunkIndex].particles[deleteId.particleIndex].Reset();
-                
-            }
+            /*Vector2 deletePosition = ParticleChunkManager.chunks[id.chunkIndex].idsToDeleteInfo[deleteIndex].Item1;
+            ChunkIndex deleteId = ParticleChunkManager.chunks[id.chunkIndex].idsToDeleteInfo[deleteIndex].Item2;
+            
+            //set its position to nothing
+            ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), deletePosition);
+            //set its id at its position to nothing
+            ParticleSimulation.SafeIdCheckSet(-1, deletePosition);
+            //set the color to empty
+            PixelColorer.SetColorAtPos(deletePosition, 102, 178, 204);
+            ParticleChunkManager.chunks[deleteId.chunkIndex].freeParticleSpots.Enqueue(deleteId.particleIndex);
+            int positionIndex = PixelColorer.PosToIndexUnsafe(deletePosition);
+            PixelColorer.particleLights[positionIndex].index = -1;
+            PixelColorer.particleLights[positionIndex].intensity = 1f;
+            PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
+            //might create cache issues?
+            //try setting the default values instead
+            ParticleChunkManager.chunks[deleteId.chunkIndex].particles[deleteId.particleIndex].Reset();*/
+            
+            
+            ParticleSimulation.SafePositionCheckSet(ParticleBehaviorType.empty.ToByte(), position);
+            //set its id at its position to nothing
+            ParticleSimulation.SafeIdCheckSet(-1, position);
+            //set the color to empty
+            PixelColorer.SetColorAtPos(position, 102, 178, 204);
+            ParticleChunkManager.chunks[id.chunkIndex].freeParticleSpots.Enqueue(id.particleIndex);
+            int positionIndex = PixelColorer.PosToIndexUnsafe(position);
+            PixelColorer.particleLights[positionIndex].index = -1;
+            PixelColorer.particleLights[positionIndex].intensity = 1f;
+            PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
+            //might create cache issues?
+            //try setting the default values instead
+            ParticleChunkManager.chunks[id.chunkIndex].particles[id.particleIndex].Reset();
         }
 
         /// <summary>

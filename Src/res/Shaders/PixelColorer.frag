@@ -94,5 +94,9 @@ void main()
         particleLighting = CalculateLighting(vec2(x,y), index);
     }
 
-    out_color = color * particleLighting;
+    color *= particleLighting;
+    color.x = pow(color.x, 1.0 / 2.2);
+    color.y = pow(color.y, 1.0 / 2.2);
+    color.z = pow(color.z, 1.0 / 2.2);
+    out_color = color;
 }

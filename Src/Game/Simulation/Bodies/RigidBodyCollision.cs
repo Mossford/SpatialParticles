@@ -193,109 +193,75 @@ namespace SpatialGame
             return contacts.ToArray();
         }
 
-        static void ResolveCollisions(in CollisionInfo[] collisions, in SimBody body, in SimMesh mesh)
+static void ResolveCollisions(in CollisionInfo[] collisions, in SimBody body, in SimMesh mesh)
+{
+    Vector2 normalCombine = Vector2.Zero;
+    Vector2 diffCombine = Vector2.Zero;
+    bool collide = false;
+    float distance = float.MaxValue;
+
+    for (int i = 0; i < collisions.Length; i++)
+    {
+        for (int j = i + 1; j < collisions.Length; j++)
         {
-            //go through each pair of collisions
-            Vector2 normalCombine = Vector2.Zero;
-            Vector2 normalCombine2 = Vector2.Zero;
-            Vector2 velocityCombine = Vector2.Zero;
-            float rotationCombine = 0;
-            bool collide = false;
-            float distance = float.MaxValue;
-            float torqueCombine = 0f;
-            
-            //interesting c# feature
-            /*if (collisions.Length == 1)
-            {
-                if (!collisions[0].collision)
-                    return;
-                
-                normalCombine = collisions[0].normal;
-                normalCombine2 = collisions[0].normal;
-                distance = collisions[0].distance;
-                
-                if (contactDebugIndex != -1)
-                {
-                    SimRenderer.DeleteMesh(contactDebugIndex);
-                    contactDebugIndex = -1;
-                }
-                //DebugDrawContactPoints(collisions, body);
-                if (normalCombine.LengthSquared() == 0f)
-                    return;
-                
-                Vector2 contactPoint = collisions[0].position;
-                Vector2 centerOfMass = body.rigidBody.position;
-                Vector2 r = contactPoint - centerOfMass;  // Position vector from center of mass to the contact point
-                
-                normalCombine = Vector2.Normalize(normalCombine);
-                DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
-                
-                Vector2 relativeVelocity = -body.rigidBody.velocity;
-                float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
-                float torque = (r.X * collisions[0].normal.Y - r.Y * collisions[0].normal.X) * j;
-                body.rigidBody.position += normalCombine * distance;
-                body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
-                body.rigidBody.angularAcceleration = -torque / ((1f / 6f) * body.rigidBody.mass);
-                return;
-            }*/
-            
-            for (int i = 0; i < collisions.Length; i++)
-            {
-                for (int j = i + 1; j < collisions.Length; j++)
-                {
-                    if(collisions[i].collision)
-                        collide = true;
-                    Vector2 line = collisions[j].position - collisions[i].position;
-                    Vector2 normal = new Vector2(-line.Y, line.X);
-                    if (Vector2.Dot(normal, collisions[i].position - body.rigidBody.position) > 0)
-                        normal *= -1;
-                    normalCombine += normal;
-                }
-                
-                //normalCombine += collisions[i].normal;
-                
-                Vector2 contactPoint = collisions[i].position;
-                Vector2 centerOfMass = body.rigidBody.position;
-                Vector2 r = contactPoint - centerOfMass;
-                
-                Vector2 relativeVelocity = -body.rigidBody.velocity;
-                float jTemp = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, collisions[i].normal))) / ((Vector2.Dot(collisions[i].normal, collisions[i].normal)) * (1 / body.rigidBody.mass + 1));
-                
-                float torque = (r.X * collisions[i].normal.Y - r.Y * collisions[i].normal.X) * jTemp;
-                
-                torqueCombine += torque;
+            if (collisions[i].collision)
+                collide = true;
 
-                if (collisions[i].collision)
-                    collide = true;
-                
-                if (distance > collisions[i].distance)
-                {
-                    distance = collisions[i].distance;
-                }
-            }
+            Vector2 line = collisions[j].position - collisions[i].position;
+            Vector2 normal = new Vector2(-line.Y, line.X);
+            if (Vector2.Dot(normal, collisions[i].position - body.rigidBody.position) > 0)
+                normal *= -1;
 
-            if (collide)
-            {
-                if (contactDebugIndex != -1)
-                {
-                    SimRenderer.DeleteMesh(contactDebugIndex);
-                    contactDebugIndex = -1;
-                }
-                //DebugDrawContactPoints(collisions, body);
-                if (normalCombine.LengthSquared() == 0f)
-                    return;
-                
-                normalCombine = Vector2.Normalize(normalCombine);
-                DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
-                //DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * distance, new Vector3(255, 0, 0), true);
-                
-                Vector2 relativeVelocity = -body.rigidBody.velocity;
-                float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
-                body.rigidBody.position += normalCombine * distance;
-                body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
-                //body.rigidBody.angularAcceleration = -torqueCombine / ((1f / 6f) * body.rigidBody.mass);
-            }
+            normalCombine += normal;
         }
+
+        Vector2 contactPoint = collisions[i].position;
+        Vector2 centerOfMass = body.rigidBody.position;
+        diffCombine += contactPoint - centerOfMass;
+
+        if (collisions[i].collision)
+            collide = true;
+
+        if (distance > collisions[i].distance)
+        {
+            distance = collisions[i].distance;
+        }
+    }
+
+    if (collide)
+    {
+        if (contactDebugIndex != -1)
+        {
+            SimRenderer.DeleteMesh(contactDebugIndex);
+            contactDebugIndex = -1;
+        }
+
+        if (normalCombine.LengthSquared() == 0f)
+            return;
+
+        normalCombine = Vector2.Normalize(normalCombine);
+        DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
+
+        Vector2 relativeVelocity = -body.rigidBody.velocity;
+        float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
+
+        // Calculate torque using the cross product and apply
+        float torque = (diffCombine.X * normalCombine.Y - diffCombine.Y * normalCombine.X) * j;
+        
+        // Update position and velocity based on the collision response
+        body.rigidBody.position += normalCombine * distance;
+        body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
+
+        // Calculate the moment of inertia for the body
+        float momentOfInertia = body.rigidBody.mass / 12.0f;  // Assuming point mass approximation
+        
+        // Apply angular acceleration based on torque and moment of inertia
+        float angularAcceleration = -torque / momentOfInertia;
+        
+        // Update angular velocity and acceleration (this could be capped or modified based on angular limits)
+        body.rigidBody.angularAcceleration = angularAcceleration;
+    }
+}
 
         static void DebugDrawContactPoints(in CollisionInfo[] collisions, in SimBody body)
         {

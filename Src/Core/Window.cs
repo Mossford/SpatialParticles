@@ -77,7 +77,7 @@ namespace SpatialEngine
             gl.Enable(GLEnum.DepthTest);
             gl.Enable(GLEnum.Texture2D);
             gl.Enable(GLEnum.CullFace);
-            gl.Enable(GLEnum.DebugOutput);
+            //gl.Enable(GLEnum.DebugOutput);
             gl.DebugMessageCallback(DebugProc, null);
             gl.DebugMessageControl(GLEnum.DontCare, GLEnum.DontCare, GLEnum.DebugSeverityNotification, 0, null, false);
             

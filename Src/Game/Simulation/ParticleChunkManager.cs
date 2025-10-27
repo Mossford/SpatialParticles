@@ -47,6 +47,7 @@ namespace SpatialGame
 
         public static void Update(float dt)
         {
+            
             if (Settings.SimulationSettings.EnableMultiThreading)
             {
                 int chunksUpdateSection = 0;
@@ -151,6 +152,7 @@ namespace SpatialGame
                 {
                     chunks[i].UpdateAddParticleQueue();
                     chunks[i].UpdateParticleQueuedAddChanges();
+                    chunks[i].UpdateParticleQueuedChanges();
                     chunks[i].DeleteParticlesOnQueue();
                 }
             }
@@ -167,9 +169,12 @@ namespace SpatialGame
                     chunks[i].UpdateLighting();
                     chunks[i].UpdateAddParticleQueue();
                     chunks[i].UpdateParticleQueuedAddChanges();
+                    chunks[i].UpdateParticleQueuedChanges();
                     chunks[i].DeleteParticlesOnQueue();
                 }
             }
+
+            DrawDebugGrid();
         }
 
         public static void DrawDebugGrid()

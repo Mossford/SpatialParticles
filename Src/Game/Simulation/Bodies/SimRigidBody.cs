@@ -27,7 +27,7 @@ namespace SpatialGame
 
         public SimRigidBody()
         {
-            mass = 1;
+            mass = 1.0f;
         }
 
         public void Update()

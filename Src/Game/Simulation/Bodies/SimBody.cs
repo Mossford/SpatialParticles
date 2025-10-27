@@ -89,7 +89,7 @@ namespace SpatialGame
                 RasterizeSpawn(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
             }*/
 
-            rigidBody.velocity.Y += 9.81f * dt;
+            rigidBody.velocity.Y += 1.81f * dt;
             rigidBody.velocity += rigidBody.acceleration * dt;
             rigidBody.position += rigidBody.velocity * dt;
             rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;

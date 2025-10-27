@@ -92,6 +92,7 @@ namespace SpatialEngine.Rendering
             ImGui.Text($"Simulation has {SpatialGame.ParticleChunkManager.chunkThreads.Length} of Chunk Threads");
             ImGui.Text($"Current resolution {SpatialGame.PixelColorer.width}, {SpatialGame.PixelColorer.height}");
             ImGui.Text($"Selected Particle {ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[SpatialGame.SimInput.mouseSelection]].name}");
+            ImGui.Checkbox("Simulation pause", ref ParticleSimulation.paused);
             
             if (ImGui.Checkbox("Vsync", ref vsync))
             {

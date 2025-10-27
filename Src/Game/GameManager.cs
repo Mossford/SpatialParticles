@@ -78,7 +78,7 @@ namespace SpatialGame
             PixelColorer.Update();
             SimRenderer.Update();
             //SimInput.Update();
-            //SimRenderer.UpdateMeshes();
+            SimRenderer.UpdateMeshes();
         }
 
         public static void RenderGame()

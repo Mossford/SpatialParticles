@@ -115,7 +115,7 @@ namespace SpatialGame
             if (properties.heatingProperties.canStateChange)
             {
                 //There is cases where solids can just turn straight into gases bypassing liquids
-                //but it will still occur with the temps needed it should not be visable as the sim
+                //but it will still occur with the temps needed it should not be visible as the sim
                 //should visually not show the transition that slow
 
                 //need to handle cases where the base state is between or after the temp changes

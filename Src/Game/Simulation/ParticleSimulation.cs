@@ -17,13 +17,15 @@ namespace SpatialGame
         /// </summary>
         public static Random random;
         public static int totalParticleCount;
+        public static bool paused;
         
 
         public static void InitParticleSim()
         {
             random = new Random();
+            paused = false;
 
-            ParticleChunkManager.chunkSize = 8;
+            ParticleChunkManager.chunkSize = 16;
             ParticleChunkManager.Init();
 
             for (int x = 0; x < PixelColorer.width; x++)
@@ -73,6 +75,7 @@ namespace SpatialGame
 
         public static void RunParticleSim(float delta)
         {
+            
             totalParticleCount = 0;
             ParticleChunkManager.Update(delta);
             for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
@@ -80,7 +83,7 @@ namespace SpatialGame
                 totalParticleCount += ParticleChunkManager.chunks[i].particleCount;
             }
             //we still need to do this once instead of on each chunk as that will cause issues
-            DeleteParticlesOnQueue();
+            //DeleteParticlesOnQueue();
         }
 
         static void DeleteParticlesOnQueue()
