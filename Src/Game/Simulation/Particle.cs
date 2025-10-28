@@ -211,40 +211,11 @@ namespace SpatialGame
             //check if we are swapping on a chunk border
             if (swapid.chunkIndex != id.chunkIndex)
             {
-                ref Particle otherParticle = ref ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
+                //copy because will get overwritten if reference
+                Particle otherParticle = ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
                 
-                ParticleChunkManager.chunks[swapid.chunkIndex].QueueParticleChange(swapid, state);
-                ParticleChunkManager.chunks[id.chunkIndex].QueueParticleChange(id, otherParticle.state);
-                
-                //for here since each particle are in seperate arrays we need to copy over data,
-                //most of what needs to be copied is state, and type, and other small things
-                //this will be a performance hit here though
-                /*ref Particle otherParticle = ref ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
-                Vector2 otherVelocity = otherParticle.velocity;
-                float otherTimeSpawned = otherParticle.timeSpawned;
-                byte otherLastMoveDir = otherParticle.lastMoveDirection;
-                int otherPropertyIndex = otherParticle.propertyIndex;
-                ParticleState otherState = otherParticle.state;
-
-                //set the other particle to equal the current particle
-                otherParticle.velocity = velocity;
-                otherParticle.timeSpawned = timeSpawned;
-                otherParticle.lastMoveDirection = lastMoveDirection;
-                otherParticle.propertyIndex = propertyIndex;
-                otherParticle.state = state;
-                ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
-                //set the type to the new position to our current element
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
-                
-                //set the current particle to equal the other particle
-                velocity = otherVelocity;
-                timeSpawned = otherTimeSpawned;
-                lastMoveDirection = otherLastMoveDir;
-                propertyIndex = otherPropertyIndex;
-                state = otherState;
-                index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-                //set the type to the new position to our current element
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = otherState.behaveType.ToByte();*/
+                ParticleChunkManager.chunks[swapid.chunkIndex].QueueParticleChange(swapid, GetParticleBehaviorType(), this);
+                ParticleChunkManager.chunks[id.chunkIndex].QueueParticleChange(id, type, otherParticle);
             }
             else
             {
@@ -309,7 +280,7 @@ namespace SpatialGame
                 
                 //check chunk bounds of particle
                 ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
-                if (!ParticleChunkManager.chunks[id.chunkIndex].ChunkBounds(newPos))
+                if (newChunk.chunkIndex != id.chunkIndex)
                 {
                     string name = GetParticleProperties().name;
                     QueueDelete();

@@ -31,7 +31,7 @@ namespace SpatialEngine
             /// <summary>
             /// Fills with sand in random order (Mainly tests memory access speed)
             /// </summary>
-            public static bool EnablePerfTestMode = true;
+            public static bool EnablePerfTestMode = false;
             /// <summary>
             /// Tests for if the lighting of temperatures should be enabled
             /// (creates a glow effect)

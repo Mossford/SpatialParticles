@@ -7,6 +7,8 @@
     <RunPostBuildEvent>Always</RunPostBuildEvent>
     <RootNamespace>Spatialparticles</RootNamespace>
     <Company>Mossford</Company>
+    <Configurations>Debug;Release;RemoveInline</Configurations>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <PackageIcon>IconSpace.png</PackageIcon>

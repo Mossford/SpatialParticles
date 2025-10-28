@@ -167,6 +167,7 @@ namespace SpatialGame
                 {
                     chunks[i].UpdateSecondPass(dt);
                     chunks[i].UpdateLighting();
+                    chunks[i].UpdateLighting();
                     chunks[i].UpdateAddParticleQueue();
                     chunks[i].UpdateParticleQueuedAddChanges();
                     chunks[i].UpdateParticleQueuedChanges();

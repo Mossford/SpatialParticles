@@ -42,7 +42,7 @@ namespace SpatialGame
         /// <summary>
         /// Queue of changes to a particle
         /// </summary>
-        public List<(ChunkIndex, ParticleState)> particleChangeQueue;
+        public List<(ChunkIndex, ParticleBehaviorType, Particle)> particleChangeQueue;
         public int particleCount;
         public int chunkIndex;
         public Vector2 position;
@@ -62,7 +62,7 @@ namespace SpatialGame
             idsToDeleteInfo = new List<(Vector2, ChunkIndex)>();
             particlesToAdd = new List<(string, Vector2)>();
             particleAddChangeQueue = new List<(Vector2, string, ParticleState)>();
-            particleChangeQueue = new List<(ChunkIndex, ParticleState)>();
+            particleChangeQueue = new List<(ChunkIndex, ParticleBehaviorType, Particle)>();
             particleCount = 0;
             suroundingIdOfParticle = new ChunkIndex[8];
             
@@ -170,11 +170,20 @@ namespace SpatialGame
         
         public void UpdateParticleQueuedChanges()
         {
-            for (int i = 0; i < particleAddChangeQueue.Count; i++)
+            for (int i = 0; i < particleChangeQueue.Count; i++)
             {
                 ChunkIndex index = particleChangeQueue[i].Item1;
                 if (index.particleIndex != -1)
-                    particles[index.particleIndex].state = particleChangeQueue[i].Item2;
+                {
+                    particles[index.particleIndex].state = particleChangeQueue[i].Item3.state;
+                    particles[index.particleIndex].propertyIndex = particleChangeQueue[i].Item3.propertyIndex;
+                    particles[index.particleIndex].velocity = particleChangeQueue[i].Item3.velocity;
+                    particles[index.particleIndex].lastMoveDirection = particleChangeQueue[i].Item3.lastMoveDirection;
+                    particles[index.particleIndex].timeSpawned = particleChangeQueue[i].Item3.timeSpawned;
+                    particles[index.particleIndex].state.behaveType = particleChangeQueue[i].Item2;
+
+                    positionCheck[index.particleIndex] = particleChangeQueue[i].Item2.ToByte();
+                }
             }
 
             particleChangeQueue.Clear();
@@ -284,9 +293,9 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public void QueueParticleChange(ChunkIndex index, in ParticleState state)
+        public void QueueParticleChange(ChunkIndex index, ParticleBehaviorType type, in Particle particle)
         {
-            particleChangeQueue.Add(new ValueTuple<ChunkIndex, ParticleState>(index, state));
+            particleChangeQueue.Add(new ValueTuple<ChunkIndex, ParticleBehaviorType, Particle>(index, type, particle));
         }
         
         /// <summary>
