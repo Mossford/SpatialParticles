@@ -25,11 +25,12 @@ namespace SpatialGame
             this.threadIndex = threadIndex;
             this.chunkColumn = chunkColumn;
             finished = false;
-            thread = new Thread(Update);
-            thread.Start();
+            ThreadPool.QueueUserWorkItem(Update);
+            //thread = new Thread(Update);
+            //thread.Start();
         }
 
-        public void Update()
+        public void Update(object stateinfo)
         {
             if (chunkOffset == 1)
             {

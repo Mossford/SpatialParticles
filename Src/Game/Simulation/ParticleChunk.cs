@@ -9,7 +9,7 @@ namespace SpatialGame
     public class ParticleChunk
     {
         public Particle[] particles;
-        public Queue<int> freeParticleSpots;
+        public Queue<short> freeParticleSpots;
         /// <summary>
         /// the type of the particle at its position
         /// 0 is no pixel at position,
@@ -22,11 +22,11 @@ namespace SpatialGame
         /// <summary>
         /// the ids of the particles at their position
         /// </summary>
-        public int[] idCheck;
+        public short[] idCheck;
         /// <summary>
         /// Queue of particles that will be deleted
         /// </summary>
-        public List<int> idsToDelete;
+        public List<short> idsToDelete;
         /// <summary>
         /// Stores info of the particles to delete as it can be overwritten
         /// </summary>
@@ -55,10 +55,10 @@ namespace SpatialGame
         public void Init()
         {
             particles = new Particle[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
-            freeParticleSpots = new Queue<int>();
+            freeParticleSpots = new Queue<short>();
             positionCheck = new byte[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
-            idCheck = new int[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
-            idsToDelete = new List<int>();
+            idCheck = new short[ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize];
+            idsToDelete = new List<short>();
             idsToDeleteInfo = new List<(Vector2, ChunkIndex)>();
             particlesToAdd = new List<(string, Vector2)>();
             particleAddChangeQueue = new List<(Vector2, string, ParticleState)>();
@@ -69,7 +69,7 @@ namespace SpatialGame
             //tell the queue that all spots are avaliable
             for (int i = 0; i < particles.Length; i++)
             {
-                freeParticleSpots.Enqueue(i);
+                freeParticleSpots.Enqueue((short)i);
             }
 
             //set all the ids to nothing
@@ -259,7 +259,7 @@ namespace SpatialGame
                 return new ChunkIndex(-1, -1);
             }
             
-            int id = freeParticleSpots.Dequeue();
+            short id = freeParticleSpots.Dequeue();
             particles[id].id = new ChunkIndex(chunkIndex, id);
             particles[id].position = pos;
             particles[id].timeSpawned = Globals.GetTime();

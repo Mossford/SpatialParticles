@@ -45,11 +45,14 @@ namespace SpatialGame
 
         public void Update(float dt)
         {
+            SetModelMatrix();
+            
             SimMesh mesh = SimRenderer.meshes[meshIndex];
             mesh.wireFrame = true;
             mesh.position = ((rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * Window.size) - Window.size / 2;
             mesh.position.Y *= -1;
-            mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
+            //mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
+            mesh.rotation = -rigidBody.rotation * conv;
             mesh.scaleX = Window.size.X / PixelColorer.width * rigidBody.scale;
             mesh.scaleY = Window.size.Y / PixelColorer.height * rigidBody.scale;
             mesh.color = new Vector3(0, 0, 0);
@@ -70,7 +73,6 @@ namespace SpatialGame
                 RasterizeClear(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
             }*/
             
-            SetModelMatrix();
             RigidBodyCollision.CollisionDetection(this, mesh);
 
             /*for (int i = 0; i < mesh.indices.Length; i += 3)
@@ -89,17 +91,21 @@ namespace SpatialGame
                 RasterizeSpawn(new Vector2(posC.X, posC.Y), new Vector2(posA.X, posA.Y));
             }*/
 
-            rigidBody.velocity.Y += 1.81f * dt;
-            rigidBody.velocity += rigidBody.acceleration * dt;
-            rigidBody.position += rigidBody.velocity * dt;
-            rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
-            rigidBody.rotation += rigidBody.angularVelocity * dt;
+            if (!ParticleSimulation.paused)
+            {
+                rigidBody.velocity.Y += 9.81f * dt;
+                rigidBody.velocity += rigidBody.acceleration * dt;
+                rigidBody.position += rigidBody.velocity * dt;
+                rigidBody.angularVelocity += rigidBody.angularAcceleration * dt;
+                rigidBody.rotation += rigidBody.angularVelocity * dt;
+            }
 
             for (int i = 0; i < rigidBody.collisionHull.Length; i++)
             {
                 Vector2 pos = Vector2.Transform(rigidBody.collisionHull[i], simModelMat);
                 DebugDrawer.DrawSquare(pos, 4f, new Vector3(255, 255, 255));
             }
+            
         }
 
         public void RasterizeSpawn(in Vector2 a, in Vector2 b)

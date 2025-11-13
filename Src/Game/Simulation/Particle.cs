@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -483,7 +484,8 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 35 + ParticleState.GetSize();
+            //return 35 + ParticleState.GetSize();
+            return Marshal.SizeOf(typeof(Particle));
         }
 
 #if RELEASE

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using SpatialEngine;
 using SpatialEngine.Rendering;
+using SpatialGame.Menus;
 using static SpatialEngine.Globals;
 using static SpatialEngine.Rendering.MeshUtils;
 using static SpatialEngine.Resources;
@@ -45,9 +46,9 @@ namespace SpatialGame
             SimRenderer.Init();
             SimLighting.Init();
             SimInput.Init();
-            RigidBodySimulation.Init();
+            //RigidBodySimulation.Init();
             
-            RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
+            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             isInitalizing = false;
         }
@@ -59,6 +60,10 @@ namespace SpatialGame
             UiRenderer.Init();
             ParticleResourceHandler.Init();
             SimTextHandler.Init();
+            UiTextHandler.Init();
+            
+            MainMenu.Init();
+            
             PixelColorer.Init(false);
             ParticleHeatSim.Init();
             ParticleSimulation.InitParticleSim();

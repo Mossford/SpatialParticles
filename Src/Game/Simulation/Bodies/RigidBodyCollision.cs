@@ -123,26 +123,16 @@ namespace SpatialGame
                 {
                     DebugDrawer.DrawSquare(start, 5f, new Vector3(255, 0, 0));
                     DebugDrawer.DrawSquare(end, 5f, new Vector3(255, 255, 0));
-                    DebugDrawer.DrawSquare(roundPosition, 2f, new Vector3(0, 0, 255));
+                    DebugDrawer.DrawSquare(roundPosition, 3f, new Vector3(0, 0, 255));
                     //roundPosition += new Vector2(0.5f, 0.5f);
-                    Vector2 collisionPos = roundPosition;
+                    Vector2 collisionPos = position;
                     //we have collision
-                    Vector2 toPosition = roundPosition - start;
+                    Vector2 toPosition = collisionPos - start;
                     //essentially a "vector rejection"
                     Vector2 projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
                     float distance = projectionOntoLine.Length();
-                    //check to make sure we are getting the correct length on which side it is intersecting
-                    if (direction.Y < 0f || direction.X > 0f)
-                    {
-                        roundPosition = new Vector2(MathF.Ceiling(position.X), MathF.Ceiling(position.Y));
-                        collisionPos = roundPosition;
-                        toPosition = roundPosition - start;
-                        //essentially a "vector rejection"
-                        projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
-                        distance = projectionOntoLine.Length();
-                    }
                     DebugDrawer.DrawLine(roundPosition, projectionOntoLine + roundPosition, new Vector3(255, 255, 0), true);
-                    DebugDrawer.DrawLine(((end - start) / 2) + start, (normal * 0.3f) + ((end - start) / 2) + start, new Vector3(255, 0, 0), true);
+                    DebugDrawer.DrawLine(((end - start) / 2) + start, (normal * 0.7f) + ((end - start) / 2) + start, new Vector3(255, 0, 0), true);
                     //if distance is 0 then we either have a particle inside touching the line
                     //or outside where then 0 is a valid case
                     if (distance == 0f)
@@ -155,22 +145,10 @@ namespace SpatialGame
                         if (id != -1)
                         {
                             //check to make sure we are getting the correct length on which side it is intersecting
-                            if (direction.Y > 0f || direction.X > 0f)
-                            {
-                                roundPosition = new Vector2(MathF.Ceiling(position.X), MathF.Ceiling(position.Y));
-                                collisionPos = roundPosition;
-                                toPosition = roundPosition - start;
-                                //essentially a "vector rejection"
-                                projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
-                                distance = projectionOntoLine.Length();
-                            }
-                            else
-                            {
-                                toPosition = roundPosition - start;
-                                //essentially a "vector rejection"
-                                projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
-                                distance = projectionOntoLine.Length();
-                            }
+                            toPosition = collisionPos - start;
+                            //essentially a "vector rejection"
+                            projectionOntoLine = toPosition - Vector2.Dot(toPosition, direction) * direction;
+                            distance = projectionOntoLine.Length();
                         }
                     }
                     
@@ -193,75 +171,75 @@ namespace SpatialGame
             return contacts.ToArray();
         }
 
-static void ResolveCollisions(in CollisionInfo[] collisions, in SimBody body, in SimMesh mesh)
-{
-    Vector2 normalCombine = Vector2.Zero;
-    Vector2 diffCombine = Vector2.Zero;
-    bool collide = false;
-    float distance = float.MaxValue;
-
-    for (int i = 0; i < collisions.Length; i++)
-    {
-        for (int j = i + 1; j < collisions.Length; j++)
+        static void ResolveCollisions(in CollisionInfo[] collisions, in SimBody body, in SimMesh mesh)
         {
-            if (collisions[i].collision)
-                collide = true;
+            
+            Vector2 normalCombine = Vector2.Zero;
+            Vector2 diffCombine = Vector2.Zero;
+            bool collide = false;
+            float distance = float.MaxValue;
 
-            Vector2 line = collisions[j].position - collisions[i].position;
-            Vector2 normal = new Vector2(-line.Y, line.X);
-            if (Vector2.Dot(normal, collisions[i].position - body.rigidBody.position) > 0)
-                normal *= -1;
+            for (int i = 0; i < collisions.Length; i++)
+            {
+                for (int j = i + 1; j < collisions.Length; j++)
+                {
+                    if (collisions[i].collision)
+                        collide = true;
 
-            normalCombine += normal;
+                    Vector2 line = collisions[j].position - collisions[i].position;
+                    Vector2 normal = new Vector2(-line.Y, line.X);
+                    if (Vector2.Dot(normal, collisions[i].position - body.rigidBody.position) > 0)
+                        normal *= -1;
+
+                    normalCombine += normal;
+                }
+
+                Vector2 contactPoint = collisions[i].position;
+                Vector2 centerOfMass = body.rigidBody.position;
+                diffCombine += contactPoint - centerOfMass;
+
+                if (collisions[i].collision)
+                    collide = true;
+
+                if (distance > collisions[i].distance)
+                {
+                    distance = collisions[i].distance;
+                }
+            }
+
+            if (collide)
+            {
+                if (normalCombine.LengthSquared() == 0f)
+                    return;
+                
+                Vector3 normal = new Vector3(-Vector2.Normalize(normalCombine), 0.0f);
+                Vector3 r = new Vector3(diffCombine, 0.0f);
+                
+
+                Vector3 relativeVel = new Vector3(-body.rigidBody.velocity, 0.0f);
+				
+                //work out the effects of inertia
+                Vector3 inertia = Vector3.Cross(Vector3.Cross(r, normal) * (body.rigidBody.mass / 12), r);
+                float angularEffect = Vector3.Dot(inertia, normal);
+				
+                //calculate the impulse
+                float j = (-(1.0f + restitution) * Vector3.Dot(relativeVel, normal)) / ((1.0f / body.rigidBody.mass) + angularEffect);
+				
+                Vector3 Jn = j * normal;//the impulse applied to the normal(in other words, the full impulse)
+				
+                //now we solve the positions of the penetrating objects then apply the impulses and apply the friction
+				
+                //solve the position
+                if (!ParticleSimulation.paused)
+                {
+                    body.rigidBody.position += new Vector2(-normal.X * distance, -normal.Y * distance);
+                    body.rigidBody.velocity += new Vector2(Jn.X * -1 / body.rigidBody.mass, Jn.Y * -1 / body.rigidBody.mass);
+                    Vector3 toAddToRV1 = Vector3.Cross(r, -Jn) * (body.rigidBody.mass / 12);
+                    body.rigidBody.rotation += toAddToRV1.Z;
+                }
+            }
+
         }
-
-        Vector2 contactPoint = collisions[i].position;
-        Vector2 centerOfMass = body.rigidBody.position;
-        diffCombine += contactPoint - centerOfMass;
-
-        if (collisions[i].collision)
-            collide = true;
-
-        if (distance > collisions[i].distance)
-        {
-            distance = collisions[i].distance;
-        }
-    }
-
-    if (collide)
-    {
-        if (contactDebugIndex != -1)
-        {
-            SimRenderer.DeleteMesh(contactDebugIndex);
-            contactDebugIndex = -1;
-        }
-
-        if (normalCombine.LengthSquared() == 0f)
-            return;
-
-        normalCombine = Vector2.Normalize(normalCombine);
-        DebugDrawer.DrawLine(body.rigidBody.position, body.rigidBody.position + normalCombine * 4f, new Vector3(255, 255, 0), true);
-
-        Vector2 relativeVelocity = -body.rigidBody.velocity;
-        float j = (-(1 + restitution) * (Vector2.Dot(relativeVelocity, normalCombine))) / ((Vector2.Dot(normalCombine, normalCombine)) * (1 / body.rigidBody.mass + 1));
-
-        // Calculate torque using the cross product and apply
-        float torque = (diffCombine.X * normalCombine.Y - diffCombine.Y * normalCombine.X) * j;
-        
-        // Update position and velocity based on the collision response
-        body.rigidBody.position += normalCombine * distance;
-        body.rigidBody.velocity -= (j * normalCombine) / body.rigidBody.mass;
-
-        // Calculate the moment of inertia for the body
-        float momentOfInertia = body.rigidBody.mass / 12.0f;  // Assuming point mass approximation
-        
-        // Apply angular acceleration based on torque and moment of inertia
-        float angularAcceleration = -torque / momentOfInertia;
-        
-        // Update angular velocity and acceleration (this could be capped or modified based on angular limits)
-        body.rigidBody.angularAcceleration = angularAcceleration;
-    }
-}
 
         static void DebugDrawContactPoints(in CollisionInfo[] collisions, in SimBody body)
         {

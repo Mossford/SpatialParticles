@@ -25,7 +25,17 @@ namespace SpatialGame
             random = new Random();
             paused = false;
 
-            ParticleChunkManager.chunkSize = 16;
+            //find max chunk size
+            int width = PixelColorer.width;
+            int height = PixelColorer.height;
+            while (width != 0)
+            {
+                int temp = width;
+                width = height % width;
+                height = temp;
+            }
+
+            ParticleChunkManager.chunkSize = height;
             ParticleChunkManager.Init();
 
             for (int x = 0; x < PixelColorer.width; x++)
@@ -176,7 +186,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool SafeIdCheckSet(int id, Vector2 position)
+        public static bool SafeIdCheckSet(short id, Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
@@ -234,7 +244,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool UnsafeIdCheckSet(int id, Vector2 position)
+        public static bool UnsafeIdCheckSet(short id, Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
             ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
@@ -287,7 +297,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool UnsafeIdCheckSet(int chunk, int id, Vector2 position)
+        public static bool UnsafeIdCheckSet(int chunk, short id, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
             ParticleChunkManager.chunks[chunk].idCheck[particleIndex] = id;
@@ -331,7 +341,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool SafeIdCheckSet(int chunk, int id, Vector2 position)
+        public static bool SafeIdCheckSet(int chunk, short id, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
             if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)

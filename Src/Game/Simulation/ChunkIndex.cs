@@ -3,7 +3,7 @@ namespace SpatialGame
     public struct ChunkIndex
     {
         public int chunkIndex;
-        public int particleIndex;
+        public short particleIndex;
 
         public ChunkIndex()
         {
@@ -11,7 +11,7 @@ namespace SpatialGame
             particleIndex = -1;
         }
 
-        public ChunkIndex(int chunkIndex, int particleIndex)
+        public ChunkIndex(int chunkIndex, short particleIndex)
         {
             this.chunkIndex = chunkIndex;
             this.particleIndex = particleIndex;
