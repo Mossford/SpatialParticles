@@ -461,12 +461,12 @@ namespace SpatialGame
             //set its id at its position to nothing
             ParticleSimulation.SafeIdCheckSet(-1, position);
             //set the color to empty
-            PixelColorer.SetColorAtPos(position, 102, 178, 204);
+            //PixelColorer.SetColorAtPos(position, 102, 178, 204);
             ParticleChunkManager.chunks[id.chunkIndex].freeParticleSpots.Enqueue(id.particleIndex);
             int positionIndex = PixelColorer.PosToIndexUnsafe(position);
-            PixelColorer.particleLights[positionIndex].index = -1;
-            PixelColorer.particleLights[positionIndex].intensity = 1f;
-            PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
+            //PixelColorer.particleLights[positionIndex].index = -1;
+            //PixelColorer.particleLights[positionIndex].intensity = 1f;
+            //PixelColorer.particleLights[positionIndex].color = new Vector4Byte(255, 255, 255, 255);
             //might create cache issues?
             //try setting the default values instead
             ParticleChunkManager.chunks[id.chunkIndex].particles[id.particleIndex].Reset();

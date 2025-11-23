@@ -188,11 +188,6 @@ namespace SpatialGame
                 
                 for (int i = 0; i < chunks.Length; i++)
                 {
-                    chunks[i].UpdatePixelColors();
-                }
-                
-                for (int i = 0; i < chunks.Length; i++)
-                {
                     chunks[i].UpdateAddParticleQueue();
                 }
                 
@@ -209,6 +204,11 @@ namespace SpatialGame
                 for (int i = 0; i < chunks.Length; i++)
                 {
                     chunks[i].DeleteParticlesOnQueue();
+                }
+                
+                for (int i = 0; i < chunks.Length; i++)
+                {
+                    chunks[i].UpdatePixelColors();
                 }
             }
 
