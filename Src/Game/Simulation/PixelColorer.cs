@@ -116,6 +116,23 @@ namespace SpatialGame
                 }
             }
         }
+        
+        public static void ResetLighting()
+        {
+            for (int i = 0; i < particleLights.Length; i++)
+            {
+                if (Settings.SimulationSettings.EnableParticleLighting)
+                {
+                   particleLights[i].index = 0;
+                    if (Settings.SimulationSettings.EnableDarkLighting)
+                        particleLights[i].intensity = 0;
+                    else
+                        particleLights[i].intensity = 1;
+                    particleLights[i].color = new Vector4Byte(255, 255, 255, 255);
+                    particleLights[i].range = Settings.SimulationSettings.particleLightRange;
+                }
+            }
+        }
 
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

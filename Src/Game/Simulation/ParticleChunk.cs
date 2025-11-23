@@ -101,8 +101,6 @@ namespace SpatialGame
         {
             lock (particles)
             {
-                if(ParticleSimulation.paused)
-                    return;
             
                 //First pass calculations
                 particleCount = 0;
@@ -124,8 +122,6 @@ namespace SpatialGame
         {
             lock (particles)
             {
-                if (ParticleSimulation.paused)
-                    return;
 
                 for (int i = 0; i < particles.Length; i++)
                 {
@@ -170,43 +166,36 @@ namespace SpatialGame
         
         public void UpdateParticleQueuedChanges()
         {
+            //might cause issues for multithreading if this is run first before the other particle can be stored and the other particle
+            //data will be deleted
+            
             for (int i = 0; i < particleChangeQueue.Count; i++)
             {
                 ChunkIndex index = particleChangeQueue[i].Item1;
-                if (index.particleIndex != -1)
-                {
-                    particles[index.particleIndex].state = particleChangeQueue[i].Item3.state;
+                //if (index.particleIndex != -1)
+                //{
+                    //particles[index.particleIndex] = particleChangeQueue[i].Item3;
+                    particles[index.particleIndex].SetValueFromParticle(particleChangeQueue[i].Item3);
+                    /*particles[index.particleIndex].state = particleChangeQueue[i].Item3.state;
                     particles[index.particleIndex].propertyIndex = particleChangeQueue[i].Item3.propertyIndex;
                     particles[index.particleIndex].velocity = particleChangeQueue[i].Item3.velocity;
                     particles[index.particleIndex].lastMoveDirection = particleChangeQueue[i].Item3.lastMoveDirection;
                     particles[index.particleIndex].timeSpawned = particleChangeQueue[i].Item3.timeSpawned;
-                    particles[index.particleIndex].state.behaveType = particleChangeQueue[i].Item2;
+                    particles[index.particleIndex].state.behaveType = particleChangeQueue[i].Item2;*/
 
                     positionCheck[index.particleIndex] = particleChangeQueue[i].Item2.ToByte();
-                }
+                //}
             }
 
             particleChangeQueue.Clear();
         }
 
-        public void UpdateLighting()
+        public void UpdatePixelColors()
         {
             lock (particles)
             {
                 for (int i = 0; i < particles.Length; i++)
                 {
-                    if (Settings.SimulationSettings.EnableParticleLighting)
-                    {
-                        int lightIndex = (chunkIndex * particles.Length) + i;
-                        PixelColorer.particleLights[lightIndex].index = 0;
-                        if (Settings.SimulationSettings.EnableDarkLighting)
-                            PixelColorer.particleLights[lightIndex].intensity = 0;
-                        else
-                            PixelColorer.particleLights[lightIndex].intensity = 1;
-                        PixelColorer.particleLights[lightIndex].color = new Vector4Byte(255, 255, 255, 255);
-                        PixelColorer.particleLights[lightIndex].range = Settings.SimulationSettings.particleLightRange;
-                    }
-
                     if (particles[i].id.chunkIndex == -1 || !particles[i].BoundsCheck(particles[i].position))
                         continue;
 
@@ -246,7 +235,7 @@ namespace SpatialGame
             if (ParticleSimulation.SafeIdCheckGet(pos) != -1)
                 return new ChunkIndex(-1, -1);
             //check if valid particle
-            if (!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out int index))
+            if (!ParticleResourceHandler.particleNameIndexes.TryGetValue(name, out short index))
             {
                 Debugging.LogConsole("Could not find particle of " + name);
                 //failed to find particle with that name so do nothing

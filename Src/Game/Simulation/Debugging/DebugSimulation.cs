@@ -28,7 +28,7 @@ namespace SpatialGame
         {
             int size = ParticleChunkManager.chunks.Length * ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize;
             size *= Particle.GetSize();
-            return size / 1024f / 1024f;
+            return size / 1000f / 1000f;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace SpatialGame
         {
             int size = ParticleChunkManager.chunks.Length * ParticleChunkManager.chunkSize * ParticleChunkManager.chunkSize;
             size *= Vector4Byte.GetSize() + ParticleLight.getSize();
-            return size / 1024f / 1024f;
+            return size / 1000f / 1000f;
         }
 
 

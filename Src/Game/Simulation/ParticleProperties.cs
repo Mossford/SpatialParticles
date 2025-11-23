@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -115,12 +116,14 @@ namespace SpatialGame
     /// <summary>
     /// Particles state as sim is running
     /// </summary>
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct ParticleState
     {
+        //order is to make sure no padding
         public ParticleMovementType moveType { get; set; } // 1 bytes
         public ParticleBehaviorType behaveType { get; set; } // 1 bytes
-        public Vector4Byte color { get; set; } // 4 bytes
         public ushort viscosity { get; set; } // 2 bytes
+        public Vector4Byte color { get; set; } // 4 bytes
         public float temperature { get; set; } // 4 bytes
         public float temperatureTemp { get; set; } // 4 bytes
 
@@ -160,7 +163,7 @@ namespace SpatialGame
 #endif
         public static int GetSize()
         {
-            return 16;
+            return Marshal.SizeOf(typeof(ParticleState));
         }
     }
 

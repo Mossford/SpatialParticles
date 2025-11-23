@@ -1,5 +1,8 @@
+using System.Runtime.InteropServices;
+
 namespace SpatialGame
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public struct ChunkIndex
     {
         public int chunkIndex;

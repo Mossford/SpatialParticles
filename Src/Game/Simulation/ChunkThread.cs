@@ -44,7 +44,7 @@ namespace SpatialGame
                             break;
                         case 1:
                             ParticleChunkManager.chunks[index].UpdateSecondPass(Globals.fixedParticleDeltaTime);
-                            ParticleChunkManager.chunks[index].UpdateLighting();
+                            ParticleChunkManager.chunks[index].UpdatePixelColors();
                             break;
                     }
                 }
@@ -61,7 +61,7 @@ namespace SpatialGame
                             break;
                         case 1:
                             ParticleChunkManager.chunks[index].UpdateSecondPass(Globals.fixedParticleDeltaTime);
-                            ParticleChunkManager.chunks[index].UpdateLighting();
+                            ParticleChunkManager.chunks[index].UpdatePixelColors();
                             break;
                     }
                 }

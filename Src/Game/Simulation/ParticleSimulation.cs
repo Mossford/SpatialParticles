@@ -85,9 +85,14 @@ namespace SpatialGame
 
         public static void RunParticleSim(float delta)
         {
+
+            if (!paused)
+            {
+                PixelColorer.ResetLighting();
+                ParticleChunkManager.Update(delta);
+            }
             
             totalParticleCount = 0;
-            ParticleChunkManager.Update(delta);
             for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
             {
                 totalParticleCount += ParticleChunkManager.chunks[i].particleCount;

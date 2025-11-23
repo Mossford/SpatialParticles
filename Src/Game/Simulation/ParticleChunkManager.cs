@@ -18,7 +18,7 @@ namespace SpatialGame
         
         public static void Init()
         {
-            if (chunkSize * chunkSize > short.MaxValue)
+            if (chunkSize * chunkSize >= short.MaxValue)
             {
                 throw new Exception("Chunk size too big");
             }
@@ -168,15 +168,46 @@ namespace SpatialGame
                 {
                     chunks[i].UpdateFirstPass(dt);
                 }
-            
+                
                 for (int i = 0; i < chunks.Length; i++)
                 {
                     chunks[i].UpdateSecondPass(dt);
-                    chunks[i].UpdateLighting();
-                    chunks[i].UpdateLighting();
+                    //chunks[i].UpdateParticleQueuedChanges();
+                    //chunks[i].UpdateAddParticleQueue();
+                    //chunks[i].UpdateParticleQueuedAddChanges();
+                    //chunks[i].DeleteParticlesOnQueue();
+                    
+                    //chunks[i].UpdateLighting();
+                    //chunks[i].UpdateParticleQueuedAddChanges();
+                    //chunks[i].UpdateParticleQueuedChanges();
+                    //chunks[i].UpdateAddParticleQueue();
+                    //chunks[i].DeleteParticlesOnQueue();
+                    //chunks[i].UpdateAddParticleQueue();
+                    //chunks[i].UpdateLighting();
+                }
+                
+                for (int i = 0; i < chunks.Length; i++)
+                {
+                    chunks[i].UpdatePixelColors();
+                }
+                
+                for (int i = 0; i < chunks.Length; i++)
+                {
                     chunks[i].UpdateAddParticleQueue();
+                }
+                
+                for (int i = 0; i < chunks.Length; i++)
+                {
                     chunks[i].UpdateParticleQueuedAddChanges();
+                }
+                
+                for (int i = 0; i < chunks.Length; i++)
+                {
                     chunks[i].UpdateParticleQueuedChanges();
+                }
+                
+                for (int i = 0; i < chunks.Length; i++)
+                {
                     chunks[i].DeleteParticlesOnQueue();
                 }
             }

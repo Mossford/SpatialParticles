@@ -73,7 +73,7 @@ namespace SpatialEngine.Rendering
             float mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSim();
             if (mem < 1f)
             {
-                ImGui.Text($"Simulation has {mem * 1024f:N2}KB of particles pooled");
+                ImGui.Text($"Simulation has {mem * 1000f:N2}KB of particles pooled");
             }
             else
             {
@@ -82,7 +82,7 @@ namespace SpatialEngine.Rendering
             mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSimGPU();
             if (mem < 1f)
             {
-                ImGui.Text($"Simulation has {mem * 1024f:N2}KB of buffers");
+                ImGui.Text($"Simulation has {mem * 1000f:N2}KB of buffers");
             }
             else
             {
@@ -164,6 +164,14 @@ namespace SpatialEngine.Rendering
                 new Vector2(cursorPos.X + textSize.X + 5, cursorPos.Y - 2), 
                 new Vector2(cursorPos.X + textSize.X + 25, cursorPos.Y - textSize.Y - 3), 
                 ImGui.ColorConvertFloat4ToU32((Vector4)color / 255f));
+            Vector4Byte light = PixelColorer.particleLights[PixelColorer.PosToIndex(floorPosition)].color * PixelColorer.particleLights[PixelColorer.PosToIndex(floorPosition)].intensity;
+            ImGui.Text($"Light {light}");
+            textSize = ImGui.CalcTextSize($"Light {light}");
+            cursorPos = ImGui.GetCursorScreenPos();
+            ImGui.GetWindowDrawList().AddRectFilled(
+                new Vector2(cursorPos.X + textSize.X + 5, cursorPos.Y - 2), 
+                new Vector2(cursorPos.X + textSize.X + 25, cursorPos.Y - textSize.Y - 3), 
+                ImGui.ColorConvertFloat4ToU32((Vector4)light / 255f));
             string particleName;
             if (ImGui.CollapsingHeader("Particle State"))
             {
@@ -360,8 +368,8 @@ namespace SpatialEngine.Rendering
                 
                 ParticleResourceHandler.loadedParticles.Add(properties);
 
-                int index = ParticleResourceHandler.particleIndexes.Length;
-                int[] particleIndexes = new int[index + 1];
+                short index = (short)ParticleResourceHandler.particleIndexes.Length;
+                short[] particleIndexes = new short[index + 1];
                 for (int i = 0; i < index; i++)
                 {
                     particleIndexes[i] = ParticleResourceHandler.particleIndexes[i];

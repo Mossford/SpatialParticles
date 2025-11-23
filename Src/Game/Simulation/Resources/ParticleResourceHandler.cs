@@ -12,12 +12,12 @@ namespace SpatialGame
     public static class ParticleResourceHandler
     {
         public static List<ParticleProperties> loadedParticles;
-        public static Dictionary<string, int> particleNameIndexes;
-        public static int[] particleIndexes;
+        public static Dictionary<string, short> particleNameIndexes;
+        public static short[] particleIndexes;
 
         public static void Init()
         {
-            particleNameIndexes = new Dictionary<string, int>();
+            particleNameIndexes = new Dictionary<string, short>();
             LoadParticles();
 
             Debugging.LogConsole("Initalized Simulation Resources");
@@ -44,10 +44,15 @@ namespace SpatialGame
                 Debugging.LogConsole("Found Particles file");
                 string text = File.ReadAllText(SpatialEngine.Resources.SimPath + "Particles.json");
                 loadedParticles = JsonSerializer.Deserialize<List<ParticleProperties>>(text, options);
-                particleIndexes = new int[loadedParticles.Count];
+                if (loadedParticles.Count >= short.MaxValue)
+                {
+                    Debugging.LogConsole("Particles.json has too many particles >= " + short.MaxValue);
+                    return;
+                }
+                particleIndexes = new short[loadedParticles.Count];
 
                 Debugging.LogConsole("Loaded particles of size " + loadedParticles.Count);
-                for (int i = 0; i < loadedParticles.Count; i++)
+                for (short i = 0; i < loadedParticles.Count; i++)
                 {
                     if(particleNameIndexes.TryAdd(loadedParticles[i].name, i))
                     {
@@ -60,6 +65,7 @@ namespace SpatialGame
             else
             {
                 Debugging.LogConsole("Could not find Particles file at " + SpatialEngine.Resources.SimPath + "Particles.json");
+                return;
             }
         }
     }

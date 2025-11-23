@@ -12,18 +12,19 @@ using System.Threading.Tasks;
 
 namespace SpatialGame
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 2)]
     public struct Particle : IDisposable
     {
         public Vector2 position { get; set; }
         public Vector2 velocity { get; set; }
         ///the id of the particle probably will not match the actual position in the array due to performance reasons
         public ChunkIndex id { get; set; }
-        public int deleteIndex { get; set; }
         public float timeSpawned { get; set; }
+        public short deleteIndex { get; set; }
+        public short propertyIndex;
         public byte lastMoveDirection { get; set; }
         public bool updated { get; set; }
-
-        public int propertyIndex;
+        
         public ParticleState state;
 
         public Particle()
@@ -32,7 +33,7 @@ namespace SpatialGame
             velocity = Vector2.Zero;
             id = new ChunkIndex(-1, -1);
             deleteIndex = -1;
-            timeSpawned = 0;
+            timeSpawned = 0;                                                            
             propertyIndex = -1;
             state = new ParticleState();
         }
@@ -206,8 +207,8 @@ namespace SpatialGame
                 return;
 
             //check position of swap element beacuse it has a possibility to be out of bounds somehow
-            if (!BoundsCheck(ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex].position))
-                return;
+            //if (!BoundsCheck(ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex].position))
+            //    return;
             
             //check if we are swapping on a chunk border
             if (swapid.chunkIndex != id.chunkIndex)
@@ -215,8 +216,16 @@ namespace SpatialGame
                 //copy because will get overwritten if reference
                 Particle otherParticle = ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex];
                 
+                //if queued then will cause a line between the chunk boundary because this function is supposed to be run during the first update pass
+                //NEEDS SOLUTION
                 ParticleChunkManager.chunks[swapid.chunkIndex].QueueParticleChange(swapid, GetParticleBehaviorType(), this);
                 ParticleChunkManager.chunks[id.chunkIndex].QueueParticleChange(id, type, otherParticle);
+                
+                //ParticleChunkManager.chunks[id.chunkIndex].positionCheck[id.particleIndex] = type.ToByte();
+                //ParticleChunkManager.chunks[swapid.chunkIndex].positionCheck[swapid.particleIndex] = GetParticleBehaviorType().ToByte();
+                
+                //ParticleChunkManager.chunks[swapid.chunkIndex].particles[swapid.particleIndex].SetValueFromParticle(this);
+                //SetValueFromParticle(otherParticle);
             }
             else
             {
@@ -415,7 +424,7 @@ namespace SpatialGame
             
             ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Add(id.particleIndex);
             ParticleChunkManager.chunks[id.chunkIndex].idsToDeleteInfo.Add(new ValueTuple<Vector2, ChunkIndex>(position, id));
-            deleteIndex = ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Count - 1;
+            deleteIndex = (short)(ParticleChunkManager.chunks[id.chunkIndex].idsToDelete.Count - 1);
         }
 
         /// <summary>
@@ -506,6 +515,42 @@ namespace SpatialGame
             propertyIndex = ParticleResourceHandler.particleNameIndexes[particle];
             state = GetParticleProperties();
             ParticleSimulation.SafePositionCheckSet((byte)GetParticleProperties().behaveType, position);
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public void SetValueFromParticle(Particle particle)
+        {
+            //remove this for now as this function is being used for swapping particles
+            //this.id = particle.id;
+            //this.position = particle.position;
+            this.updated = particle.updated;
+            this.velocity = particle.velocity;
+            this.deleteIndex = particle.deleteIndex;
+            this.propertyIndex = particle.propertyIndex;
+            this.timeSpawned = particle.timeSpawned;
+            this.lastMoveDirection = particle.lastMoveDirection;
+
+            this.state.color = particle.state.color;
+            this.state.temperature = particle.state.temperature;
+            this.state.viscosity = particle.state.viscosity;
+            this.state.behaveType = particle.state.behaveType;
+            this.state.moveType = particle.state.moveType;
+            this.state.temperatureTemp = particle.state.temperatureTemp;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public void SetValueFromState(ParticleState state)
+        {
+            this.state.color = state.color;
+            this.state.temperature = state.temperature;
+            this.state.viscosity = state.viscosity;
+            this.state.behaveType = state.behaveType;
+            this.state.moveType = state.moveType;
+            this.state.temperatureTemp = state.temperatureTemp;
         }
 
 

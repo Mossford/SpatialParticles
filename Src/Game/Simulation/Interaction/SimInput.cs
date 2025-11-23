@@ -41,7 +41,7 @@ namespace SpatialGame
             mousePressed = false;
             mouseButtonPress = 0;
             mouseSpawnRadius = 10;
-            ParticleResourceHandler.particleNameIndexes.TryGetValue("Sand", out int index);
+            ParticleResourceHandler.particleNameIndexes.TryGetValue("Sand", out short index);
             selectionMode = false;
             mouseSelection = index;
 

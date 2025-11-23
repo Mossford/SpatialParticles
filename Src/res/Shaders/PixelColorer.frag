@@ -89,14 +89,10 @@ void main()
     if(enableParticleLighting)
     {
         if(enableGpuComp)
-        particleLighting = texture(lightingTex, fragPos);
+            particleLighting = texture(lightingTex, fragPos);
         if(!enableGpuComp)
-        particleLighting = CalculateLighting(vec2(x,y), index);
+            particleLighting = CalculateLighting(vec2(x,y), index);
     }
-
-    color *= particleLighting;
-    color.x = pow(color.x, 1.0 / 2.2);
-    color.y = pow(color.y, 1.0 / 2.2);
-    color.z = pow(color.z, 1.0 / 2.2);
-    out_color = color;
+    
+    out_color = color * particleLighting;
 }

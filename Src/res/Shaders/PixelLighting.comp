@@ -23,7 +23,7 @@ vec4 CalculateLighting(vec2 particlePos, int index)
 {
     //check if there is a particle at this position
     if(floatBitsToInt(particleLights.Lights[index].x) == -1)
-    return vec4(1.0);
+        return vec4(1.0);
 
     int range = floatBitsToInt(particleLights.Lights[index].w);
 
