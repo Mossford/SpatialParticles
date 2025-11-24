@@ -41,7 +41,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void CalculateParticleTemp(ref Particle particle, in ChunkIndex[] suroundingIdOfParticle)
+        public static void CalculateParticleTemp(ref Particle particle, in ChunkIndex[] suroundingIdOfParticle, float delta)
         {
             
             if (!particle.GetParticleProperties().heatingProperties.enableHeatSim)
@@ -65,6 +65,7 @@ namespace SpatialGame
             idsSurroundCount++;
 
             //temperature transfers
+            //can only transfer as much as available
             float heatTransConst = particle.state.temperature / idsSurroundCount;
             for (int i = 0; i < 8; i++)
             {
@@ -73,7 +74,8 @@ namespace SpatialGame
                 
                 ref ParticleChunk chunk = ref ParticleChunkManager.chunks[suroundingIdOfParticle[i].chunkIndex];
                 ref Particle other = ref chunk.particles[suroundingIdOfParticle[i].particleIndex];
-                
+
+                //will transfer some amount of the current particles temp from 0 to 100 percent (0-1)
                 float heatTrans = heatTransConst * other.GetParticleProperties().heatingProperties.heatTransferRate;
                 particle.state.temperatureTemp -= heatTrans;
                 chunk.particles[suroundingIdOfParticle[i].particleIndex].state.temperatureTemp += heatTrans;
@@ -83,7 +85,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static void CalculateParticleHeatSimOthers(ref Particle particle)
+        public static void CalculateParticleHeatSimOthers(ref Particle particle, float delta)
         { 
             ParticleProperties properties = particle.GetParticleProperties();
             //temperature transfers

@@ -25,6 +25,7 @@ namespace SpatialEngine
             
             //wont reach after here until window closes
             NetworkManager.Cleanup();
+            Window.Cleanup();
         }
 
         

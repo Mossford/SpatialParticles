@@ -111,7 +111,7 @@ namespace SpatialGame
                 
                     if (!particles[i].updated)
                     {
-                        particles[i].UpdateGeneralFirst(suroundingIdOfParticle);
+                        particles[i].UpdateGeneralFirst(suroundingIdOfParticle, delta);
                     }
                     particleCount++;
                 }
@@ -132,7 +132,7 @@ namespace SpatialGame
                     if (!particles[i].updated)
                     {
                         particles[i].Update(delta);
-                        particles[i].UpdateGeneralSecond();
+                        particles[i].UpdateGeneralSecond(delta);
                     }
                     else
                     {

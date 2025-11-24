@@ -8,6 +8,7 @@ using Silk.NET.OpenGL.Extensions.ImGui;
 using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using SDL;
 using SpatialEngine.Networking;
 
 using static SpatialEngine.Globals;
@@ -50,6 +51,9 @@ namespace SpatialEngine
         static unsafe void OnLoad() 
         {
             gl = snWindow.CreateOpenGL();
+            
+            //needed for the text rendering
+            SDL3.SDL_Init(SDL_InitFlags.SDL_INIT_VIDEO);
             
             //get the display size
             snWindow.WindowState = WindowState.Fullscreen;
@@ -187,6 +191,12 @@ namespace SpatialEngine
             {
                 controller.Render();
             }
+        }
+
+        public static void Cleanup()
+        {
+            SDL3.SDL_Quit();
+            SDL3_ttf.TTF_Quit();
         }
     }
 }

@@ -45,6 +45,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ppy.SDL3_ttf-CS" Version="2025.1118.0" />
     <PackageReference Include="Silk.NET" Version="2.20.0" />
     <PackageReference Include="Silk.NET.Core" Version="2.20.0" />
     <PackageReference Include="Silk.NET.Input" Version="2.20.0" />
@@ -52,7 +53,6 @@
     <PackageReference Include="Silk.NET.OpenGL.Extensions.ImGui" Version="2.17.1" />
     <PackageReference Include="Silk.NET.Windowing" Version="2.20.0" />
     <PackageReference Include="StbImageSharp" Version="2.27.13" />
-    <PackageReference Include="StbTrueTypeSharp" Version="1.26.12" />
     <PackageReference Include="RiptideNetworking.Riptide" Version="2.1.2" />
   </ItemGroup>
   <ItemGroup>
@@ -70,18 +70,14 @@
     <ItemGroup>
       <FilesToCopy Include="Src\res\**\*" />
     </ItemGroup>
-    <Copy
-            SourceFiles="@(FilesToCopy)"
-            DestinationFiles="@(FilesToCopy->'$(TargetDir)res\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)res\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <MakeDir Directories="$(TargetDir)res" />
     <ItemGroup>
       <FilesToCopy Include="Src\res\**\*" />
     </ItemGroup>
-    <Copy
-            SourceFiles="@(FilesToCopy)"
-            DestinationFiles="@(FilesToCopy->'$(TargetDir)res\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(FilesToCopy)" DestinationFiles="@(FilesToCopy->'$(TargetDir)res\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
 </Project>

@@ -2,6 +2,7 @@ using Silk.NET.Windowing;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using System.Runtime.CompilerServices;
+using SDL;
 
 namespace SpatialEngine
 {

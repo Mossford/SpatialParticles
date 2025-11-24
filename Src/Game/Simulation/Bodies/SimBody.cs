@@ -51,8 +51,8 @@ namespace SpatialGame
             mesh.wireFrame = true;
             mesh.position = ((rigidBody.position / new Vector2(PixelColorer.width, PixelColorer.height)) * Window.size) - Window.size / 2;
             mesh.position.Y *= -1;
-            //mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
-            mesh.rotation = -rigidBody.rotation * conv;
+            mesh.rotation = (-rigidBody.rotation * conv) + (3 * MathF.PI / 2); 
+            //mesh.rotation = -rigidBody.rotation * conv;
             mesh.scaleX = Window.size.X / PixelColorer.width * rigidBody.scale;
             mesh.scaleY = Window.size.Y / PixelColorer.height * rigidBody.scale;
             mesh.color = new Vector3(0, 0, 0);

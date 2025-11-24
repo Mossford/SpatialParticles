@@ -4,9 +4,10 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using static StbTrueTypeSharp.StbTrueType;
+using SDL;
 
 
 namespace SpatialEngine.Rendering
@@ -15,12 +16,10 @@ namespace SpatialEngine.Rendering
     {
         public string text;
         public Vector2 position;
-        int width;
+        public int width;
         public int height;
         public float scale;
         public float rotation;
-        public int textHeight;
-        public int numLines;
         public Vector3 color;
 
         Texture texture;
@@ -32,225 +31,156 @@ namespace SpatialEngine.Rendering
             
         }
 
-        public UiText(string text, Vector2 pos, float scaleImage, float rotation, int textHeight, int numLines)
+        public UiText(string text, Vector2 pos, float scaleImage, float rotation)
         {
             this.text = text;
             this.position = pos;
-            this.width = (int)Window.size.X;
-            this.height = textHeight;
             this.scale = scaleImage;
             this.rotation = rotation;
-            this.textHeight = textHeight;
-            this.numLines = numLines;
             
             CreateText();
         }
         
+        public static byte[] CreateBitmapFromSurface(IntPtr ptr, int length)
+        {
+            byte[] array = new byte[length];
+
+            //divide by 4 so we dont index outside of the pointer
+            for (int i = 0; i < length / 4; i++)
+            {
+                array[i] = (byte)Marshal.PtrToStructure(ptr + i, typeof(byte));
+            }
+
+            return array;
+        }
+        
         public unsafe void CreateText()
         {
-            int imageWidth = width;
-            int imageHeight = height;
-
-            float tempScale = stbtt_ScaleForPixelHeight(UiTextHandler.font, textHeight);
-
-            height = textHeight * numLines;
-
-            bitmap = new byte[width * height];
-
-            int x = 0;
-
-            int ascent, descent, lineGap;
-            stbtt_GetFontVMetrics(UiTextHandler.font, &ascent, &descent, &lineGap);
-
-            ascent = (int)(ascent * tempScale);
-            descent = (int)(descent * tempScale);
-            fixed (byte* bitmapDataPtr = bitmap)
-            {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    /* how wide is this character */
-                    int ax;
-                    int lsb;
-                    stbtt_GetCodepointHMetrics(UiTextHandler.font, text[i], &ax, &lsb);
-
-                    if (x + (ax * tempScale) > width)
-                        continue;
-                    /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
-
-                    /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
-                    int c_x1, c_y1, c_x2, c_y2;
-                    stbtt_GetCodepointBitmapBox(UiTextHandler.font, text[i], tempScale, tempScale, &c_x1, &c_y1, &c_x2, &c_y2);
-
-                    /* compute y (different characters have different heights) */
-                    int y = ascent + c_y1;
-
-                    /* render character (stride and offset is important here) */
-                    int byteOffset = x + (int)(lsb * tempScale) + (y * width);
-                    stbtt_MakeCodepointBitmap(UiTextHandler.font, bitmapDataPtr + byteOffset, c_x2 - c_x1, c_y2 - c_y1, width, tempScale, tempScale, text[i]);
-
-                    /* advance x */
-                    x += (int)(ax * tempScale);
-
-                    /* add kerning */
-                    int kern;
-                    if(i + 1 != text.Length)
-                    {
-                        kern = stbtt_GetCodepointKernAdvance(UiTextHandler.font, text[i], text[i + 1]);
-                        x += (int)(kern * tempScale);
-                    }
-                }
-                
-            }
-
+            SDL_Surface* surface;
+            
             color = Vector3.One;
+            SDL_Color tempColor = new SDL_Color();
+            tempColor.r = (byte)(color.X * 255);
+            tempColor.g = (byte)(color.Y * 255);
+            tempColor.b = (byte)(color.Z * 255);
+            tempColor.a = 0;
+            
+            byte[] textData = Encoding.UTF8.GetBytes(text);
+            fixed (byte* textDataPtr = textData)
+                surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
+
+            Console.WriteLine(surface->format);
+            
+            //the surface format is already index 8 but this seems to get it to work?
+            SDL_Surface* surfaceConvert = SDL3.SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
+            if (surfaceConvert is null)
+            {
+                Console.WriteLine("Could not create texture, " + SDL3.SDL_GetError());
+                SDL3.SDL_DestroySurface(surface);
+                return;
+            }
+            SDL3.SDL_DestroySurface(surface);
+            surface = surfaceConvert;
+
+            bitmap = CreateBitmapFromSurface(surface->pixels, surface->w * surface->h * 4);
+            
+            texture = new Texture();
+            texture.LoadTexture(bitmap, surface->w, surface->h, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
+            elementIndex = UiRenderer.uiElements.Count;
+            //add on the length from the actual text to center it to a position
+            UiRenderer.AddElement(texture, new Vector2(position.X, position.Y), rotation, scale, texture.size, UiElementType.text);
+            
+            SDL3.SDL_DestroySurface(surface);
+        }
+        
+        public unsafe void CreateText(string text, Vector2 pos, float scaleImage, float rotation)
+        {
+            this.text = text;
+            this.position = pos;
+            this.scale = scaleImage;
+            this.rotation = rotation;
+            
+            SDL_Surface* surface;
+            
+            color = Vector3.One;
+            SDL_Color tempColor = new SDL_Color();
+            tempColor.r = (byte)(color.X * 255);
+            tempColor.g = (byte)(color.Y * 255);
+            tempColor.b = (byte)(color.Z * 255);
+            tempColor.a = 0;
+            
+            byte[] textData = Encoding.UTF8.GetBytes(text);
+            fixed (byte* textDataPtr = textData)
+                surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
+
+            width = surface->w;
+            height = surface->h;
+            
+            //the surface format is already index 8 but this seems to get it to work?
+            SDL_Surface* surfaceConvert = SDL3.SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
+            if (surfaceConvert is null)
+            {
+                Console.WriteLine("Could not create texture, " + SDL3.SDL_GetError());
+                SDL3.SDL_DestroySurface(surface);
+                return;
+            }
+            SDL3.SDL_DestroySurface(surface);
+            surface = surfaceConvert;
+
+            bitmap = CreateBitmapFromSurface(surface->pixels, width * height * 4);
+            
             texture = new Texture();
             texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
             elementIndex = UiRenderer.uiElements.Count;
             //add on the length from the actual text to center it to a position
-            UiRenderer.AddElement(texture, new Vector2(position.X + (width - x), position.Y), rotation, scale, new Vector2(imageWidth, imageHeight), UiElementType.text);
+            UiRenderer.AddElement(texture, position, rotation, scale, texture.size, UiElementType.text);
+            
+            SDL3.SDL_DestroySurface(surface);
         }
         
-        public unsafe void CreateText(string text, Vector2 pos, float scaleImage, float rotation, int textHeight, int numLines)
+        public unsafe void UpdateText(string text, Vector2 pos, float scaleImage, float rotation)
         {
             this.text = text;
             this.position = pos;
-            this.width = (int)Window.size.X;
-            this.height = textHeight;
             this.scale = scaleImage;
             this.rotation = rotation;
-            this.textHeight = textHeight;
-            this.numLines = numLines;
-            
-            int imageWidth = width;
-            int imageHeight = height;
 
-            float tempScale = stbtt_ScaleForPixelHeight(UiTextHandler.font, textHeight);
-
-            height += textHeight * (numLines - 1);
-
-            bitmap = new byte[width * height];
-
-            int x = 0;
-
-            int ascent, descent, lineGap;
-            stbtt_GetFontVMetrics(UiTextHandler.font, &ascent, &descent, &lineGap);
-
-            ascent = (int)(ascent * tempScale);
-            descent = (int)(descent * tempScale);
-            fixed (byte* bitmapDataPtr = bitmap)
-            {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    /* how wide is this character */
-                    int ax;
-                    int lsb;
-                    stbtt_GetCodepointHMetrics(UiTextHandler.font, text[i], &ax, &lsb);
-
-                    if (x + (ax * tempScale) > width)
-                        continue;
-                    /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
-
-                    /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
-                    int c_x1, c_y1, c_x2, c_y2;
-                    stbtt_GetCodepointBitmapBox(UiTextHandler.font, text[i], tempScale, tempScale, &c_x1, &c_y1, &c_x2, &c_y2);
-
-                    /* compute y (different characters have different heights) */
-                    int y = ascent + c_y1;
-
-                    /* render character (stride and offset is important here) */
-                    int byteOffset = x + (int)(lsb * tempScale) + (y * width);
-                    stbtt_MakeCodepointBitmap(UiTextHandler.font, bitmapDataPtr + byteOffset, c_x2 - c_x1, c_y2 - c_y1, width, tempScale, tempScale, text[i]);
-
-                    /* advance x */
-                    x += (int)(ax * tempScale);
-
-                    /* add kerning */
-                    int kern;
-                    if(i + 1 != text.Length)
-                    {
-                        kern = stbtt_GetCodepointKernAdvance(UiTextHandler.font, text[i], text[i + 1]);
-                        x += (int)(kern * tempScale);
-                    }
-                }
-                
-            }
+            SDL_Surface* surface;
             
             color = Vector3.One;
-            texture = new Texture();
-            texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
-            elementIndex = UiRenderer.uiElements.Count;
-            //add on the length from the actual text to center it to a position
-            UiRenderer.AddElement(texture, new Vector2(position.X + (width - x), position.Y), rotation, scale, new Vector2(imageWidth, imageHeight), UiElementType.text);
-        }
-        
-        public unsafe void UpdateText(string text, Vector2 pos, float scaleImage, float rotation, int textHeight, int numLines)
-        {
-            this.text = text;
-            this.position = pos;
-            this.width = (int)Window.size.X;
-            this.height = textHeight;
-            this.scale = scaleImage;
-            this.rotation = rotation;
-            this.textHeight = textHeight;
-            this.numLines = numLines;
+            SDL_Color tempColor = new SDL_Color();
+            tempColor.r = (byte)(color.X * 255);
+            tempColor.g = (byte)(color.Y * 255);
+            tempColor.b = (byte)(color.Z * 255);
+            tempColor.a = 0;
             
-            UiRenderer.uiElements[elementIndex].width = width;
-            UiRenderer.uiElements[elementIndex].height = height;
+            byte[] textData = Encoding.UTF8.GetBytes(text);
+            fixed (byte* textDataPtr = textData)
+                surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
 
-            float tempScale = stbtt_ScaleForPixelHeight(UiTextHandler.font, textHeight);
-
-            height += textHeight * (numLines - 1);
-
-            bitmap = new byte[width * height];
-
-            int x = 0;
-
-            int ascent, descent, lineGap;
-            stbtt_GetFontVMetrics(UiTextHandler.font, &ascent, &descent, &lineGap);
-
-            ascent = (int)(ascent * tempScale);
-            descent = (int)(descent * tempScale);
-            fixed (byte* bitmapDataPtr = bitmap)
+            width = surface->w;
+            height = surface->h;
+            
+            //the surface format is already index 8 but this seems to get it to work?
+            SDL_Surface* surfaceConvert = SDL3.SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
+            if (surfaceConvert is null)
             {
-                for (int i = 0; i < text.Length; i++)
-                {
-                    /* how wide is this character */
-                    int ax;
-                    int lsb;
-                    stbtt_GetCodepointHMetrics(UiTextHandler.font, text[i], &ax, &lsb);
-
-                    if (x + (ax * tempScale) > width)
-                        continue;
-                    /* (Note that each Codepoint call has an alternative Glyph version which caches the work required to lookup the character word[i].) */
-
-                    /* get bounding box for character (may be offset to account for chars that dip above or below the line) */
-                    int c_x1, c_y1, c_x2, c_y2;
-                    stbtt_GetCodepointBitmapBox(UiTextHandler.font, text[i], tempScale, tempScale, &c_x1, &c_y1, &c_x2, &c_y2);
-
-                    /* compute y (different characters have different heights) */
-                    int y = ascent + c_y1;
-
-                    /* render character (stride and offset is important here) */
-                    int byteOffset = x + (int)(lsb * tempScale) + (y * width);
-                    stbtt_MakeCodepointBitmap(UiTextHandler.font, bitmapDataPtr + byteOffset, c_x2 - c_x1, c_y2 - c_y1, width, tempScale, tempScale, text[i]);
-
-                    /* advance x */
-                    x += (int)(ax * tempScale);
-
-                    /* add kerning */
-                    int kern;
-                    if(i + 1 != text.Length)
-                    {
-                        kern = stbtt_GetCodepointKernAdvance(UiTextHandler.font, text[i], text[i + 1]);
-                        x += (int)(kern * tempScale);
-                    }
-                }
-                
+                Console.WriteLine("Could not create texture, " + SDL3.SDL_GetError());
+                SDL3.SDL_DestroySurface(surface);
+                return;
             }
+            SDL3.SDL_DestroySurface(surface);
+            surface = surfaceConvert;
+
+            bitmap = CreateBitmapFromSurface(surface->pixels, width * height * 4);
+            
+            SDL3.SDL_DestroySurface(surface);
 
             UiRenderer.uiElements[elementIndex].color = color;
             UiRenderer.uiElements[elementIndex].scale = scaleImage;
-            UiRenderer.uiElements[elementIndex].position = new Vector2(pos.X + (width - x), pos.Y);
+            UiRenderer.uiElements[elementIndex].position = position;
+            UiRenderer.uiElements[elementIndex].width = width;
+            UiRenderer.uiElements[elementIndex].height = height;
             UiRenderer.uiElements[elementIndex].rotation = rotation;
             UiRenderer.uiElements[elementIndex].texture.UpdateTexture(bitmap, width, height);
         }
@@ -262,21 +192,23 @@ namespace SpatialEngine.Rendering
     }
     
     
-    public static class UiTextHandler
+    public static unsafe class UiTextHandler
     {
-        public static stbtt_fontinfo font;
-        static byte[] fontData;
-        public unsafe static void Init()
+        public static TTF_Font* font;
+        public static void Init()
         {
-            fontData = File.ReadAllBytes(SpatialEngine.Resources.FontPath + "JetBrainsMono-Regular.ttf");
-            font = new stbtt_fontinfo();
-            
-            fixed (byte* fontDataPtr = fontData)
+            byte[] file = Encoding.UTF8.GetBytes(SpatialEngine.Resources.FontPath + "JetBrainsMono-Regular.ttf");
+
+            if (!SDL3_ttf.TTF_Init())
             {
-                if (stbtt_InitFont(font, fontDataPtr, 0) == 0)
-                {
-                    throw new Exception("Error occured while loading font");
-                }
+                throw new Exception("Failed to start font library");
+            }
+            
+            fixed (byte* fontDataPtr = file)
+            {
+                font = SDL3_ttf.TTF_OpenFont(fontDataPtr, 36);
+                if(font is null)
+                    throw new Exception("Failed to load font");
             }
         }
     }
