@@ -67,8 +67,9 @@ namespace SpatialEngine.Rendering
             byte[] textData = Encoding.UTF8.GetBytes(text);
             fixed (byte* textDataPtr = textData)
                 surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
-
-            Console.WriteLine(surface->format);
+            
+            width = surface->w;
+            height = surface->h;
             
             //the surface format is already index 8 but this seems to get it to work?
             SDL_Surface* surfaceConvert = SDL3.SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);

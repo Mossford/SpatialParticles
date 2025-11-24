@@ -152,6 +152,9 @@ namespace SpatialEngine.Rendering
             ImGui.Text("Particle Info at Mouse Pos:");
             //Vector2 position = ((Mouse.localPosition / Window.size * new Vector2(PixelColorer.width, PixelColorer.height)) + (new Vector2(PixelColorer.width, PixelColorer.height) / 2));
             Vector2 position = Mouse.position * new Vector2(PixelColorer.width, PixelColorer.height) / Window.size;
+            if(!PixelColorer.BoundCheck(position))
+                return;
+            
             ImGui.Text($"Pos {position:N1}");
             ImGui.Text($"Chunk Pos {(position / ParticleChunkManager.chunkSize):N1}");
             ImGui.Text($"Particle Index {PixelColorer.PosToIndex(position):N0}");
