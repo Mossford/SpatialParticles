@@ -58,11 +58,10 @@ namespace SpatialEngine.Rendering
         {
             SDL_Surface* surface;
             
-            color = Vector3.One;
             SDL_Color tempColor = new SDL_Color();
-            tempColor.r = (byte)(color.X * 255);
-            tempColor.g = (byte)(color.Y * 255);
-            tempColor.b = (byte)(color.Z * 255);
+            tempColor.r = 255;
+            tempColor.g = 255;
+            tempColor.b = 255;
             tempColor.a = 0;
             
             byte[] textData = Encoding.UTF8.GetBytes(text);
@@ -102,11 +101,10 @@ namespace SpatialEngine.Rendering
             
             SDL_Surface* surface;
             
-            color = Vector3.One;
             SDL_Color tempColor = new SDL_Color();
-            tempColor.r = (byte)(color.X * 255);
-            tempColor.g = (byte)(color.Y * 255);
-            tempColor.b = (byte)(color.Z * 255);
+            tempColor.r = 255;
+            tempColor.g = 255;
+            tempColor.b = 255;
             tempColor.a = 0;
             
             byte[] textData = Encoding.UTF8.GetBytes(text);
@@ -147,11 +145,10 @@ namespace SpatialEngine.Rendering
 
             SDL_Surface* surface;
             
-            color = Vector3.One;
             SDL_Color tempColor = new SDL_Color();
-            tempColor.r = (byte)(color.X * 255);
-            tempColor.g = (byte)(color.Y * 255);
-            tempColor.b = (byte)(color.Z * 255);
+            tempColor.r = 255;
+            tempColor.g = 255;
+            tempColor.b = 255;
             tempColor.a = 0;
             
             byte[] textData = Encoding.UTF8.GetBytes(text);
