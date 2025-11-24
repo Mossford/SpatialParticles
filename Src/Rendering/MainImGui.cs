@@ -25,6 +25,7 @@ namespace SpatialEngine.Rendering
         static ImFontPtr font;
         static float fpsCount;
         static float fpsTotal;
+        static float fpsMax;
         static float msCount;
         static float msTotal;
         static float fpsTime;
@@ -50,9 +51,14 @@ namespace SpatialEngine.Rendering
             ImGui.Text("Gpu: " + Gpu);
             ImGui.Text($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
             ImGui.Text($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
+            ImGui.Text($"{1.0f / fpsMax * 1000.0f:N3} ms/frame ({fpsMax:N1} FPS Max)");
             ImGui.Text($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
             ImGui.Text($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / ( 1.0f / ImGui.GetIO().Framerate * 1000.0f)):N1}p/ms)");
 
+            if (fpsMax < ImGui.GetIO().Framerate)
+            {
+                fpsMax = ImGui.GetIO().Framerate;
+            }
             fpsTotal += ImGui.GetIO().Framerate;
             msTotal += 1.0f / ImGui.GetIO().Framerate * 1000f;
             fpsCount++;
