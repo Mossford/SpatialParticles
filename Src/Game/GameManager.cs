@@ -39,6 +39,7 @@ namespace SpatialGame
 
             UiRenderer.Init();
             ParticleResourceHandler.Init();
+            ScriptManager.Init();
             PixelColorer.Init(changeResolution);
             ParticleHeatSim.Init();
             ParticleSimulation.InitParticleSim();
@@ -58,6 +59,7 @@ namespace SpatialGame
             timeSinceLastInit = GetTime();
             UiRenderer.Init();
             ParticleResourceHandler.Init();
+            ScriptManager.Init();
             UiTextHandler.Init();
             
             MainMenu.Init();

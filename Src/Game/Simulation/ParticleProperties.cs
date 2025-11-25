@@ -17,7 +17,7 @@ namespace SpatialGame
     {
         public string name { get; set; }
         public ParticleMovementType moveType { get; set; }
-        public ParticleBehaviorType behaveType { get; set; }
+        public byte behaveType { get; set; }
         public Vector4Byte color { get; set; }
         public ushort viscosity { get; set; }
         public float xBounce { get; set; }
@@ -30,7 +30,7 @@ namespace SpatialGame
         {
             name = "";
             moveType = ParticleMovementType.empty;
-            behaveType = ParticleBehaviorType.empty;
+            behaveType = (byte)ParticleBehaviorType.empty;
             color = new Vector4Byte(0,0,0,0);
             viscosity = 0;
             xBounce = 0;
@@ -62,6 +62,8 @@ namespace SpatialGame
         public bool canStateChange { get; set; }
         public float[] stateChangeTemps { get; set; }
         public ushort[] stateChangeViscosity { get; set; }
+        public ushort[] stateChangeBehaveType { get; set; }
+        public ushort[] stateChangeMoveType { get; set; }
         public Vector4Byte[] stateChangeColors { get; set; }
         public bool[] canColorChange { get; set; }
 
@@ -72,7 +74,9 @@ namespace SpatialGame
             heatTransferRate = 0;
             canStateChange = false;
             stateChangeTemps = new float[2];
-            stateChangeViscosity = new ushort[2];
+            stateChangeViscosity = new ushort[3];
+            stateChangeBehaveType = new ushort[3];
+            stateChangeMoveType = new ushort[3];
             stateChangeColors = new Vector4Byte[3];
             canColorChange = new bool[3];
         }
@@ -84,6 +88,8 @@ namespace SpatialGame
                    "CanStateChange: " + canStateChange + "\n" + 
                    "StateChangeTemps: " + string.Join(", ", stateChangeTemps) + "\n" + 
                    "StateChangeViscosity: " + string.Join(", ", stateChangeViscosity) + "\n" + 
+                   "StateChangeBehaveType" + string.Join(", ", stateChangeBehaveType) + "\n" +
+                   "stateChangeMoveType" + string.Join(", ", stateChangeMoveType) + "\n" +
                    "StateChangeColors: " + string.Join(", ", stateChangeColors) + "\n" + 
                    "CanColorChange: " + string.Join(", ", canColorChange) + "\n";
         }
@@ -121,7 +127,7 @@ namespace SpatialGame
     {
         //order is to make sure no padding
         public ParticleMovementType moveType { get; set; } // 1 bytes
-        public ParticleBehaviorType behaveType { get; set; } // 1 bytes
+        public byte behaveType { get; set; } // 1 bytes
         public ushort viscosity { get; set; } // 2 bytes
         public Vector4Byte color { get; set; } // 4 bytes
         public float temperature { get; set; } // 4 bytes
@@ -130,7 +136,7 @@ namespace SpatialGame
         public ParticleState()
         {
             moveType = ParticleMovementType.empty;
-            behaveType = ParticleBehaviorType.empty;
+            behaveType = (byte)ParticleBehaviorType.empty;
             color = new Vector4Byte(0, 0, 0, 0);
             viscosity = 0;
             temperature = 0;
@@ -141,7 +147,7 @@ namespace SpatialGame
             return new ParticleState
             {
                 moveType = properties.moveType,
-                behaveType = properties.behaveType,
+                behaveType = (byte)properties.behaveType,
                 color = properties.color,
                 viscosity = properties.viscosity,
                 temperature = properties.heatingProperties.temperature,
@@ -178,6 +184,8 @@ namespace SpatialGame
         wall = 6,
         heater = 7,
         cooler = 8,
+        
+        //everything past 31 is custom defined
     }
 
     public enum ParticleMovementType : byte

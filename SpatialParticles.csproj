@@ -45,6 +45,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="NLua" Version="1.7.6" />
     <PackageReference Include="ppy.SDL3_ttf-CS" Version="2025.1118.0" />
     <PackageReference Include="Silk.NET" Version="2.20.0" />
     <PackageReference Include="Silk.NET.Core" Version="2.20.0" />

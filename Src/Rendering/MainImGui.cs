@@ -46,14 +46,14 @@ namespace SpatialEngine.Rendering
 
             //needs to be io.framerate because the actal deltatime is polled too fast and the 
             //result is hard to read
-            ImGui.Text("Version " + EngVer);
-            ImGui.Text("OpenGl " + OpenGlVersion);
-            ImGui.Text("Gpu: " + Gpu);
-            ImGui.Text($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
-            ImGui.Text($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
-            ImGui.Text($"{1.0f / fpsMax * 1000.0f:N3} ms/frame ({fpsMax:N1} FPS Max)");
-            ImGui.Text($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
-            ImGui.Text($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / ( 1.0f / ImGui.GetIO().Framerate * 1000.0f)):N1}p/ms)");
+            ImGui.TextWrapped("Version " + EngVer);
+            ImGui.TextWrapped("OpenGl " + OpenGlVersion);
+            ImGui.TextWrapped("Gpu: " + Gpu);
+            ImGui.TextWrapped($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
+            ImGui.TextWrapped($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
+            ImGui.TextWrapped($"{1.0f / fpsMax * 1000.0f:N3} ms/frame ({fpsMax:N1} FPS Max)");
+            ImGui.TextWrapped($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
+            ImGui.TextWrapped($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / ( 1.0f / ImGui.GetIO().Framerate * 1000.0f)):N1}p/ms)");
 
             if (fpsMax < ImGui.GetIO().Framerate)
             {
@@ -75,29 +75,29 @@ namespace SpatialEngine.Rendering
 
             drawCallCount = 0;
 
-            ImGui.Text($"Time Open {totalTime / 60.0f:N1} minutes");
+            ImGui.TextWrapped($"Time Open {totalTime / 60.0f:N1} minutes");
             float mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSim();
             if (mem < 1f)
             {
-                ImGui.Text($"Simulation has {mem * 1000f:N2}KB of particles pooled");
+                ImGui.TextWrapped($"Simulation has {mem * 1000f:N2}KB of particles pooled");
             }
             else
             {
-                ImGui.Text($"Simulation has {mem:N2}MB of particles pooled");
+                ImGui.TextWrapped($"Simulation has {mem:N2}MB of particles pooled");
             }
             mem = SpatialGame.DebugSimulation.GetCurrentMemoryOfSimGPU();
             if (mem < 1f)
             {
-                ImGui.Text($"Simulation has {mem * 1000f:N2}KB of buffers");
+                ImGui.TextWrapped($"Simulation has {mem * 1000f:N2}KB of buffers");
             }
             else
             {
-                ImGui.Text($"Simulation has {mem:N2}MB of buffers");
+                ImGui.TextWrapped($"Simulation has {mem:N2}MB of buffers");
             }
-            ImGui.Text($"Simulation has {SpatialGame.ParticleSimulation.totalParticleCount} of particles Spawned");
-            ImGui.Text($"Simulation has {SpatialGame.ParticleChunkManager.chunkThreads.Length} of Chunk Threads");
-            ImGui.Text($"Current resolution {SpatialGame.PixelColorer.width}, {SpatialGame.PixelColorer.height}");
-            ImGui.Text($"Selected Particle {ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[SpatialGame.SimInput.mouseSelection]].name}");
+            ImGui.TextWrapped($"Simulation has {SpatialGame.ParticleSimulation.totalParticleCount} of particles Spawned");
+            ImGui.TextWrapped($"Simulation has {SpatialGame.ParticleChunkManager.chunkThreads.Length} of Chunk Threads");
+            ImGui.TextWrapped($"Current resolution {SpatialGame.PixelColorer.width}, {SpatialGame.PixelColorer.height}");
+            ImGui.TextWrapped($"Selected Particle {ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[SpatialGame.SimInput.mouseSelection]].name}");
             ImGui.Checkbox("Simulation pause", ref ParticleSimulation.paused);
             
             if (ImGui.Checkbox("Vsync", ref vsync))
@@ -117,6 +117,12 @@ namespace SpatialEngine.Rendering
                     ImGui.EndMenu();
                 }
                 ImGui.EndMenuBar();
+            }
+
+            if (Debugging.showImmediateConsole)
+            {
+                Debugging.showImmediateConsole = false;
+                ShowConsoleViewerMenu = true;
             }
 
             if (ShowConsoleViewerMenu)
@@ -149,24 +155,24 @@ namespace SpatialEngine.Rendering
         static void SimViewer()
         {
             ImGui.Begin("Simulation");
-            ImGui.Text("Particle Info at Mouse Pos:");
+            ImGui.TextWrapped("Particle Info at Mouse Pos:");
             //Vector2 position = ((Mouse.localPosition / Window.size * new Vector2(PixelColorer.width, PixelColorer.height)) + (new Vector2(PixelColorer.width, PixelColorer.height) / 2));
             Vector2 position = Mouse.position * new Vector2(PixelColorer.width, PixelColorer.height) / Window.size;
             if(!PixelColorer.BoundCheck(position))
                 return;
             
-            ImGui.Text($"Pos {position:N1}");
-            ImGui.Text($"Chunk Pos {(position / ParticleChunkManager.chunkSize):N1}");
-            ImGui.Text($"Particle Index {PixelColorer.PosToIndex(position):N0}");
-            ImGui.Text($"Chunk Index {ParticleChunkManager.SafeGetChunkIndexMap(position):N0}");
-            ImGui.Text($"Chunk Particle Index {ParticleChunkManager.SafeGetIndexInChunksMap(position)}");
-            ImGui.Text($"IdCheck {ParticleSimulation.SafeIdCheckGet(position):N0}");
+            ImGui.TextWrapped($"Pos {position:N1}");
+            ImGui.TextWrapped($"Chunk Pos {(position / ParticleChunkManager.chunkSize):N1}");
+            ImGui.TextWrapped($"Particle Index {PixelColorer.PosToIndex(position):N0}");
+            ImGui.TextWrapped($"Chunk Index {ParticleChunkManager.SafeGetChunkIndexMap(position):N0}");
+            ImGui.TextWrapped($"Chunk Particle Index {ParticleChunkManager.SafeGetIndexInChunksMap(position)}");
+            ImGui.TextWrapped($"IdCheck {ParticleSimulation.SafeIdCheckGet(position):N0}");
             ref ParticleChunk testChunk = ref ParticleChunkManager.GetChunkReference(position);
-            ImGui.Text($"Chunk Particle Count {testChunk.particleCount:N0}");
-            ImGui.Text($"In chunk {testChunk.ChunkBounds(position)}");
+            ImGui.TextWrapped($"Chunk Particle Count {testChunk.particleCount:N0}");
+            ImGui.TextWrapped($"In chunk {testChunk.ChunkBounds(position)}");
             Vector2 floorPosition = new Vector2(MathF.Floor(position.X), MathF.Floor(position.Y));
             Vector4Byte color = PixelColorer.GetColorAtPos(floorPosition);
-            ImGui.Text($"Color {color}");
+            ImGui.TextWrapped($"Color {color}");
             Vector2 textSize = ImGui.CalcTextSize($"Color {color}");
             Vector2 cursorPos = ImGui.GetCursorScreenPos();
             ImGui.GetWindowDrawList().AddRectFilled(
@@ -174,7 +180,7 @@ namespace SpatialEngine.Rendering
                 new Vector2(cursorPos.X + textSize.X + 25, cursorPos.Y - textSize.Y - 3), 
                 ImGui.ColorConvertFloat4ToU32((Vector4)color / 255f));
             Vector4Byte light = PixelColorer.particleLights[PixelColorer.PosToIndex(floorPosition)].color * PixelColorer.particleLights[PixelColorer.PosToIndex(floorPosition)].intensity;
-            ImGui.Text($"Light {light}");
+            ImGui.TextWrapped($"Light {light}");
             textSize = ImGui.CalcTextSize($"Light {light}");
             cursorPos = ImGui.GetCursorScreenPos();
             ImGui.GetWindowDrawList().AddRectFilled(
@@ -188,11 +194,11 @@ namespace SpatialEngine.Rendering
                 if (idToCheck.particleIndex != -1)
                 {
                     ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
-                    ImGui.Text($"{chunk.particles[idToCheck.particleIndex]}");
+                    ImGui.TextWrapped($"{chunk.particles[idToCheck.particleIndex]}");
                 }
                 else
                 {
-                    ImGui.Text($"{emptyParticle}");
+                    ImGui.TextWrapped($"{emptyParticle}");
                 }
             }
             if (ImGui.CollapsingHeader("Particle Properties"))
@@ -201,11 +207,11 @@ namespace SpatialEngine.Rendering
                 if (idToCheck.particleIndex != -1)
                 {
                     ref ParticleChunk chunk = ref ParticleChunkManager.GetChunkReference(idToCheck.chunkIndex);
-                    ImGui.Text($"{chunk.particles[idToCheck.particleIndex].GetParticleProperties()}");
+                    ImGui.TextWrapped($"{chunk.particles[idToCheck.particleIndex].GetParticleProperties()}");
                 }
                 else
                 {
-                    ImGui.Text($"{emptyParticle.GetParticleProperties()}");
+                    ImGui.TextWrapped($"{emptyParticle.GetParticleProperties()}");
                 }
             }
             ImGui.End();
@@ -219,7 +225,7 @@ namespace SpatialEngine.Rendering
             ImGui.Checkbox("Enable Dark Lighting", ref Settings.SimulationSettings.EnableDarkLighting);
             ImGui.Checkbox("Enable Heat Simulation", ref Settings.SimulationSettings.EnableHeatSimulation);
             ImGui.Checkbox("Enable Multithreading", ref Settings.SimulationSettings.EnableMultiThreading);
-            ImGui.Text("Particle Light Range");
+            ImGui.TextWrapped("Particle Light Range");
             ImGui.PushItemWidth(ImGui.CalcTextSize("Particle Light Range").X);
             ImGui.InputInt("##particleLight", ref Settings.SimulationSettings.particleLightRange);
             ImGui.End();
@@ -252,70 +258,70 @@ namespace SpatialEngine.Rendering
 
             //Properties
             
-            ImGui.Text("Particle Name");
+            ImGui.TextWrapped("Particle Name");
             ImGui.InputText("##name", ref pcName, 100);
             
-            ImGui.Text("Particle Movement");
+            ImGui.TextWrapped("Particle Movement");
             string[] movementTypesNames = Enum.GetNames(typeof(ParticleMovementType));
             ImGui.Combo("##moveType", ref pcCurrentMoveSelect, movementTypesNames, movementTypesNames.Length);
             
-            ImGui.Text("Particle Behavior");
+            ImGui.TextWrapped("Particle Behavior");
             string[] behaviorTypesNames = Enum.GetNames(typeof(ParticleBehaviorType));
             ImGui.Combo("##behaveType", ref pcCurrentBehaveSelect, behaviorTypesNames, behaviorTypesNames.Length);
 
-            ImGui.Text("Particle Color");
+            ImGui.TextWrapped("Particle Color");
             ImGui.ColorEdit4("##Color", ref pcColor, ImGuiColorEditFlags.Float);
 
             if ((ParticleMovementType)pcCurrentMoveSelect == ParticleMovementType.liquid || (ParticleMovementType)pcCurrentMoveSelect == ParticleMovementType.gas)
             {
-                ImGui.Text("Particle Viscosity");
+                ImGui.TextWrapped("Particle Viscosity");
                 ImGui.DragInt("##Viscosity", ref pcViscosity);
             }
             
-            ImGui.Text("Particle XBounce");
+            ImGui.TextWrapped("Particle XBounce");
             ImGui.DragFloat("##XBounce", ref pcXBounce, 0.001f, 0f, 1f);
             
-            ImGui.Text("Particle YBounce");
+            ImGui.TextWrapped("Particle YBounce");
             ImGui.DragFloat("##YBounce", ref pcYBounce, 0.001f, 0f, 1f);
             
-            ImGui.Text("Particle CanMove");
+            ImGui.TextWrapped("Particle CanMove");
             ImGui.Checkbox("##CanMove", ref pcCanMove);
             
             //Heat properties
             ImGui.NewLine();
             ImGui.NewLine();
             
-            ImGui.Text("Enable Heat Simulation");
+            ImGui.TextWrapped("Enable Heat Simulation");
             ImGui.Checkbox("##pcEnableHeatSim", ref pcEnableHeatSim);
 
-            ImGui.Text("Temperature");
+            ImGui.TextWrapped("Temperature");
             ImGui.DragFloat("##pcTemperature", ref pcTemperature);
 
-            ImGui.Text("Heat Transfer Rate");
+            ImGui.TextWrapped("Heat Transfer Rate");
             ImGui.DragFloat("##pcHeatTransferRate", ref pcHeatTransferRate);
 
-            ImGui.Text("Can State Change");
+            ImGui.TextWrapped("Can State Change");
             ImGui.Checkbox("##pcCanStateChange", ref pcCanStateChange);
 
-            ImGui.Text("State Change Temperatures");
+            ImGui.TextWrapped("State Change Temperatures");
             for (int i = 0; i < pcStateChangeTemps.Length; i++)
             {
                 ImGui.DragFloat($"##pcStateChangeTemp{i}", ref pcStateChangeTemps[i]);
             }
 
-            ImGui.Text("State Change Viscosity");
+            ImGui.TextWrapped("State Change Viscosity");
             for (int i = 0; i < pcStateChangeViscosity.Length; i++)
             {
                 ImGui.DragInt($"##pcStateChangeViscosity{i}", ref pcStateChangeViscosity[i]);
             }
 
-            ImGui.Text("State Change Colors");
+            ImGui.TextWrapped("State Change Colors");
             for (int i = 0; i < pcStateChangeColors.Length; i++)
             {
                 ImGui.ColorEdit4($"##pcStateChangeColor{i}", ref pcStateChangeColors[i], ImGuiColorEditFlags.Float);
             }
 
-            ImGui.Text("Can Color Change");
+            ImGui.TextWrapped("Can Color Change");
             for (int i = 0; i < pcCanColorChange.Length; i++)
             {
                 ImGui.Checkbox($"##pcCanColorChange{i}", ref pcCanColorChange[i]);
@@ -326,16 +332,16 @@ namespace SpatialEngine.Rendering
             ImGui.NewLine();
             ImGui.NewLine();
             
-            ImGui.Text("Range");
+            ImGui.TextWrapped("Range");
             ImGui.DragFloat("##pcRange", ref pcRange);
 
-            ImGui.Text("Power");
+            ImGui.TextWrapped("Power");
             ImGui.DragFloat("##pcPower", ref pcPower);
 
-            ImGui.Text("Flash Point");
+            ImGui.TextWrapped("Flash Point");
             ImGui.DragFloat("##pcFlashPoint", ref pcFlashPoint);
 
-            ImGui.Text("Heat Output");
+            ImGui.TextWrapped("Heat Output");
             ImGui.DragFloat("##pcHeatOutput", ref pcHeatOutput);
 
             if (ImGui.Button("Add Particle"))
@@ -343,7 +349,7 @@ namespace SpatialEngine.Rendering
                 ParticleProperties properties = new ParticleProperties();
                 properties.name = pcName;
                 properties.moveType = (ParticleMovementType)pcCurrentMoveSelect;
-                properties.behaveType = (ParticleBehaviorType)pcCurrentBehaveSelect;
+                properties.behaveType = (byte)pcCurrentBehaveSelect;
                 properties.color = (Vector4Byte)(pcColor * 255f);
                 properties.viscosity = (ushort)pcViscosity;
                 properties.xBounce = pcXBounce;
@@ -405,10 +411,32 @@ namespace SpatialEngine.Rendering
             ImGui.BeginChild("Output", new Vector2(0, ImGui.GetWindowSize().Y * 0.9f), true, ImGuiWindowFlags.NoResize);
             for (int i = 0; i < Debugging.consoleText.Count; i++)
             {
-                if(i == 0)
-                    ImGui.Text("> " + (Debugging.consoleText.Count - i) + " " + Debugging.consoleText[i]);
+                if (i == 0)
+                {
+                    if (Debugging.consoleText[i].Item2)
+                    {
+                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0, 0, 1.0f));
+                        ImGui.TextWrapped("> [" + (Debugging.consoleText.Count - i) + "] " + Debugging.consoleText[i].Item1);
+                        ImGui.PopStyleColor();
+                    }
+                    else
+                    {
+                        ImGui.TextWrapped("> [" + (Debugging.consoleText.Count - i) + "] " + Debugging.consoleText[i].Item1);
+                    }
+                }
                 else
-                    ImGui.Text(Debugging.consoleText.Count - i + " " + Debugging.consoleText[i]);
+                {
+                    if (Debugging.consoleText[i].Item2)
+                    {
+                        ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0, 0, 1.0f));
+                        ImGui.TextWrapped("[" + (Debugging.consoleText.Count - i) + "] " + Debugging.consoleText[i].Item1);
+                        ImGui.PopStyleColor();
+                    }
+                    else
+                    {
+                        ImGui.TextWrapped("[" + (Debugging.consoleText.Count - i) + "] " + Debugging.consoleText[i].Item1);
+                    }
+                }
             }
             ImGui.EndChild();
             ImGui.End();
@@ -439,7 +467,7 @@ namespace SpatialEngine.Rendering
                 {
                     if(NetworkManager.server.IsRunning())
                     {
-                        ImGui.Text("Running Server on: ");
+                        ImGui.TextWrapped("Running Server on: ");
                         ImGui.SameLine();
                         ImGui.TextColored(new Vector4(1, 0, 0, 1), $"{NetworkManager.server.ip}:{NetworkManager.server.port}");
                         int currentSel = 0;
@@ -478,14 +506,14 @@ namespace SpatialEngine.Rendering
                 {
                     if(NetworkManager.client.IsConnected())
                     {
-                        ImGui.Text("Connected to Server: ");
+                        ImGui.TextWrapped("Connected to Server: ");
                         ImGui.SameLine();
                         ImGui.TextColored(new Vector4(1, 0, 0, 1), $"{NetworkManager.client.connectIp}:{NetworkManager.client.connectPort}");
                         Connection clientConnect = NetworkManager.client.GetConnection();
-                        ImGui.Text("Client on: ");
+                        ImGui.TextWrapped("Client on: ");
                         ImGui.SameLine();
                         ImGui.TextColored(new Vector4(1, 0, 0, 1), $"{clientConnect}");
-                        ImGui.Text(string.Format($"Ping: {NetworkManager.client.GetPing() * 1000f:0.00}ms"));
+                        ImGui.TextWrapped(string.Format($"Ping: {NetworkManager.client.GetPing() * 1000f:0.00}ms"));
 
                         if(ImGui.Button("Disconnect"))
                         {
@@ -494,7 +522,7 @@ namespace SpatialEngine.Rendering
                     }
                     else
                     {
-                        ImGui.Text("Client not connected to server");
+                        ImGui.TextWrapped("Client not connected to server");
                         ImGui.InputText("IP Address", ref ip, 24, ImGuiInputTextFlags.CharsNoBlank);
                         ImGui.InputInt("Port", ref port);
                         port = (int)MathF.Abs(port);

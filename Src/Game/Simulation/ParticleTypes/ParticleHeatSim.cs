@@ -100,13 +100,13 @@ namespace SpatialGame
             Vector4Byte baseColor = new Vector4Byte(255, 255, 255, 255);
             switch (particle.state.behaveType)
             {
-                case ParticleBehaviorType.solid:
+                case (byte)ParticleBehaviorType.solid:
                     canColorChange = properties.heatingProperties.canColorChange[0];
                     break;
-                case ParticleBehaviorType.liquid:
+                case (byte)ParticleBehaviorType.liquid:
                     canColorChange = properties.heatingProperties.canColorChange[1];
                     break;
-                case ParticleBehaviorType.gas:
+                case (byte)ParticleBehaviorType.gas:
                     canColorChange = properties.heatingProperties.canColorChange[2];
                     break;
                 default:
@@ -119,107 +119,37 @@ namespace SpatialGame
                 //There is cases where solids can just turn straight into gases bypassing liquids
                 //but it will still occur with the temps needed it should not be visible as the sim
                 //should visually not show the transition that slow
-
-                //need to handle cases where the base state is between or after the temp changes
-                switch (properties.behaveType)
+                
+                //solid
+                
+                if (particle.state.temperature < properties.heatingProperties.stateChangeTemps[0])
                 {
-                    //the lower bound is solid and the base state is between the two temps
-                    case ParticleBehaviorType.liquid:
-                        {
-                            //lower bound of liquid base types to turn into a solid
-                            if (particle.state.temperature < properties.heatingProperties.stateChangeTemps[0])
-                            {
-                                particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
-                                particle.state.behaveType = ParticleBehaviorType.solid;
-                                particle.state.moveType = ParticleMovementType.particle;
-                                particle.state.color = properties.heatingProperties.stateChangeColors[0];
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            //middle bound transition where a liquid base type stays what it is
-                            if (particle.state.temperature >= properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
-                            {
-                                particle.state.viscosity = properties.viscosity;
-                                particle.state.color = properties.color;
-                                particle.state.behaveType = ParticleBehaviorType.liquid;
-                                particle.state.moveType = ParticleMovementType.liquid;
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            //upper bound gas transition where liquid turns to gas
-                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
-                            {
-                                particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
-                                particle.state.behaveType = ParticleBehaviorType.gas;
-                                particle.state.moveType = ParticleMovementType.gas;
-                                particle.state.color = properties.heatingProperties.stateChangeColors[2];
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            break;
-                        }
-                    //the lower bound is solid and the base state is between the two temps
-                    case ParticleBehaviorType.gas:
-                        {
-                            //lower bound of gas base types to turn into a solid
-                            if (particle.state.temperature < properties.heatingProperties.stateChangeTemps[0])
-                            {
-                                particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
-                                particle.state.behaveType = ParticleBehaviorType.solid;
-                                particle.state.moveType = ParticleMovementType.particle;
-                                particle.state.color = properties.heatingProperties.stateChangeColors[0];
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            //middle bound transition where a gas base type turns to liquid
-                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
-                            {
-                                particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
-                                particle.state.behaveType = ParticleBehaviorType.liquid;
-                                particle.state.moveType = ParticleMovementType.liquid;
-                                particle.state.color = properties.heatingProperties.stateChangeColors[1];
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            //upper bound gas transition where a gas base stays a gas
-                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
-                            {
-                                particle.state.viscosity = properties.viscosity;
-                                particle.state.color = properties.color;
-                                particle.state.behaveType = ParticleBehaviorType.gas;
-                                particle.state.moveType = ParticleMovementType.gas;
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            break;
-                        }
-
-                    default:
-                        {
-                            //base type is a solid or some other type that does not need special handeling
-                            if (particle.state.temperature < properties.heatingProperties.stateChangeTemps[0])
-                            {
-                                particle.state.viscosity = properties.viscosity;
-                                particle.state.color = properties.color;
-                                particle.state.behaveType = ParticleBehaviorType.solid;
-                                particle.state.moveType = properties.moveType;
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            //middle bound transition where base type turns to liquid
-                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
-                            {
-                                particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
-                                particle.state.behaveType = ParticleBehaviorType.liquid;
-                                particle.state.moveType = ParticleMovementType.liquid;
-                                particle.state.color = properties.heatingProperties.stateChangeColors[1];
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            //upper bound gas transition where liquid turns to gas
-                            if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
-                            {
-                                particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
-                                particle.state.behaveType = ParticleBehaviorType.gas;
-                                particle.state.moveType = ParticleMovementType.gas;
-                                particle.state.color = properties.heatingProperties.stateChangeColors[2];
-                                ParticleSimulation.SafePositionCheckSet(particle.state.behaveType.ToByte(), particle.position);
-                            }
-                            break;
-                        }
+                    particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[0];
+                    particle.state.behaveType = (byte)properties.heatingProperties.stateChangeBehaveType[0];
+                    particle.state.moveType = (ParticleMovementType)properties.heatingProperties.stateChangeMoveType[0];
+                    particle.state.color = properties.heatingProperties.stateChangeColors[0];
+                    ParticleSimulation.SafePositionCheckSet(particle.state.behaveType, particle.position);
                 }
+                
+                //middle bound transition where a liquid base type stays what it is
+                if (particle.state.temperature >= properties.heatingProperties.stateChangeTemps[0] && particle.state.temperature < properties.heatingProperties.stateChangeTemps[1])
+                {
+                    particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[1];
+                    particle.state.color = properties.heatingProperties.stateChangeColors[1];
+                    particle.state.behaveType = (byte)properties.heatingProperties.stateChangeBehaveType[1];
+                    particle.state.moveType = (ParticleMovementType)properties.heatingProperties.stateChangeMoveType[1];
+                    ParticleSimulation.SafePositionCheckSet(particle.state.behaveType, particle.position);
+                }
+                //upper bound gas transition where liquid turns to gas
+                if (particle.state.temperature > properties.heatingProperties.stateChangeTemps[1])
+                {
+                    particle.state.viscosity = properties.heatingProperties.stateChangeViscosity[2];
+                    particle.state.behaveType = (byte)properties.heatingProperties.stateChangeBehaveType[2];
+                    particle.state.moveType = (ParticleMovementType)properties.heatingProperties.stateChangeMoveType[2];
+                    particle.state.color = properties.heatingProperties.stateChangeColors[2];
+                    ParticleSimulation.SafePositionCheckSet(particle.state.behaveType, particle.position);
+                }
+                
                 baseColor = particle.state.color;
             }
             else
@@ -237,13 +167,13 @@ namespace SpatialGame
 
                 switch (particle.state.behaveType)
                 {
-                    case ParticleBehaviorType.solid:
+                    case (byte)ParticleBehaviorType.solid:
                         baseColorTemp = (Vector3)properties.heatingProperties.stateChangeColors[0] / 255f;
                         break;
-                    case ParticleBehaviorType.liquid:
+                    case (byte)ParticleBehaviorType.liquid:
                         baseColorTemp = (Vector3)properties.heatingProperties.stateChangeColors[1] / 255f;
                         break;
-                    case ParticleBehaviorType.gas:
+                    case (byte)ParticleBehaviorType.gas:
                         baseColorTemp = (Vector3)properties.heatingProperties.stateChangeColors[2] / 255f;
                         break;
                 }

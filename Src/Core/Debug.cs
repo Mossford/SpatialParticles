@@ -21,8 +21,9 @@ namespace SpatialEngine
 
         static Shader lineShader = new Shader(gl, "DebugDrawing.vert", "DebugDrawing.frag");
 
-        public static List<string> consoleText = new List<string>();
+        public static List<Tuple<string, bool>> consoleText = new List<Tuple<string, bool>>();
         public const int maxConsoleText = 499;
+        public static bool showImmediateConsole;
 
         public static void LogConsole(string msg)
         {
@@ -30,7 +31,18 @@ namespace SpatialEngine
             {
                 consoleText.RemoveAt(consoleText.Count - 1);
             }
-            consoleText.Insert(0, msg);
+            consoleText.Insert(0, new Tuple<string, bool>(msg, false));
+        }
+
+        public static void LogErrorConsole(string msg)
+        {
+            if (consoleText.Count >= maxConsoleText)
+            {
+                consoleText.RemoveAt(consoleText.Count - 1);
+            }
+            consoleText.Insert(0, new Tuple<string, bool>(msg, true));
+            showImmediateConsole = true;
+            Globals.showImguiDebug = true;
         }
 
 

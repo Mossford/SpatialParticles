@@ -95,55 +95,63 @@ namespace SpatialGame
                         break;
                     }
             }
-
-            switch (GetParticleBehaviorType())
+            
+            if (state.behaveType <= ScriptManager.reservedSpots)
             {
-                default:
+                switch (GetParticleBehaviorType())
                 {
-                    SolidBehaviorDefines.Update(ref this);
-                    break;
-                }
-                case ParticleBehaviorType.solid:
+                    default:
                     {
                         SolidBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.liquid:
+                    case ParticleBehaviorType.solid:
+                    {
+                        SolidBehaviorDefines.Update(ref this);
+                        break;
+                    }
+                    case ParticleBehaviorType.liquid:
                     {
                         LiquidBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.wall:
+                    case ParticleBehaviorType.wall:
                     {
                         UnmoveableBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.gas:
+                    case ParticleBehaviorType.gas:
                     {
                         GasBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.fire:
+                    case ParticleBehaviorType.fire:
                     {
                         FireBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.explosive: 
+                    case ParticleBehaviorType.explosive: 
                     {
                         ExplosiveBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.heater:
+                    case ParticleBehaviorType.heater:
                     {
                         HeaterBehaviorDefines.Update(ref this);
                         break;
                     }
-                case ParticleBehaviorType.cooler:
+                    case ParticleBehaviorType.cooler:
                     {
                         CoolerBehaviorDefines.Update(ref this);
                         break;
                     }
+                }    
             }
+            else
+            {
+                ScriptManager.RunScript(ref this);
+            }
+            
         }
 
 #if RELEASE
@@ -151,7 +159,7 @@ namespace SpatialGame
 #endif
         public ParticleBehaviorType GetParticleBehaviorType()
         {
-            return state.behaveType;
+            return (ParticleBehaviorType)state.behaveType;
         }
 
 #if RELEASE
