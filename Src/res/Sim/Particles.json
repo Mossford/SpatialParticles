@@ -2,7 +2,7 @@
   {
     "name": "Sand",
     "moveType": 2, // Particle movement
-    "behaveType": 32, // Solid behavior
+    "behaveType": 1, // Solid behavior
     "color": {
       "x": 255,
       "y": 255,
@@ -28,9 +28,9 @@
         10 //Gas
       ],
       "stateChangeBehaveType": [
-        32, 
-        32,
-        32
+        1,
+        2,
+        3
       ],
       "stateChangeMoveType": [
         2,
