@@ -88,8 +88,8 @@ namespace SpatialGame
                    "CanStateChange: " + canStateChange + "\n" + 
                    "StateChangeTemps: " + string.Join(", ", stateChangeTemps) + "\n" + 
                    "StateChangeViscosity: " + string.Join(", ", stateChangeViscosity) + "\n" + 
-                   "StateChangeBehaveType" + string.Join(", ", stateChangeBehaveType) + "\n" +
-                   "stateChangeMoveType" + string.Join(", ", stateChangeMoveType) + "\n" +
+                   "StateChangeBehaveType: " + string.Join(", ", stateChangeBehaveType) + "\n" +
+                   "stateChangeMoveType: " + string.Join(", ", stateChangeMoveType) + "\n" +
                    "StateChangeColors: " + string.Join(", ", stateChangeColors) + "\n" + 
                    "CanColorChange: " + string.Join(", ", canColorChange) + "\n";
         }

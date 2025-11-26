@@ -985,5 +985,70 @@
         false
       ]
     }
+  },
+  {
+    "name": "Test",
+    "moveType": 2, // Particle movement
+    "behaveType": 32, // Solid behavior
+    "color": {
+      "x": 255,
+      "y": 255,
+      "z": 255,
+      "w": 255
+    },
+    "viscosity": 0,
+    "xBounce": 0.12,
+    "yBounce": 0.07,
+    "heatingProperties": {
+      "enableHeatSim": true,
+      "temperature": 0.0,
+      "autoIgnite": 0.0,
+      "heatTransferRate": 0.6, // (60 percent of heat transfers)
+      "canStateChange": true,
+      "stateChangeTemps": [
+        1500.0, //glass melting temp
+        3500.0 //kind of guess based on silicon temps
+      ],
+      "stateChangeViscosity": [
+        0, //Solid
+        3, //Liquid
+        10 //Gas
+      ],
+      "stateChangeBehaveType": [
+        32,
+        32,
+        32
+      ],
+      "stateChangeMoveType": [
+        2,
+        3,
+        4
+      ],
+      "stateChangeColors": [
+        {
+          "x": 255,
+          "y": 255,
+          "z": 255,
+          "w": 255
+        },
+        {
+          "x": 255,
+          "y": 255,
+          "z": 255,
+          "w": 255
+        },
+        {
+          "x": 255,
+          "y": 255,
+          "z": 255,
+          "w": 255
+        }
+      ],
+      "canColorChange": [
+        true,
+        true,
+        false
+      ]
+    }
   }
 ]
