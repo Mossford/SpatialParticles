@@ -80,7 +80,7 @@ namespace SpatialGame
             particleScripts = Directory.GetFiles(SpatialEngine.Resources.SimScriptPath, "*.lua");
             if (particleScripts.Length > byte.MaxValue)
             {
-                Debugging.LogErrorConsole("Could not load past script: " + particleScripts[byte.MaxValue] + " Got past" + byte.MaxValue + " limit");
+                Debugging.LogErrorConsole("Could not load script past: " + particleScripts[byte.MaxValue] + " Got past" + byte.MaxValue + " limit");
                 
                 string[] temp = new string[byte.MaxValue];
                 for (int i = 0; i < byte.MaxValue; i++)
