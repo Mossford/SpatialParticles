@@ -41,7 +41,7 @@ namespace SpatialGame
         {
             string file = DateTime.Now.ToLongDateString() + ".sim";
 
-            if (!File.Exists(file))
+            if (!File.Exists(Resources.SimSavePath + file))
             {
                 Debugging.LogErrorConsole($"{file} not found");
                 return;
