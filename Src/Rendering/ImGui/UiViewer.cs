@@ -20,6 +20,9 @@ namespace Spatialparticles.Rendering.ImGUI
                     UiElement element = UiRenderer.uiElements[i];
                     Type elementType = element.GetType();
                     
+                    if(element.hide)
+                        continue;
+                    
                     ImGui.Separator();
 
                     if (ImGui.TreeNode(i, $"Element {i} {elementType.Name}"))

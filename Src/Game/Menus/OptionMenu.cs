@@ -50,7 +50,7 @@ namespace SpatialGame.Menus
             controlsShift = new UiText("LShift + MScroll - Switch Particle", new Vector2(650, 50f), 0.7f, 0.0f);
             controlsCtrl = new UiText("LCtrl + MScroll - Switch Mode", new Vector2(650, 0f), 0.7f, 0.0f);
             controlsLMouse = new UiText("LMouse - Spawn Particle", new Vector2(650, -50f), 0.7f, 0.0f);
-            controlsMScroll = new UiText("MScroll - Spawn Radius", new Vector2(650, -100f), 0.7f, 0.0f);
+            controlsMScroll = new UiText("MScroll - Spawner Radius", new Vector2(650, -100f), 0.7f, 0.0f);
             
             enableHeatSim.SetHide(hide);
             enablePerfTest.SetHide(hide);
