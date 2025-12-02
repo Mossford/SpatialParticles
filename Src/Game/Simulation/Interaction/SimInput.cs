@@ -128,6 +128,9 @@ namespace SpatialGame
 
         static void MouseScroll(IMouse mouse, ScrollWheel wheel)
         {
+            if (Globals.showImguiDebug && ImGui.GetIO().WantCaptureMouse)
+                return;
+            
             if (Input.IsKeyDown(Key.ShiftLeft) && Input.IsKeyUp(Key.ControlLeft))
             {
                 mouseSelection = (mouseSelection + (int)wheel.Y) % ParticleResourceHandler.particleIndexes.Length;

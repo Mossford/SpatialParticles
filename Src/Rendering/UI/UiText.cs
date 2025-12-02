@@ -60,6 +60,12 @@ namespace SpatialEngine.Rendering
             tempColor.b = 255;
             tempColor.a = 0;
             
+            //crashes when string is empty
+            if (text.Length == 0)
+            {
+                text = " ";
+            }
+            
             byte[] textData = Encoding.UTF8.GetBytes(text);
             fixed (byte* textDataPtr = textData)
                 surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
@@ -102,6 +108,12 @@ namespace SpatialEngine.Rendering
             tempColor.b = 255;
             tempColor.a = 0;
             
+            //crashes when string is empty
+            if (text.Length == 0)
+            {
+                text = " ";
+            }
+            
             byte[] textData = Encoding.UTF8.GetBytes(text);
             fixed (byte* textDataPtr = textData)
                 surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
@@ -143,6 +155,12 @@ namespace SpatialEngine.Rendering
             tempColor.g = 255;
             tempColor.b = 255;
             tempColor.a = 0;
+
+            //crashes when string is empty
+            if (text.Length == 0)
+            {
+                text = " ";
+            }
             
             byte[] textData = Encoding.UTF8.GetBytes(text);
             fixed (byte* textDataPtr = textData)

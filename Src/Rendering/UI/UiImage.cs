@@ -30,8 +30,8 @@ namespace SpatialEngine.Rendering
             this.scale = 1.0f;
             this.rotation = 0.0f;
             
-            byte[] pixels = new byte[width * height * 3];
-            for (int i = 0; i < width * height * 3; i++)
+            byte[] pixels = new byte[width * height * 4];
+            for (int i = 0; i < width * height * 4; i++)
             {
                 pixels[i] = 255;
             }
@@ -52,8 +52,8 @@ namespace SpatialEngine.Rendering
             this.scale = 1.0f;
             this.rotation = 0.0f;
             
-            byte[] pixels = new byte[width * height * 3];
-            for (int i = 0; i < width * height * 3; i++)
+            byte[] pixels = new byte[width * height * 4];
+            for (int i = 0; i < width * height * 4; i++)
             {
                 pixels[i] = 255;
             }
@@ -74,8 +74,8 @@ namespace SpatialEngine.Rendering
             this.scale = 1.0f;
             this.rotation = 0.0f;
             
-            byte[] pixels = new byte[width * height * 3];
-            for (int i = 0; i < width * height * 3; i++)
+            byte[] pixels = new byte[width * height * 4];
+            for (int i = 0; i < width * height * 4; i++)
             {
                 pixels[i] = 255;
             }

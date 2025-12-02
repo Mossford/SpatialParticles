@@ -14,6 +14,15 @@ namespace SpatialGame.Menus
         public static UiButton saveButton;
         public static UiButton loadButton;
         public static UiImage background;
+        public static UiText controls;
+        public static UiText controlsR;
+        public static UiText controlsT;
+        public static UiText controlsG;
+        public static UiText controlsEsc;
+        public static UiText controlsShift;
+        public static UiText controlsLMouse;
+        public static UiText controlsCtrl;
+        public static UiText controlsMScroll;
         public static bool hide;
         
         public static void Init()

@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using ImGuiNET;
 using Silk.NET.Input;
 using SpatialGame.Menus;
 
@@ -8,11 +9,9 @@ namespace SpatialEngine.Rendering
 {
     public class UiButton : UiElement
     {
-        public Vector2 position;
-        public Vector2 size;
         public Vector4 highLightColor;
         public Vector4 clickColor;
-        Action onClick;
+        public Action onClick;
 
         public UiText text;
         public UiImage image;
@@ -20,7 +19,8 @@ namespace SpatialEngine.Rendering
         public UiButton(Vector2 position, Vector2 size, Action onClick, string text, Vector4 color, Vector4 highLightColor, Vector4 clickColor)
         {
             this.position = position;
-            this.size = size;
+            this.width = size.X;
+            this.height = size.Y;
             this.scale = 1.0f;
             this.rotation = 0f;
             this.onClick = onClick;
@@ -43,7 +43,8 @@ namespace SpatialEngine.Rendering
         public UiButton(Vector2 position, Vector2 size, Action onClick, string text, Vector4 color, float highLightScale = 0.5f, float clickScale = 0.01f)
         {
             this.position = position;
-            this.size = size;
+            this.width = size.X;
+            this.height = size.Y;
             this.scale = 1.0f;
             this.rotation = 0f;
             this.onClick = onClick;
@@ -73,7 +74,7 @@ namespace SpatialEngine.Rendering
             this.highLightColor = highLightColor;
             this.clickColor = clickColor;
             
-            this.image = new UiImage(position, (int)size.X, (int)size.Y, color);
+            this.image = new UiImage(position, (int)width, (int)height, color);
             this.image.SetLayer((int)UiLayer.UiImage);
             this.text = new UiText(text, position, 1.0f, 0.0f);
             this.text.SetLayer((int)UiLayer.UiText);
@@ -81,9 +82,10 @@ namespace SpatialEngine.Rendering
             //calculate text scaling
             float scale = height / this.text.height;
             this.text.scale = scale;
-
-            this.size = new Vector2(this.text.width, height);
-            this.image.UpdateImage(position, (int)size.X, (int)size.Y, color);
+            
+            this.width = this.text.width;
+            this.height = height;
+            this.image.UpdateImage(position, (int)width, (int)height, color);
             
             AddThis();
         }
@@ -98,7 +100,7 @@ namespace SpatialEngine.Rendering
             this.highLightColor = new Vector4(color.X * highLightScale, color.Y * highLightScale, color.Z * highLightScale, color.W);
             this.clickColor = new Vector4(highLightColor.X * clickScale, highLightColor.Y * clickScale, highLightColor.Z * clickScale, color.W);
             
-            this.image = new UiImage(position, (int)size.X, (int)size.Y, color);
+            this.image = new UiImage(position, (int)width, (int)height, color);
             this.image.SetLayer((int)UiLayer.UiImage);
             this.text = new UiText(text, position, 1.0f, 0.0f);
             this.text.SetLayer((int)UiLayer.UiText);
@@ -107,8 +109,9 @@ namespace SpatialEngine.Rendering
             float scale = height / this.text.height;
             this.text.scale = scale;
 
-            this.size = new Vector2(this.text.width, height);
-            this.image.UpdateImage(position, (int)size.X, (int)size.Y, color);
+            this.width = this.text.width;
+            this.height = height;
+            this.image.UpdateImage(position, (int)width, (int)height, color);
             
             AddThis();
         }
@@ -122,11 +125,15 @@ namespace SpatialEngine.Rendering
             this.image.scale = scale;
             this.text.rotation = rotation;
             this.image.rotation = rotation;
+            this.text.width = width;
+            this.image.width = width;
+            this.text.height = height;
+            this.image.height = height;
 
             Mouse.uiWantMouse = false;
             this.image.color = color;
             
-            if (!BoundsCheck(mousePos) || hide)
+            if (!BoundsCheck(mousePos) || hide || ImGui.GetIO().WantCaptureMouse)
                 return;
             
             Mouse.uiWantMouse = true;
@@ -164,7 +171,7 @@ namespace SpatialEngine.Rendering
     #endif
         public bool BoundsCheck(Vector2 pos)
         {
-            if (pos.X < position.X - size.X || pos.X > position.X + size.X || pos.Y < position.Y - size.Y || pos.Y > position.Y + size.Y)
+            if (pos.X < position.X - width || pos.X > position.X + width || pos.Y < position.Y - height || pos.Y > position.Y + height)
                 return false;
             return true;
         }
