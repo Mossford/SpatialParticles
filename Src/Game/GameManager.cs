@@ -68,7 +68,7 @@ namespace SpatialGame
             //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             started = true;
-            paused = true;
+            paused = false;
             isInitalizing = false;
         }
 

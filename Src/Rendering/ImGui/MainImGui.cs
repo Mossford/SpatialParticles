@@ -21,6 +21,50 @@ using Spatialparticles.Rendering.ImGUI;
 
 namespace SpatialEngine.Rendering
 {
+    class ScrollingBuffer
+    {
+        int MaxSize;
+        int Offset;
+        public float[] DataX;
+        public float[] DataY;
+
+        public float dataYMax;
+        int dataYMaxIndex;
+        
+        public ScrollingBuffer(int max_size = 2000)
+        {
+            MaxSize = max_size;
+            Offset = 0;
+            DataX = new float[max_size];
+            DataY = new float[max_size];
+        }
+        public void AddPoint(float x, float y)
+        {
+            if (y > dataYMax)
+            {
+                dataYMaxIndex = Offset;
+                dataYMax = y;
+            }
+            
+            DataX[Offset] = x;
+            DataY[Offset] = y;
+            Offset = (Offset + 1) % MaxSize;
+
+            if (Offset == 0)
+            {
+                dataYMax = 0;
+                for (int i = 0; i < DataY.Length; i++)
+                {
+                    if (DataY[i] > dataYMax)
+                    {
+                        dataYMax = DataY[i];
+                        dataYMaxIndex = i;
+                    }
+                }
+            }
+        }
+    }
+
     public static class MainImGui
     {
         static bool ShowConsoleViewerMenu, 
@@ -36,6 +80,7 @@ namespace SpatialEngine.Rendering
         static float msCount;
         static float msTotal;
         static float fpsTime;
+        static ScrollingBuffer frameTimes = new ScrollingBuffer(2000);
 
         public static void Init()
         {
@@ -44,7 +89,7 @@ namespace SpatialEngine.Rendering
             SetImGuiStyle();
         }
 
-        public static void ImGuiMenu(float deltaTime)
+        public unsafe static void ImGuiMenu(float deltaTime)
         {
             ImGuiWindowFlags window_flags = 0;
             window_flags |= ImGuiWindowFlags.NoTitleBar;
@@ -60,6 +105,14 @@ namespace SpatialEngine.Rendering
             ImGui.TextWrapped($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
             ImGui.TextWrapped($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
             ImGui.TextWrapped($"{1.0f / fpsMax * 1000.0f:N3} ms/frame ({fpsMax:N1} FPS Max)");
+            frameTimes.AddPoint(GetTime(), ImGui.GetIO().Framerate);
+            fixed (float* dataX = frameTimes.DataX)
+            {
+                fixed (float* dataY = frameTimes.DataY)
+                {
+                    ImGui.PlotLines("", ref *dataY, frameTimes.DataX.Length, 0,"", 0.0f, frameTimes.dataYMax, new Vector2(0, 80.0f));
+                }
+            }
             ImGui.TextWrapped($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
             ImGui.TextWrapped($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / ( 1.0f / ImGui.GetIO().Framerate * 1000.0f)):N1}p/ms)");
 

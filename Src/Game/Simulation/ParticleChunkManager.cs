@@ -270,7 +270,8 @@ namespace SpatialGame
 #endif
         public static Vector2 MapPositionToChunks(Vector2 pos)
         {
-            return new Vector2(MathF.Floor(pos.X / chunkSize), MathF.Floor(pos.Y / chunkSize));
+            float inv = 1f / chunkSize;
+            return new Vector2((int)(pos.X * inv), (int)(pos.Y * inv));
         }
         
         /// <summary>
@@ -282,7 +283,12 @@ namespace SpatialGame
 #endif
         public static Vector2 MapPositionToChunk(Vector2 pos)
         {
-            return new Vector2(pos.X % chunkSize, pos.Y % chunkSize);
+            float inv = 1f / chunkSize;
+            //take position subtracted from the rounded amount to that chunk position
+            float ckX = pos.X - (int)(pos.X * inv) * chunkSize;
+            float ckY = pos.Y - (int)(pos.Y * inv) * chunkSize;
+
+            return new Vector2(ckX, ckY);
         }
         
 #if RELEASE
@@ -297,7 +303,7 @@ namespace SpatialGame
             
             //calculate index
             //may have issue where require the y size than the width size
-            int index = (int)((chunkHeightAmount * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
+            int index = (int)((chunkHeightAmount * pos.X) + pos.Y);
             return index;
         }
         
@@ -333,7 +339,7 @@ namespace SpatialGame
 
             //map position to size of chunks
             pos = MapPositionToChunk(pos);
-            short particleIndex = (short)((chunkSize * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
+            short particleIndex = (short)((chunkSize * pos.X) + pos.Y);
             if (particleIndex < 0 || particleIndex > chunks[chunkIndex].particles.Length)
                 return new ChunkIndex(-1, -1);
             return new ChunkIndex(chunkIndex, particleIndex);
@@ -371,7 +377,7 @@ namespace SpatialGame
             
             //calculate index
             //may have issue where require the y size than the width size
-            int index = (int)((chunkHeightAmount * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
+            int index = (int)((chunkHeightAmount * pos.X) + pos.Y);
             return index;
         }
         
@@ -398,7 +404,7 @@ namespace SpatialGame
 
             //map position to size of chunks
             pos = MapPositionToChunk(pos);
-            short particleIndex = (short)((chunkSize * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
+            short particleIndex = (short)((chunkSize * pos.X) + pos.Y);
             return new ChunkIndex(chunkIndex, particleIndex);
         }
 
@@ -413,7 +419,7 @@ namespace SpatialGame
             //map position to size of chunks
             //pos -= new Vector2(chunks[chunk].position.X, chunks[chunk].position.Y);
             pos = MapPositionToChunk(pos);
-            short particleIndex = (short)((chunkSize * MathF.Floor(pos.X)) + MathF.Floor(pos.Y));
+            short particleIndex = (short)((chunkSize * pos.X) + pos.Y);
             return new ChunkIndex(chunk, particleIndex);
         }
     }

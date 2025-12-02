@@ -22,25 +22,21 @@ namespace SpatialGame
             int posCheckR = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
             
             bool inAir = posCheckBelow == ParticleBehaviorType.empty.ToByte();
-            float velocityMag = pastVelocity.Length();
             if (inAir == false)
             {
-                particle.velocity = new Vector2(0, -velocityMag * particle.GetParticleProperties().yBounce);
-                if (particle.velocity.Length() < 0.01f)
-                {
-                    bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
-                    bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte();
-                    int posCheckRight = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
-                    int posCheckLeft = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y));
+                particle.velocity = new Vector2(0, -pastVelocity.Y * particle.GetParticleProperties().yBounce);
+                bool LUnder = posCheckLU == ParticleBehaviorType.empty.ToByte();
+                bool RUnder = posCheckRU == ParticleBehaviorType.empty.ToByte();
+                int posCheckRight = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X + 1, particle.position.Y));
+                int posCheckLeft = ParticleSimulation.SafePositionCheckGet(new Vector2(particle.position.X - 1, particle.position.Y));
                     
-                    if (LUnder && num == 0 && posCheckLeft == ParticleBehaviorType.empty.ToByte())
-                    {
-                        particle.MoveParticleOne(new Vector2(-1, -1));
-                    }
-                    else if (RUnder && num == 1 && posCheckRight == ParticleBehaviorType.empty.ToByte())
-                    {
-                        particle.MoveParticleOne(new Vector2(1, -1));
-                    }
+                if (LUnder && num == 0 && posCheckLeft == ParticleBehaviorType.empty.ToByte())
+                {
+                    particle.MoveParticleOne(new Vector2(-1, -1));
+                }
+                else if (RUnder && num == 1 && posCheckRight == ParticleBehaviorType.empty.ToByte())
+                {
+                    particle.MoveParticleOne(new Vector2(1, -1));
                 }
             }
             
