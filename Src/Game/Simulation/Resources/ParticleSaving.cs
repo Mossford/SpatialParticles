@@ -62,7 +62,7 @@ namespace SpatialGame
             
             for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
             {
-                ReadParticleChunk(ParticleChunkManager.chunks[i], reader);
+                ReadParticleChunk(ref ParticleChunkManager.chunks[i], reader);
             }
             
             reader.Close();
@@ -97,7 +97,7 @@ namespace SpatialGame
                 writer.Write(chunk.particleAddChangeQueue[i].Item1.X);
                 writer.Write(chunk.particleAddChangeQueue[i].Item1.Y);
                 writer.Write(chunk.particleAddChangeQueue[i].Item2);
-                WriteParticleState(writer, chunk.particleAddChangeQueue[i].Item3);
+                WriteParticle(writer, chunk.particleAddChangeQueue[i].Item3);
             }
             writer.Write(chunk.particleChangeQueue.Count);
             for (int i = 0; i < chunk.particleChangeQueue.Count; i++)
@@ -113,7 +113,7 @@ namespace SpatialGame
             writer.Write(chunk.position.Y);
         }
 
-        static void ReadParticleChunk(in ParticleChunk chunk, in BinaryReader reader)
+        static void ReadParticleChunk(ref ParticleChunk chunk, in BinaryReader reader)
         {
             chunk.particles = ReadArray<Particle>(reader);
             chunk.freeParticleSpots = new Queue<short>(ReadArray<short>(reader));
@@ -134,12 +134,12 @@ namespace SpatialGame
                 chunk.particlesToAdd[i] = new ValueTuple<string, Vector2>(reader.ReadString(), new Vector2(reader.ReadSingle(), reader.ReadSingle()));
             }
             int particleAddChangeQueueCount = reader.ReadInt32();
-            chunk.particleAddChangeQueue = new List<(Vector2, string, ParticleState)>(particleAddChangeQueueCount);
+            chunk.particleAddChangeQueue = new List<(Vector2, string, Particle)>(particleAddChangeQueueCount);
             for (int i = 0; i < particleAddChangeQueueCount; i++)
             {
-                chunk.particleAddChangeQueue[i] = new ValueTuple<Vector2, string, ParticleState>(new Vector2(reader.ReadSingle(), reader.ReadSingle()),
+                chunk.particleAddChangeQueue[i] = new ValueTuple<Vector2, string, Particle>(new Vector2(reader.ReadSingle(), reader.ReadSingle()),
                     reader.ReadString(),
-                    ReadParticleState(reader));
+                    ReadParticle(reader));
             }
             int particleChangeQueueCount = reader.ReadInt32();
             chunk.particleChangeQueue = new List<(ChunkIndex, ParticleBehaviorType, Particle)>(particleChangeQueueCount);

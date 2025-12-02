@@ -75,21 +75,21 @@ namespace SpatialGame
                     }
                 case ParticleMovementType.particle:
                     {
-                        velocity += new Vector2(0,2f);
+                        velocity += new Vector2(0,1f);
                         MoveParticle();
                         ParticleMovementDefines.Update(ref this, pastVelocity);
                         break;
                     }
                 case ParticleMovementType.liquid:
                     {
-                        velocity += new Vector2(0,2f);
+                        velocity += new Vector2(0,1f);
                         MoveParticle();
                         LiquidMovement.Update(ref this, pastVelocity);
                         break;
                     }
                 case ParticleMovementType.gas:
                     {
-                        velocity += new Vector2(0,-2f);
+                        velocity += new Vector2(0,-1f);
                         MoveParticle();
                         GasMovementDefines.Update(ref this, pastVelocity);
                         break;
@@ -276,19 +276,22 @@ namespace SpatialGame
                 step = (int)Math.Abs(dir.Y);
 
             Vector2 increase = dir / step;
+            Vector2 maxPos = position;
+            bool canMove = true;
 
             for (int i = 0; i < step; i++)
             {
-                Vector2 newPos = position + increase;
+                Vector2 newPos = position + (increase * (i + 1));
                 newPos = new Vector2(MathF.Floor(newPos.X), MathF.Floor(newPos.Y));
                 int otherId = ParticleSimulation.SafeIdCheckGet(newPos);
                 
+                //check if there is a particle in the way
                 if (otherId != -1)
                 {
-                    return;
+                    break;
                 }
                 
-                //check bounds of particle
+                //particle gone out of bounds, delete
                 if (!BoundsCheck(newPos))
                 {
                     velocity = dir;
@@ -296,22 +299,12 @@ namespace SpatialGame
                     return;
                 }
                 
-                //check chunk bounds of particle
-                ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
-                if (newChunk.chunkIndex != id.chunkIndex)
-                {
-                    string name = GetParticleProperties().name;
-                    QueueDelete();
-                    //check if it got added and if it did not then an issue and no particle has been spawned
-                    ParticleChunkManager.chunks[newChunk.chunkIndex].QueueParticleAddChange(newPos, name, state);
-                    return;
-                }
+                ChunkIndex chunkCheck = ParticleChunkManager.UnsafeGetIndexInChunksMap(newPos);
                 
                 //quick check to make sure we dont move into a queued particle 
-                bool canMove = true;
-                for (int g = 0; g < ParticleChunkManager.chunks[newChunk.chunkIndex].particleAddChangeQueue.Count; g++)
+                for (int g = 0; g < ParticleChunkManager.chunks[chunkCheck.chunkIndex].particleAddChangeQueue.Count; g++)
                 {
-                    if (ParticleChunkManager.chunks[newChunk.chunkIndex].particleAddChangeQueue[g].Item1 == newPos)
+                    if (ParticleChunkManager.chunks[chunkCheck.chunkIndex].particleAddChangeQueue[g].Item1 == newPos)
                     {
                         canMove = false;
                         break;
@@ -319,20 +312,33 @@ namespace SpatialGame
                 }
             
                 if(!canMove)
-                    return;
-                
-                //------safe to access the arrays directly------
-                
-                ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
-                ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;
-                position = newPos;
-                //has to be floor other than round because round can go up and move the element
-                //into a position where it is now intersecting another element
-                index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
-                ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id.particleIndex;
+                    break;
+
+                maxPos = newPos;
             }
+            
+            //check chunk bounds of particle
+            ChunkIndex newChunk = ParticleChunkManager.UnsafeGetIndexInChunksMap(maxPos);
+            if (newChunk.chunkIndex != id.chunkIndex)
+            {
+                string name = GetParticleProperties().name;
+                QueueDelete();
+                //check if it got added and if it did not then an issue and no particle has been spawned
+                ParticleChunkManager.chunks[newChunk.chunkIndex].QueueParticleAddChange(maxPos, name, this);
+                return;
+            }
+            
+            //------safe to access the arrays directly------
+                
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
+            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;
+            position = maxPos;
+            //has to be floor other than round because round can go up and move the element
+            //into a position where it is now intersecting another element
+            index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = GetParticleBehaviorType().ToByte();
+            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id.particleIndex;
         }
 
 #if RELEASE
@@ -365,7 +371,7 @@ namespace SpatialGame
                 string name = GetParticleProperties().name;
                 QueueDelete();
                 //check if it got added and if it did not then an issue and no particle has been spawned
-                ParticleChunkManager.chunks[newChunk.chunkIndex].QueueParticleAddChange(newPos, name, state);
+                ParticleChunkManager.chunks[newChunk.chunkIndex].QueueParticleAddChange(newPos, name, this);
                 return;
             }
             

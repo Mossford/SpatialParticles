@@ -6,7 +6,7 @@ using SpatialEngine;
 
 namespace SpatialGame
 {
-    public class ParticleChunk
+    public struct ParticleChunk
     {
         public Particle[] particles;
         public Queue<short> freeParticleSpots;
@@ -38,7 +38,7 @@ namespace SpatialGame
         /// <summary>
         /// Adds Queued particle with changes to index, the id to swap, and the state to change
         /// </summary>
-        public List<(Vector2, string, ParticleState)> particleAddChangeQueue;
+        public List<(Vector2, string, Particle)> particleAddChangeQueue;
         /// <summary>
         /// Queue of changes to a particle
         /// </summary>
@@ -61,7 +61,7 @@ namespace SpatialGame
             idsToDelete = new List<short>();
             idsToDeleteInfo = new List<(Vector2, ChunkIndex)>();
             particlesToAdd = new List<(string, Vector2)>();
-            particleAddChangeQueue = new List<(Vector2, string, ParticleState)>();
+            particleAddChangeQueue = new List<(Vector2, string, Particle)>();
             particleChangeQueue = new List<(ChunkIndex, ParticleBehaviorType, Particle)>();
             particleCount = 0;
             suroundingIdOfParticle = new ChunkIndex[8];
@@ -158,7 +158,9 @@ namespace SpatialGame
             {
                 ChunkIndex index = AddParticle(particleAddChangeQueue[i].Item1, particleAddChangeQueue[i].Item2);
                 if (index.particleIndex != -1)
-                    particles[index.particleIndex].state = particleAddChangeQueue[i].Item3;
+                {
+                    particles[index.particleIndex].SetValueFromParticle(particleAddChangeQueue[i].Item3);
+                }
             }
 
             particleAddChangeQueue.Clear();
@@ -274,9 +276,9 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public void QueueParticleAddChange(Vector2 pos, string name, in ParticleState state)
+        public void QueueParticleAddChange(Vector2 pos, string name, in Particle particle)
         {
-            particleAddChangeQueue.Add(new ValueTuple<Vector2, string, ParticleState>(pos, name, state));
+            particleAddChangeQueue.Add(new ValueTuple<Vector2, string, Particle>(pos, name, particle));
         }
 
 #if RELEASE

@@ -235,6 +235,9 @@ namespace SpatialGame
         /// will throw a exception if it's not in bounds
         /// </summary>
         /// <returns></returns>
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static ref ParticleChunk GetChunkReference(Vector2 position)
         {
             int index = SafeGetChunkIndexMap(position);
@@ -248,6 +251,9 @@ namespace SpatialGame
         /// will throw a exception if it's not in bounds
         /// </summary>
         /// <returns></returns>
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
         public static ref ParticleChunk GetChunkReference(int index)
         {
             if (index > -1 && index < chunks.Length)
