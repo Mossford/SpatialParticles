@@ -253,12 +253,6 @@ namespace SpatialGame
                 spawners[id].idElementSqaureInnerMesh = SimRenderer.meshes.Count;
                 SimRenderer.meshes.Add(CreateSimShapes.CreateSquare(1f));
                 
-                textPos = positionMouse + new Vector2(2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                if (textPos.X - 125 > Window.size.X / 2f)
-                {
-                    textPos = positionMouse + new Vector2(-2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                }
-                textPos.Y *= -1;
                 spawners[id].elementText.CreateText("text", textPos, 1f, 0f);
             }
 
@@ -274,15 +268,9 @@ namespace SpatialGame
             {
                 if (spawners[id].nameBefore != name || spawners[id].modeBefore != mode)
                 {
-                    Vector3 color = (Vector3)Particle.GetParticleColor(name) / 255f;
-                    textPos = positionMouse + new Vector2(2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                    if (textPos.X - 125 > Window.size.X / 2f)
-                    {
-                        textPos = positionMouse + new Vector2(-2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                    }
-                    textPos.Y *= -1;
+                    Vector3 color = (Vector3)Particle.GetParticleColor(name);
                     spawners[id].elementText.UpdateText(name, textPos,1.0f, 0f);
-                    spawners[id].elementText.color = color;
+                    spawners[id].elementText.color = new Vector4(color, 255);
                     SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = color;
                     spawners[id].nameBefore = name;
                     spawners[id].modeBefore = mode;
@@ -296,15 +284,9 @@ namespace SpatialGame
                 {
                     if (selection != spawners[id].selectionBefore || spawners[id].modeBefore != mode)
                     {
-                        textPos = positionMouse + new Vector2(2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                        if (textPos.X - 125 > Window.size.X / 2f)
-                        {
-                            textPos = positionMouse + new Vector2(-2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                        }
-                        textPos.Y *= -1;
                         spawners[id].elementText.UpdateText("Heat", textPos,1.0f, 0f);
-                        spawners[id].elementText.color = new Vector3(1f, 100 / 255f, 0);
-                        SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(1f, 100 / 255f, 0);
+                        spawners[id].elementText.color = new Vector4(240, 70, 0, 255);
+                        SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(240, 70, 0);
                         spawners[id].selectionBefore = selection;
                         spawners[id].modeBefore = mode;
                     }
@@ -314,28 +296,23 @@ namespace SpatialGame
                 {
                     if (selection != spawners[id].selectionBefore || spawners[id].modeBefore != mode)
                     {
-                        textPos = positionMouse + new Vector2(2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                        if (textPos.X - 125 > Window.size.X / 2f)
-                        {
-                            textPos = positionMouse + new Vector2(-2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-                        }
-                        textPos.Y *= -1;
                         spawners[id].elementText.UpdateText("Cool", textPos, 1.0f, 0f);
-                        spawners[id].elementText.color = new Vector3(0, 100 / 255f, 1f);
-                        SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(0, 100 / 255f, 1f);
+                        spawners[id].elementText.color = new Vector4(0, 70, 240, 255);
+                        SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].color = new Vector3(0, 70, 240);
                         spawners[id].selectionBefore = selection;
                         spawners[id].modeBefore = mode;
                     }
                 }
             }
             
-            textPos = positionMouse + new Vector2(2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
-            if (textPos.X - 125 > Window.size.X / 2f)
+            textPos = positionMouse + new Vector2(2 * scaleX + (spawners[id].elementText.width * Window.scaleFromBase.X), -1 * boxDist);
+            if (textPos.X + spawners[id].elementText.width > Window.size.X / 2f)
             {
-                textPos = positionMouse + new Vector2(-2 * scaleX + spawners[id].elementText.width, -1 * boxDist);
+                textPos = positionMouse + new Vector2(-2 * scaleX + (spawners[id].elementText.width * Window.scaleFromBase.X), -1 * boxDist);
             }
             textPos.Y *= -1;
-            spawners[id].elementText.UpdateText(spawners[id].elementText.text, textPos, 1.0f, 0f);
+            
+            spawners[id].elementText.UpdateText(spawners[id].elementText.text, textPos / Window.scaleFromBase, 1.0f, 0f);
             SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].position = BoxPos;
             SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].position.Y *= -1;
             SimRenderer.meshes[spawners[id].idElementSqaureInnerMesh].scaleX = scaleXInner;

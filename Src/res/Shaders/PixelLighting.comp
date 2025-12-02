@@ -34,7 +34,8 @@ vec4 CalculateLighting(vec2 particlePos, int index)
     {
         for(int yL = -range; yL < range; yL++)
         {
-            vec2 lightPos = vec2(particlePos.x + xL, particlePos.y + yL);
+            vec2 offset = vec2(xL, yL);
+            vec2 lightPos = particlePos + offset;
 
             int indexLight = int((lightPos.x * particleResolution.y) - lightPos.y + particleResolution.y - 1);
 

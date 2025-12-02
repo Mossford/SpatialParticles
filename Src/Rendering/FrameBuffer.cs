@@ -69,6 +69,26 @@ namespace SpatialEngine.Rendering
             draw();
             Globals.gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
         }
+        
+        public void Update(Action draw, uint width, uint height)
+        {
+            Globals.gl.Viewport(0, 0, width, height);
+            Globals.gl.BindFramebuffer(FramebufferTarget.Framebuffer, id);
+            if (mask == ClearBufferMask.ColorBufferBit)
+            {
+                Globals.gl.Clear(mask | ClearBufferMask.DepthBufferBit);
+            }
+            else if (mask == ClearBufferMask.DepthBufferBit)
+            {
+                Globals.gl.Clear(mask);
+            }
+            else if (mask == ClearBufferMask.StencilBufferBit)
+            {
+                Globals.gl.Clear(mask | ClearBufferMask.DepthBufferBit);
+            }
+            draw();
+            Globals.gl.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+        }
 
         public void Bind()
         {

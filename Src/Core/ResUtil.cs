@@ -13,7 +13,8 @@ namespace SpatialEngine
         public static string ImagePath = resourcePath + "Images/";
         public static string ModelPath = resourcePath + "Models/";
         public static string SimPath = resourcePath + "Sim/";
-        public static string SimScriptPath = resourcePath + "Sim/Scripts/";
+        public static string SimScriptPath = SimPath + "Scripts/";
+        public static string SimSavePath = SimPath + "Saves/";
         public static string FontPath = resourcePath + "Font/";
 
         //IMPORTANT

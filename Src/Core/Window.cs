@@ -18,6 +18,7 @@ using static SpatialEngine.Debugging;
 using static SpatialEngine.Input;
 using SpatialGame;
 using SilkNetWindow = Silk.NET.Windowing.Window;
+using Texture = SpatialEngine.Rendering.Texture;
 
 namespace SpatialEngine
 {
@@ -29,6 +30,8 @@ namespace SpatialEngine
         public static int MAX_SCR_HEIGHT;
         public static Vector2 size;
         public static Vector2 windowScale;
+        public static Vector2 scaleFromBase;
+        public static FrameBuffer frameBuffer;
         
         public static void Init()
         {
@@ -62,6 +65,7 @@ namespace SpatialEngine
             snWindow.WindowState = WindowState.Normal;
             size = (Vector2)snWindow.FramebufferSize;
             windowScale = size / (Vector2)snWindow.Size;
+            scaleFromBase = size / new Vector2(SCR_WIDTH, SCR_HEIGHT);
             
             //gl = GL.GetApi(window);
             byte* text = gl.GetString(GLEnum.Renderer);
@@ -99,7 +103,8 @@ namespace SpatialEngine
             NetworkManager.Init();
             player = new Player(Vector2.Zero);
             
-
+            frameBuffer = new FrameBuffer((uint)size.X, (uint)size.Y, ClearBufferMask.ColorBufferBit);
+            
             input.Keyboards[0].KeyDown += KeyDown;
             
         }
@@ -121,6 +126,7 @@ namespace SpatialEngine
         {
             size = (Vector2)snWindow.FramebufferSize;
             windowScale = size / (Vector2)snWindow.Size;
+            scaleFromBase = size / new Vector2(SCR_WIDTH, SCR_HEIGHT);
             
             totalTime += (float)dt;
             deltaTime = (float)dt;
@@ -182,6 +188,7 @@ namespace SpatialEngine
             gl.PolygonMode(GLEnum.FrontAndBack, GLEnum.Fill);
             
             GameManager.RenderGame();
+            frameBuffer.Update(GameManager.RenderGame, (uint)size.X, (uint)size.Y);
             //renders other more generic ui stuff
             UiRenderer.Draw();
             SetNeededDebug(Matrix4x4.CreateOrthographic(size.X, size.Y, -1, 1f), Matrix4x4.Identity);

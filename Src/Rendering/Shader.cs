@@ -244,6 +244,13 @@ namespace SpatialEngine.Rendering
             gl.UniformMatrix3x2(location, 1, false, (float*)&mat);
         }
 
+        public void setTexture(string name, in Texture texture, GLEnum point, int pointNum)
+        {
+            int location = GetUniformLocation(name);
+            gl.Uniform1(location, pointNum);
+            texture.Bind(point);
+        }
+
         public void Dispose()
         {
             gl.DeleteProgram(shader);

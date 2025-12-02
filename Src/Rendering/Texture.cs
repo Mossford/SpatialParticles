@@ -195,6 +195,12 @@ namespace SpatialEngine.Rendering
             gl.ActiveTexture(GLEnum.Texture0);
             gl.BindTexture(GLEnum.Texture2D, id);
         }
+        
+        public void Bind(GLEnum point)
+        {
+            gl.ActiveTexture(point);
+            gl.BindTexture(GLEnum.Texture2D, id);
+        }
 
         public void BindImage()
         {

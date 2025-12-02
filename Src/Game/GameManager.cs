@@ -22,6 +22,7 @@ namespace SpatialGame
         public static bool started;
         public static bool isInitalizing;
         public static float timeSinceLastInit;
+        public static bool paused;
         static float totalTimeUpdate;
 
         public static void ReInitGame()
@@ -35,9 +36,44 @@ namespace SpatialGame
                 PixelColorer.CleanUp();
                 SimRenderer.CleanUp();
                 SimInput.CleanUp();
+                UiRenderer.Cleanup();
             }
-
+            
             UiRenderer.Init();
+            MainMenu.Init();
+            OptionMenu.Init();
+
+            StartGame();
+            //RigidBodySimulation.Init();
+            
+            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
+            
+            isInitalizing = false;
+        }
+        
+        public static void InitGame()
+        {
+            isInitalizing = true;
+            timeSinceLastInit = GetTime();
+            UiTextHandler.Init();
+            ParticleSaving.Init();
+            
+            UiRenderer.Init();
+            MainMenu.Init();
+            OptionMenu.Init();
+            
+            StartGame();
+            //RigidBodySimulation.Init();
+            
+            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
+
+            started = true;
+            paused = true;
+            isInitalizing = false;
+        }
+
+        public static void StartGame()
+        {
             ParticleResourceHandler.Init();
             ScriptManager.Init();
             PixelColorer.Init(changeResolution);
@@ -46,40 +82,14 @@ namespace SpatialGame
             SimRenderer.Init();
             SimLighting.Init();
             SimInput.Init();
-            //RigidBodySimulation.Init();
-            
-            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
-
-            isInitalizing = false;
-        }
-        
-        public static void InitGame()
-        {
-            isInitalizing = true;
-            timeSinceLastInit = GetTime();
-            UiRenderer.Init();
-            ParticleResourceHandler.Init();
-            ScriptManager.Init();
-            UiTextHandler.Init();
-            
-            MainMenu.Init();
-            
-            PixelColorer.Init(false);
-            ParticleHeatSim.Init();
-            ParticleSimulation.InitParticleSim();
-            SimRenderer.Init();
-            SimLighting.Init();
-            SimInput.Init();
-            //RigidBodySimulation.Init();
-            
-            //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
-
-            started = true;
-            isInitalizing = false;
         }
 
         public static void UpdateGame(float dt)
         {
+            GameInteraction.Update();
+            MainMenu.Update();
+            OptionMenu.Update();
+            
             PixelColorer.Update();
             SimRenderer.Update();
             //SimInput.Update();
@@ -97,9 +107,12 @@ namespace SpatialGame
 
         public static void FixedUpdateGame(float dt)
         {
-            SimInput.Update();
-            SimInput.FixedUpdate();
-            //RigidBodySimulation.Update(dt / 1000f);
+            if (!paused)
+            {
+                SimInput.Update();
+                SimInput.FixedUpdate();
+                //RigidBodySimulation.Update(dt / 1000f);
+            }
         }
 
         public static void FixedUpdateGameThreaded(float dt)
@@ -114,8 +127,11 @@ namespace SpatialGame
 
         public static void FixedParticleUpdate(float dt)
         {
-            ParticleSimulation.RunParticleSim(dt);
-            ScriptManager.Update();
+            if (!paused)
+            {
+                ParticleSimulation.RunParticleSim(dt);
+                ScriptManager.Update();
+            }
         }
     }
 }

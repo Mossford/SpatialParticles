@@ -12,19 +12,11 @@ using SDL;
 
 namespace SpatialEngine.Rendering
 {
-    public class UiText : IDisposable
+    public class UiText : UiElement
     {
         public string text;
-        public Vector2 position;
-        public int width;
-        public int height;
-        public float scale;
-        public float rotation;
-        public Vector3 color;
-
         Texture texture;
         byte[] bitmap;
-        int elementIndex;
 
         public UiText()
         {
@@ -37,7 +29,11 @@ namespace SpatialEngine.Rendering
             this.position = pos;
             this.scale = scaleImage;
             this.rotation = rotation;
+            this.width = 100;
+            this.height = 100;
+            this.color = new Vector4(255, 255, 255, 255);
             
+            SetLayer((int)UiLayer.UiText);
             CreateText();
         }
         
@@ -68,8 +64,8 @@ namespace SpatialEngine.Rendering
             fixed (byte* textDataPtr = textData)
                 surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
             
-            width = surface->w;
-            height = surface->h;
+            this.width = surface->w;
+            this.height = surface->h;
             
             //the surface format is already index 8 but this seems to get it to work?
             SDL_Surface* surfaceConvert = SDL3.SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
@@ -82,13 +78,11 @@ namespace SpatialEngine.Rendering
             SDL3.SDL_DestroySurface(surface);
             surface = surfaceConvert;
 
-            bitmap = CreateBitmapFromSurface(surface->pixels, surface->w * surface->h * 4);
+            bitmap = CreateBitmapFromSurface(surface->pixels, (int)width * (int)height * 4);
             
             texture = new Texture();
-            texture.LoadTexture(bitmap, surface->w, surface->h, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
-            elementIndex = UiRenderer.uiElements.Count;
-            //add on the length from the actual text to center it to a position
-            UiRenderer.AddElement(texture, new Vector2(position.X, position.Y), rotation, scale, texture.size, UiElementType.text);
+            texture.LoadTexture(bitmap, (int)width, (int)height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
+            AddThis();
             
             SDL3.SDL_DestroySurface(surface);
         }
@@ -112,8 +106,8 @@ namespace SpatialEngine.Rendering
             fixed (byte* textDataPtr = textData)
                 surface = SDL3_ttf.TTF_RenderText_Solid(UiTextHandler.font, textDataPtr, (nuint)text.Length, tempColor);
 
-            width = surface->w;
-            height = surface->h;
+            this.width = surface->w;
+            this.height = surface->h;
             
             //the surface format is already index 8 but this seems to get it to work?
             SDL_Surface* surfaceConvert = SDL3.SDL_ConvertSurface(surface, SDL_PixelFormat.SDL_PIXELFORMAT_INDEX8);
@@ -126,13 +120,11 @@ namespace SpatialEngine.Rendering
             SDL3.SDL_DestroySurface(surface);
             surface = surfaceConvert;
 
-            bitmap = CreateBitmapFromSurface(surface->pixels, width * height * 4);
+            bitmap = CreateBitmapFromSurface(surface->pixels, (int)width * (int)height * 4);
             
             texture = new Texture();
-            texture.LoadTexture(bitmap, width, height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
-            elementIndex = UiRenderer.uiElements.Count;
-            //add on the length from the actual text to center it to a position
-            UiRenderer.AddElement(texture, position, rotation, scale, texture.size, UiElementType.text);
+            texture.LoadTexture(bitmap, (int)width, (int)height, Silk.NET.OpenGL.InternalFormat.Red, Silk.NET.OpenGL.GLEnum.Red);
+            AddThis();
             
             SDL3.SDL_DestroySurface(surface);
         }
@@ -170,22 +162,34 @@ namespace SpatialEngine.Rendering
             SDL3.SDL_DestroySurface(surface);
             surface = surfaceConvert;
 
-            bitmap = CreateBitmapFromSurface(surface->pixels, width * height * 4);
+            bitmap = CreateBitmapFromSurface(surface->pixels, (int)width * (int)height * 4);
             
             SDL3.SDL_DestroySurface(surface);
-
-            UiRenderer.uiElements[elementIndex].color = color;
-            UiRenderer.uiElements[elementIndex].scale = scaleImage;
-            UiRenderer.uiElements[elementIndex].position = position;
-            UiRenderer.uiElements[elementIndex].width = width;
-            UiRenderer.uiElements[elementIndex].height = height;
-            UiRenderer.uiElements[elementIndex].rotation = rotation;
-            UiRenderer.uiElements[elementIndex].texture.UpdateTexture(bitmap, width, height);
+            
+            texture.UpdateTexture(bitmap, (int)width, (int)height);
         }
-        
-        public void Dispose()
+
+        public override void Update()
         {
-            UiRenderer.DeleteElement(elementIndex);
+            if(hide)
+                return;
+            
+            UpdateMatrix();
+        }
+
+        public override void Draw(in UiQuad quad)
+        {
+            quad.Draw(UiRenderer.uiTextShader, matrix, texture, color / new Vector4(255));
+        }
+
+        public override void Cleanup()
+        {
+            texture.Dispose();
+        }
+
+        public override void SetHide(bool hide)
+        {
+            this.hide = hide;
         }
     }
     

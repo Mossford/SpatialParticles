@@ -18,6 +18,8 @@ namespace SpatialGame
         public static Random random;
         public static int totalParticleCount;
         public static bool paused;
+
+        public const string Version = "0.5";
         
 
         public static void InitParticleSim()
@@ -85,7 +87,8 @@ namespace SpatialGame
 
         public static void RunParticleSim(float delta)
         {
-
+            paused = GameManager.paused;
+            
             if (!paused)
             {
                 PixelColorer.ResetLighting();

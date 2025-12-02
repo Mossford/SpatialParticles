@@ -3,6 +3,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
 using System.Runtime.CompilerServices;
 using SDL;
+using SpatialGame;
 
 namespace SpatialEngine
 {
@@ -11,7 +12,7 @@ namespace SpatialEngine
         public static GL gl;
         public static GraphicsAPI glApi = GraphicsAPI.Default;
         public static IWindow snWindow;
-        public static string EngVer = "PAR:0.5 | ENG:0.6.8 Stable";
+        public static string EngVer = $"PAR:{ParticleSimulation.Version} | ENG:0.6.8 Stable";
         public static string OpenGlVersion = "";
         public static string Gpu = "";
 

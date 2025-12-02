@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using SpatialEngine;
@@ -7,10 +8,9 @@ namespace SpatialEngine.Rendering
 {
     public static class UiRenderer
     {
-        static Shader uiTextShader;
-        static Shader uiImageShader;
+        public static Shader uiTextShader;
+        public static Shader uiImageShader;
         public static List<UiElement> uiElements;
-        public static List<Button> buttons;
         //will reuse this quad for all elements
         static UiQuad quad;
 
@@ -23,12 +23,26 @@ namespace SpatialEngine.Rendering
             quad.Bind();
 
             uiElements = new List<UiElement>();
-            buttons = new List<Button>();
+            Mouse.uiWantMouse = false;
         }
 
-        public static void AddElement(Texture texture, Vector2 pos, float rotation, float scale, Vector2 dimension, UiElementType type)
+        public static void AddElement(UiElement element)
         {
-            uiElements.Add(new UiElement(texture, pos, rotation, scale, dimension.X, dimension.Y, type));
+            element.index = 0;
+            for (int i = 0; i < uiElements.Count; i++)
+            {
+                if (element.layer > uiElements[i].layer)
+                {
+                    element.index = i + 1;
+                }
+                if (element.layer <= uiElements[i].layer)
+                {
+                    element.index = i;
+                    break;
+                }
+            }
+            
+            uiElements.Insert(element.index, element);
         }
 
         public static void DeleteElement(int index)
@@ -38,11 +52,6 @@ namespace SpatialEngine.Rendering
 
         public static void Update()
         {
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                buttons[i].Update();
-            }
-            
             for (int i = 0; i < uiElements.Count; i++)
             {
                 uiElements[i].Update();
@@ -53,19 +62,21 @@ namespace SpatialEngine.Rendering
         {
             for (int i = 0; i < uiElements.Count; i++)
             {
-                switch(uiElements[i].type)
-                {
-                    default:
-                        quad.Draw(in uiImageShader, in uiElements[i].matrix, in uiElements[i].texture, uiElements[i].color);
-                        break;
-                    case UiElementType.image:
-                        quad.Draw(in uiImageShader, in uiElements[i].matrix, in uiElements[i].texture, uiElements[i].color);
-                        break;
-                    case UiElementType.text:
-                        quad.Draw(in uiTextShader, in uiElements[i].matrix, in uiElements[i].texture, uiElements[i].color);
-                        break;
-                }
+                if(!uiElements[i].hide)
+                    uiElements[i].Draw(quad);
             }
+        }
+
+        public static void Cleanup()
+        {
+            for (int i = 0; i < uiElements.Count; i++)
+            {
+                uiElements[i].Dispose();
+            }
+            uiElements.Clear();
+            quad.Dispose();
+            uiTextShader.Dispose();
+            uiImageShader.Dispose();
         }
     }
 }

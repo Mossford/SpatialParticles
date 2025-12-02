@@ -66,13 +66,16 @@ namespace SpatialEngine.Rendering
         }
 
         //ui renderer usage
-        public unsafe void Draw(in Shader shader, in Matrix4x4 mat, in Texture texture, in Vector3 color)
+        public unsafe void Draw(in Shader shader, in Matrix4x4 mat, in Texture texture, in Vector4 color)
         {
             Globals.gl.BindVertexArray(id);
-            texture.Bind();
             Globals.gl.UseProgram(shader.shader);
+            shader.setTexture("diffuseTexture", texture, GLEnum.Texture0, 0);
+            shader.setTexture("frame", Window.frameBuffer.texture, GLEnum.Texture1, 1);
             shader.setMat4("model", mat);
-            shader.setVec3("uiColor", color);
+            shader.setVec4("uiColor", color);
+            shader.setVec2("resolution", Window.size);
+            shader.setInt("radius", 2);
             Globals.gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
             Globals.gl.BindVertexArray(0);
             Globals.drawCallCount++;
