@@ -75,21 +75,21 @@ namespace SpatialGame
                     }
                 case ParticleMovementType.particle:
                     {
-                        velocity += new Vector2(0,1f);
+                        velocity += new Vector2(0,2f);
                         MoveParticle();
                         ParticleMovementDefines.Update(ref this, pastVelocity);
                         break;
                     }
                 case ParticleMovementType.liquid:
                     {
-                        velocity += new Vector2(0,1f);
+                        velocity += new Vector2(0,2f);
                         MoveParticle();
                         LiquidMovement.Update(ref this, pastVelocity);
                         break;
                     }
                 case ParticleMovementType.gas:
                     {
-                        velocity += new Vector2(0,-1f);
+                        velocity += new Vector2(0,-2f);
                         MoveParticle();
                         GasMovementDefines.Update(ref this, pastVelocity);
                         break;
@@ -322,7 +322,7 @@ namespace SpatialGame
                     return;
                 
                 //------safe to access the arrays directly------
-
+                
                 ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
                 ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = ParticleBehaviorType.empty.ToByte();
                 ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = -1;

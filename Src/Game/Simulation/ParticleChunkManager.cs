@@ -186,10 +186,12 @@ namespace SpatialGame
                     //chunks[i].UpdateLighting();
                 }
                 
+                
                 for (int i = 0; i < chunks.Length; i++)
                 {
                     chunks[i].UpdateAddParticleQueue();
                 }
+                
                 
                 for (int i = 0; i < chunks.Length; i++)
                 {

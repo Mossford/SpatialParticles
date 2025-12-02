@@ -215,7 +215,7 @@ namespace SpatialGame
                                 }
                                 if (idToCheck.particleIndex != -1 && selection == 1)
                                 {
-                                    chunk.particles[idToCheck.particleIndex].state.temperature -=  Globals.fixedDeltaTime;
+                                    chunk.particles[idToCheck.particleIndex].state.temperature -= Globals.fixedDeltaTime;
                                 }
                             }
                             else if(button == 1)

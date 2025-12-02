@@ -94,6 +94,11 @@ namespace SpatialGame
             SimRenderer.Update();
             //SimInput.Update();
             SimRenderer.UpdateMeshes();
+
+            if (!paused)
+            {
+                SimInput.Update();
+            }
         }
 
         public static void RenderGame()
@@ -109,7 +114,6 @@ namespace SpatialGame
         {
             if (!paused)
             {
-                SimInput.Update();
                 SimInput.FixedUpdate();
                 //RigidBodySimulation.Update(dt / 1000f);
             }

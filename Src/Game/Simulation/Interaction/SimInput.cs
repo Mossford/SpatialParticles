@@ -57,7 +57,8 @@ namespace SpatialGame
 
         public static void FixedUpdate()
         {
-            
+            string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
+            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.localPosition, Mouse.lastLocalPosition, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
         }
         
         public static void Update()
@@ -65,7 +66,6 @@ namespace SpatialGame
             string name = ParticleResourceHandler.loadedParticles[ParticleResourceHandler.particleIndexes[mouseSelection]].name;
             MouseInteraction.DrawMouseElementSelect(Mouse.localPosition, mouseSpawnRadius, mousePressed, name, selectionMode, mouseSelection, 0);
             MouseInteraction.DrawMouseElementsCircle(Mouse.localPosition, mouseSpawnRadius, mousePressed, 0);
-            MouseInteraction.SpawnParticlesCircleSpawner(Mouse.localPosition, Mouse.lastLocalPosition, mouseSpawnRadius, mousePressed, mouseButtonPress, name, selectionMode, mouseSelection);
             
             if (Input.IsKeyDown(Key.T) && !initButton)
             {
