@@ -10,7 +10,7 @@ namespace SpatialGame
         {
             if (Input.IsKeyDown(Key.Escape) && !GameManager.paused)
             {
-                MainMenu.hide = false;
+                MainMenu.SetHide(false);
                 GameManager.paused = true;
             }
         }

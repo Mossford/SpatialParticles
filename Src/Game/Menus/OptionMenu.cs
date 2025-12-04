@@ -30,8 +30,6 @@ namespace SpatialGame.Menus
 
         public static void Init()
         {
-            hide = true;
-
             enableHeatSim = new UiText("Heat Simulation", new Vector2(-550, 400), 0.75f, 0.0f);
             enablePerfTest = new UiText("Performance Test", new Vector2(-550, 300), 0.75f, 0.0f);
             enableParticleLight = new UiText("Particle Lighting", new Vector2(-550, 200), 0.75f, 0.0f);
@@ -51,28 +49,13 @@ namespace SpatialGame.Menus
             controlsCtrl = new UiText("LCtrl + MScroll - Switch Mode", new Vector2(650, 0f), 0.7f, 0.0f);
             controlsLMouse = new UiText("LMouse - Spawn Particle", new Vector2(650, -50f), 0.7f, 0.0f);
             controlsMScroll = new UiText("MScroll - Spawner Radius", new Vector2(650, -100f), 0.7f, 0.0f);
-            
-            enableHeatSim.SetHide(hide);
-            enablePerfTest.SetHide(hide);
-            enableParticleLight.SetHide(hide);
-            enableDarkLight.SetHide(hide);
-            particleLightRange.SetHide(hide);
-            enableGpuCompLight.SetHide(hide);
-            enableMultiThread.SetHide(hide);
-            simulationSpeed.SetHide(hide);
-            controls.SetHide(hide);
-            controlsR.SetHide(hide);
-            controlsT.SetHide(hide);
-            controlsG.SetHide(hide);
-            controlsEsc.SetHide(hide);
-            controlsShift.SetHide(hide);
-            controlsCtrl.SetHide(hide);
-            controlsLMouse.SetHide(hide);
-            controlsMScroll.SetHide(hide);
+
+            SetHide(true);
         }
 
-        public static void Update()
+        public static void SetHide(bool hide)
         {
+            OptionMenu.hide = hide;
             enableHeatSim.SetHide(hide);
             enablePerfTest.SetHide(hide);
             enableParticleLight.SetHide(hide);

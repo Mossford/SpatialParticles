@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-
+using ImGuiNET;
 using SpatialEngine;
 using SpatialEngine.Rendering;
 using SpatialGame.Menus;
@@ -24,6 +25,9 @@ namespace SpatialGame
         public static float timeSinceLastInit;
         public static bool paused;
         static float totalTimeUpdate;
+        public static double particleUpdateTime;
+
+        //static PerformanceTester tester;
 
         public static void ReInitGame()
         {
@@ -41,6 +45,7 @@ namespace SpatialGame
             
             UiRenderer.Init();
             MainMenu.Init();
+            MainMenu.SetHide(true);
             OptionMenu.Init();
 
             StartGame();
@@ -68,8 +73,11 @@ namespace SpatialGame
             //RigidBodySimulation.bodies.Add(new SimBody(new Vector2(80.5f, 56.4f), 10f, 0f));
 
             started = true;
-            paused = false;
+            paused = true;
             isInitalizing = false;
+            
+            //tester = new PerformanceTester();
+            //tester.Init();
         }
 
         public static void StartGame()
@@ -86,18 +94,16 @@ namespace SpatialGame
 
         public static void UpdateGame(float dt)
         {
-            GameInteraction.Update();
-            MainMenu.Update();
-            OptionMenu.Update();
+            //tester.UpdatePerformanceTester(dt);
             
-            PixelColorer.Update();
-            SimRenderer.Update();
-            //SimInput.Update();
-            SimRenderer.UpdateMeshes();
+            GameInteraction.Update();
 
             if (!paused)
-            {
+            { 
+                PixelColorer.Update();
+                SimRenderer.Update();
                 SimInput.Update();
+                SimRenderer.UpdateMeshes();
             }
         }
 
@@ -133,8 +139,13 @@ namespace SpatialGame
         {
             if (!paused)
             {
+                double delta = GetTimeHigh() * 1000.0f;
                 ParticleSimulation.RunParticleSim(dt);
                 ScriptManager.Update();
+                delta = (GetTimeHigh() * 1000.0f) - delta;
+                particleUpdateTime = delta;
+                //tester.particleUpdateTime += delta;
+                //tester.particleUpdateTicks++;
             }
         }
     }

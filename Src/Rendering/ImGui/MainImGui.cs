@@ -74,12 +74,12 @@ namespace SpatialEngine.Rendering
             ShowParticleCreationMenu,
             ShowUiViewer;
         static ImFontPtr font;
-        static float fpsCount;
-        static float fpsTotal;
+        static uint frameCount;
+        static double frameAvg;
+        static double particleFrameAvg;
         static float fpsMax;
-        static float msCount;
-        static float msTotal;
         static float fpsTime;
+        static float updateBlocker;
         static ScrollingBuffer frameTimes = new ScrollingBuffer(2000);
 
         public static void Init()
@@ -97,41 +97,42 @@ namespace SpatialEngine.Rendering
 
             ImGui.Begin("SpatialParticles", window_flags);
 
+            float frameRate = 1.0f / deltaTime;
+
             //needs to be io.framerate because the actal deltatime is polled too fast and the 
             //result is hard to read
             ImGui.TextWrapped("Version " + EngVer);
             ImGui.TextWrapped("OpenGl " + OpenGlVersion);
             ImGui.TextWrapped("Gpu: " + Gpu);
-            ImGui.TextWrapped($"{1.0f / ImGui.GetIO().Framerate * 1000.0f:N3} ms/frame ({ImGui.GetIO().Framerate:N1} FPS)");
-            ImGui.TextWrapped($"{msTotal / fpsCount:N3} ms Avg ({fpsTotal / fpsCount:N1} FPS Avg)");
+            ImGui.TextWrapped($"{1000f / frameAvg:N3} ms ({frameAvg:N1} FPS)");
             ImGui.TextWrapped($"{1.0f / fpsMax * 1000.0f:N3} ms/frame ({fpsMax:N1} FPS Max)");
-            frameTimes.AddPoint(GetTime(), ImGui.GetIO().Framerate);
-            fixed (float* dataX = frameTimes.DataX)
+            frameTimes.AddPoint((float)particleFrameAvg, (float)frameAvg);
+            fixed (float* dataY = frameTimes.DataY)
             {
-                fixed (float* dataY = frameTimes.DataY)
-                {
-                    ImGui.PlotLines("", ref *dataY, frameTimes.DataX.Length, 0,"", 0.0f, frameTimes.dataYMax, new Vector2(0, 80.0f));
-                }
+                ImGui.PlotLines("", ref *dataY, frameTimes.DataX.Length, 0,"", 0.0f, frameTimes.dataYMax, new Vector2(0, 80.0f));
             }
             ImGui.TextWrapped($"DrawCall per frame: ({MathF.Round(drawCallCount):N1})");
-            ImGui.TextWrapped($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / ( 1.0f / ImGui.GetIO().Framerate * 1000.0f)):N1}p/ms)");
-
-            if (fpsMax < ImGui.GetIO().Framerate)
+            ImGui.Separator();
+            ImGui.TextWrapped($"Particle sim %: ({100 * (particleFrameAvg - frameAvg) / (particleFrameAvg * 1000f):N1}%)");
+            ImGui.TextWrapped($"Particles per frame: ({(PixelColorer.width * PixelColorer.height / (1.0f / frameAvg * 1000.0f)):N1}p/frame)");
+            ImGui.TextWrapped($"Particle sim: {1000f / particleFrameAvg:N3} ms ({particleFrameAvg:N1} FPS)");
+            ImGui.TextWrapped($"Particles per ms: ({(PixelColorer.width * PixelColorer.height / (1.0f / particleFrameAvg * 1000.0f)):N1}p/ms)");
+            
+            if (fpsMax < frameRate)
             {
-                fpsMax = ImGui.GetIO().Framerate;
+                fpsMax = frameRate;
             }
-            fpsTotal += ImGui.GetIO().Framerate;
-            msTotal += 1.0f / ImGui.GetIO().Framerate * 1000f;
-            fpsCount++;
-            msTotal++;
+
+            frameAvg += (frameRate - frameAvg) / (frameCount + 1);
+            particleFrameAvg += ((1000.0f / GameManager.particleUpdateTime) - particleFrameAvg) / (frameCount + 1);
+            frameCount++;
             fpsTime += deltaTime;
-            if(fpsTime >= 10)
+            if(fpsTime >= 5)
             {
                 fpsTime = 0f;
-                fpsTotal = 0f;
-                fpsCount = 0;
-                msTotal = 0;
-                msCount = 0;
+                frameCount = 0;
+                frameAvg = 0;
+                particleFrameAvg = 0;
             }
 
             drawCallCount = 0;

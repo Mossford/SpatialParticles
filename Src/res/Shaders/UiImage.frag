@@ -6,16 +6,15 @@ uniform sampler2D frame;
 in vec2 TexCoords;
 uniform vec2 resolution;
 uniform vec4 uiColor;
-uniform int radius;
 
 vec3 boxBlur()
 {
     vec3 result = vec3(0.0);
     float count = 0.0;
     
-    for (int x = -radius; x <= radius; x++)
+    for (int x = -2; x <= 2; x++)
     {
-        for (int y = -radius; y <= radius; y++)
+        for (int y = -2; y <= 2; y++)
         {
             vec2 offset = vec2(x, y) * 3.0f / resolution;
             result += texture(frame, gl_FragCoord.xy / resolution + offset).rgb;

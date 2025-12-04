@@ -75,7 +75,6 @@ namespace SpatialEngine.Rendering
             shader.setMat4("model", mat);
             shader.setVec4("uiColor", color);
             shader.setVec2("resolution", Window.size);
-            shader.setInt("radius", 2);
             Globals.gl.DrawElements(GLEnum.Triangles, 6, GLEnum.UnsignedInt, (void*)0);
             Globals.gl.BindVertexArray(0);
             Globals.drawCallCount++;

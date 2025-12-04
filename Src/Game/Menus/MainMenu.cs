@@ -36,8 +36,9 @@ namespace SpatialGame.Menus
             background = new UiImage(Vector2.Zero, (int)(Window.size.X / 2), (int)(Window.size.Y / 2), new Vector4(50, 50, 50, 0));
         }
 
-        public static void Update()
+        public static void SetHide(bool hide)
         {
+            MainMenu.hide = hide;
             title.SetHide(hide);
             titleBackground.SetHide(hide);
             playButton.SetHide(hide);
@@ -50,13 +51,13 @@ namespace SpatialGame.Menus
         public static void RunPlay()
         {
             GameManager.paused = false;
-            hide = true;
+            SetHide(true);
         }
         
         public static void RunOptions()
         {
-            hide = true;
-            OptionMenu.hide = false;
+            OptionMenu.SetHide(false);
+            SetHide(true);
         }
 
         public static void RunSave()
@@ -67,7 +68,7 @@ namespace SpatialGame.Menus
         {
             ParticleSaving.Load();
             GameManager.paused = false;
-            hide = true;
+            SetHide(true);
         }
     }
 }

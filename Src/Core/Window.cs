@@ -122,31 +122,36 @@ namespace SpatialEngine
         }
         
         static float totalTimeUpdate = 0.0f;
+        static double currentTime;
+        static double lastTime;
         static void OnUpdate(double dt)
         {
             size = (Vector2)snWindow.FramebufferSize;
             windowScale = size / (Vector2)snWindow.Size;
             scaleFromBase = size / new Vector2(SCR_WIDTH, SCR_HEIGHT);
             
-            totalTime += (float)dt;
-            deltaTime = (float)dt;
+            currentTime = GetTimeHigh();
+            deltaTime = (float)(currentTime - lastTime);
+            lastTime = currentTime;
+            
+            totalTime += deltaTime;
 
             //clear first as any keys pressed can not be dectected by the order of input silk net does
             Input.Clear();
             Input.Update();
             
-            GameManager.UpdateGame((float)dt);
+            GameManager.UpdateGame(deltaTime);
             Mouse.Update();
             UiRenderer.Update();
 
-            totalTimeUpdate += (float)dt * 1000;
+            totalTimeUpdate += deltaTime * 1000;
             while (totalTimeUpdate >= fixedDeltaTime)
             {
                 totalTimeUpdate -= fixedDeltaTime;
                 FixedUpdate(fixedDeltaTime);
             }
             
-            GameManager.FixedUpdateGameThreaded((float)dt);
+            GameManager.FixedUpdateGameThreaded(deltaTime);
         }
         
         static void FixedUpdate(float dt)
