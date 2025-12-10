@@ -150,6 +150,7 @@ namespace SpatialGame
             }
 
             particlesToAdd.Clear();
+            
         }
 
         public void UpdateParticleQueuedAddChanges()
@@ -164,6 +165,7 @@ namespace SpatialGame
             }
 
             particleAddChangeQueue.Clear();
+            
         }
         
         public void UpdateParticleQueuedChanges()
@@ -176,16 +178,16 @@ namespace SpatialGame
                 ChunkIndex index = particleChangeQueue[i].Item1;
                 //if (index.particleIndex != -1)
                 //{
-                    //particles[index.particleIndex] = particleChangeQueue[i].Item3;
-                    particles[index.particleIndex].SetValueFromParticle(particleChangeQueue[i].Item3);
-                    /*particles[index.particleIndex].state = particleChangeQueue[i].Item3.state;
-                    particles[index.particleIndex].propertyIndex = particleChangeQueue[i].Item3.propertyIndex;
-                    particles[index.particleIndex].velocity = particleChangeQueue[i].Item3.velocity;
-                    particles[index.particleIndex].lastMoveDirection = particleChangeQueue[i].Item3.lastMoveDirection;
-                    particles[index.particleIndex].timeSpawned = particleChangeQueue[i].Item3.timeSpawned;
-                    particles[index.particleIndex].state.behaveType = particleChangeQueue[i].Item2;*/
+                //particles[index.particleIndex] = particleChangeQueue[i].Item3;
+                particles[index.particleIndex].SetValueFromParticle(particleChangeQueue[i].Item3);
+                /*particles[index.particleIndex].state = particleChangeQueue[i].Item3.state;
+                particles[index.particleIndex].propertyIndex = particleChangeQueue[i].Item3.propertyIndex;
+                particles[index.particleIndex].velocity = particleChangeQueue[i].Item3.velocity;
+                particles[index.particleIndex].lastMoveDirection = particleChangeQueue[i].Item3.lastMoveDirection;
+                particles[index.particleIndex].timeSpawned = particleChangeQueue[i].Item3.timeSpawned;
+                particles[index.particleIndex].state.behaveType = particleChangeQueue[i].Item2;*/
 
-                    positionCheck[index.particleIndex] = particleChangeQueue[i].Item2.ToByte();
+                positionCheck[index.particleIndex] = particleChangeQueue[i].Item2.ToByte();
                 //}
             }
 
@@ -270,7 +272,10 @@ namespace SpatialGame
 #endif
         public void AddParticleQueue(Vector2 pos, string name)
         {
-            particlesToAdd.Add(new ValueTuple<string, Vector2>(name, pos));
+            lock (particlesToAdd)
+            {
+                particlesToAdd.Add(new ValueTuple<string, Vector2>(name, pos));
+            }
         }
         
 #if RELEASE
@@ -278,7 +283,10 @@ namespace SpatialGame
 #endif
         public void QueueParticleAddChange(Vector2 pos, string name, in Particle particle)
         {
-            particleAddChangeQueue.Add(new ValueTuple<Vector2, string, Particle>(pos, name, particle));
+            lock (particleAddChangeQueue)
+            {
+                particleAddChangeQueue.Add(new ValueTuple<Vector2, string, Particle>(pos, name, particle));
+            }
         }
 
 #if RELEASE
@@ -286,7 +294,10 @@ namespace SpatialGame
 #endif
         public void QueueParticleChange(ChunkIndex index, ParticleBehaviorType type, in Particle particle)
         {
-            particleChangeQueue.Add(new ValueTuple<ChunkIndex, ParticleBehaviorType, Particle>(index, type, particle));
+            lock (particleChangeQueue)
+            {
+                particleChangeQueue.Add(new ValueTuple<ChunkIndex, ParticleBehaviorType, Particle>(index, type, particle));
+            }
         }
         
         /// <summary>

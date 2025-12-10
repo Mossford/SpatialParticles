@@ -173,8 +173,11 @@ namespace SpatialGame
         public static void SetColorAtPos(Vector2 pos, byte r, byte g, byte b)
         {
             int index = PosToIndex(pos);
-            if(index != -1)
-                pixelColors[index] = new Vector4Byte(r,g,b,255);
+            lock (pixelColors)
+            {
+                if(index != -1)
+                    pixelColors[index] = new Vector4Byte(r,g,b,255);
+            }
         }
 
 #if RELEASE

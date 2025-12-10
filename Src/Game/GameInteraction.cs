@@ -1,6 +1,5 @@
 using Silk.NET.Input;
 using SpatialEngine;
-using SpatialGame.Menus;
 
 namespace SpatialGame
 {

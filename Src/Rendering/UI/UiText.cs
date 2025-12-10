@@ -23,7 +23,7 @@ namespace SpatialEngine.Rendering
             
         }
 
-        public UiText(string text, Vector2 pos, float scaleImage, float rotation)
+        public UiText(string text, Vector2 pos, float scaleImage, float rotation, UiAlignment alignment = UiAlignment.Left)
         {
             this.text = text;
             this.position = pos;
@@ -35,9 +35,10 @@ namespace SpatialEngine.Rendering
             
             SetLayer((int)UiLayer.UiText);
             CreateText();
+            SetAlignment(alignment);
         }
         
-        public static byte[] CreateBitmapFromSurface(IntPtr ptr, int length)
+        static byte[] CreateBitmapFromSurface(IntPtr ptr, int length)
         {
             byte[] array = new byte[length];
 

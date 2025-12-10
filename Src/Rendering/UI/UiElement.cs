@@ -19,9 +19,10 @@ namespace SpatialEngine.Rendering
         public int index;
         public int layer;
         public bool hide;
+        public UiAlignment alignment;
             
         static float conv = MathF.PI / 180f;
-        public void UpdateMatrix()
+        protected void UpdateMatrix()
         {
             matrix = Matrix4x4.Identity;
             matrix *= Matrix4x4.CreateScale(width * scale * Window.scaleFromBase.X, height * scale * Window.scaleFromBase.Y, 1f);
@@ -36,6 +37,27 @@ namespace SpatialEngine.Rendering
             UiRenderer.AddElement(this);
         }
 
+        public void SetAlignment(UiAlignment alignment)
+        {
+            this.alignment = alignment;
+            float posX = position.X;
+            switch (alignment)
+            {
+                case UiAlignment.Left:
+                {
+                    posX += (width * scale);
+                    break;
+                }
+                case UiAlignment.Right:
+                {
+                    posX -= (width * scale);
+                    break;
+                }
+            }
+
+            position.X = posX;
+        }
+
         public void SetLayer(int layer)
         {
             //if changed during running the uielement list wont be sorted anymore
@@ -45,6 +67,16 @@ namespace SpatialEngine.Rendering
         public int CompareLayer(UiElement first, UiElement second)
         {
             return first.layer.CompareTo(second);
+        }
+
+        public void SetFromElement(UiElement element)
+        {
+            this.width = element.width;
+            this.height = element.height;
+            this.position = element.position;
+            this.rotation = element.rotation;
+            this.scale = element.scale;
+            this.alignment = element.alignment;
         }
 
         public abstract void Update();

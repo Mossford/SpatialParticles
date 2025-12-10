@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using ImGuiNET;
 using Silk.NET.Input;
-using SpatialGame.Menus;
 
 namespace SpatialEngine.Rendering
 {
@@ -12,11 +11,12 @@ namespace SpatialEngine.Rendering
         public Vector4 highLightColor;
         public Vector4 clickColor;
         public Action onClick;
+        bool clicked;
 
         public UiText text;
         public UiImage image;
 
-        public UiButton(Vector2 position, Vector2 size, Action onClick, string text, Vector4 color, Vector4 highLightColor, Vector4 clickColor)
+        public UiButton(Vector2 position, Vector2 size, Action onClick, string text, Vector4 color, Vector4 highLightColor, Vector4 clickColor, UiAlignment alignment = UiAlignment.Center)
         {
             this.position = position;
             this.width = size.X;
@@ -30,17 +30,18 @@ namespace SpatialEngine.Rendering
             
             this.image = new UiImage(position, (int)size.X, (int)size.Y, color);
             this.image.SetLayer((int)UiLayer.UiImage);
-            this.text = new UiText(text, position, 1.0f, 0.0f);
+            this.text = new UiText(text, position, 1.0f, 0.0f, alignment);
             this.text.SetLayer((int)UiLayer.UiText);
             
             //calculate text scaling
             float scale = size.Y / this.text.height;
             this.text.scale = scale;
             
+            SetAlignment(alignment);
             AddThis();
         }
         
-        public UiButton(Vector2 position, Vector2 size, Action onClick, string text, Vector4 color, float highLightScale = 0.5f, float clickScale = 0.01f)
+        public UiButton(Vector2 position, Vector2 size, Action onClick, string text, Vector4 color, float highLightScale = 0.5f, float clickScale = 0.01f, UiAlignment alignment = UiAlignment.Center)
         {
             this.position = position;
             this.width = size.X;
@@ -54,43 +55,18 @@ namespace SpatialEngine.Rendering
             
             this.image = new UiImage(position, (int)size.X, (int)size.Y, color);
             this.image.SetLayer((int)UiLayer.UiImage);
-            this.text = new UiText(text, position, 1.0f, 0.0f);
+            this.text = new UiText(text, position, 1.0f, 0.0f, alignment);
             this.text.SetLayer((int)UiLayer.UiText);
             
             //calculate text scaling
             float scale = size.Y / this.text.height;
             this.text.scale = scale;
             
+            SetAlignment(alignment);
             AddThis();
         }
         
-        public UiButton(Vector2 position, float height, Action onClick, string text, Vector4 color, Vector4 highLightColor, Vector4 clickColor)
-        {
-            this.position = position;
-            this.onClick = onClick;
-            this.scale = 1.0f;
-            this.rotation = 0f;
-            this.color = color;
-            this.highLightColor = highLightColor;
-            this.clickColor = clickColor;
-            
-            this.image = new UiImage(position, (int)width, (int)height, color);
-            this.image.SetLayer((int)UiLayer.UiImage);
-            this.text = new UiText(text, position, 1.0f, 0.0f);
-            this.text.SetLayer((int)UiLayer.UiText);
-            
-            //calculate text scaling
-            float scale = height / this.text.height;
-            this.text.scale = scale;
-            
-            this.width = this.text.width;
-            this.height = height;
-            this.image.UpdateImage(position, (int)width, (int)height, color);
-            
-            AddThis();
-        }
-        
-        public UiButton(Vector2 position, float height, Action onClick, string text, Vector4 color, float highLightScale = 0.5f, float clickScale = 0.01f)
+        public UiButton(Vector2 position, float height, Action onClick, string text, Vector4 color, float highLightScale = 0.5f, float clickScale = 0.01f, UiAlignment alignment = UiAlignment.Center)
         {
             this.position = position;
             this.onClick = onClick;
@@ -102,7 +78,7 @@ namespace SpatialEngine.Rendering
             
             this.image = new UiImage(position, (int)width, (int)height, color);
             this.image.SetLayer((int)UiLayer.UiImage);
-            this.text = new UiText(text, position, 1.0f, 0.0f);
+            this.text = new UiText(text, position, 1.0f, 0.0f, alignment);
             this.text.SetLayer((int)UiLayer.UiText);
             
             //calculate text scaling
@@ -113,22 +89,15 @@ namespace SpatialEngine.Rendering
             this.height = height;
             this.image.UpdateImage(position, (int)width, (int)height, color);
             
+            SetAlignment(alignment);
             AddThis();
         }
             
         public override void Update()
         {
             Vector2 mousePos = Mouse.localPosition * new Vector2(1.0f, -1.0f);
-            this.text.position = position;
-            this.image.position = position;
-            this.text.scale = scale;
-            this.image.scale = scale;
-            this.text.rotation = rotation;
-            this.image.rotation = rotation;
-            this.text.width = width;
-            this.image.width = width;
-            this.text.height = height;
-            this.image.height = height;
+            this.text.SetFromElement(this);
+            this.image.SetFromElement(this);
 
             Mouse.uiWantMouse = false;
             this.image.color = color;
@@ -139,10 +108,15 @@ namespace SpatialEngine.Rendering
             Mouse.uiWantMouse = true;
             this.image.color = highLightColor;
             
-            if (Mouse.mouse.IsButtonPressed(MouseButton.Left))
+            if (Mouse.mouse.IsButtonPressed(MouseButton.Left) && !clicked)
             {
                 this.image.color = clickColor;
                 onClick();
+                clicked = true;
+            }
+            else if (!Mouse.mouse.IsButtonPressed(MouseButton.Left))
+            {
+                clicked = false;
             }
             
             UpdateMatrix();

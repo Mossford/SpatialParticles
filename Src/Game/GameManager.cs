@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using ImGuiNET;
 using SpatialEngine;
 using SpatialEngine.Rendering;
-using SpatialGame.Menus;
 using static SpatialEngine.Globals;
 using static SpatialEngine.Rendering.MeshUtils;
 using static SpatialEngine.Resources;
@@ -60,6 +59,8 @@ namespace SpatialGame
         {
             isInitalizing = true;
             timeSinceLastInit = GetTime();
+            
+            //should only be run once
             UiTextHandler.Init();
             ParticleSaving.Init();
             

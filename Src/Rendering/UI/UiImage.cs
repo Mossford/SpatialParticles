@@ -17,6 +17,7 @@ namespace SpatialEngine.Rendering
             this.scale = 1.0f;
             this.rotation = 0.0f;
             
+            SetAlignment(UiAlignment.Center);
             SetLayer((int)UiLayer.UiImage);
             AddThis();
         }
@@ -39,11 +40,12 @@ namespace SpatialEngine.Rendering
             texture = new Texture();
             texture.LoadTexture(pixels, width, height, InternalFormat.Rgb, GLEnum.Rgb);
             
+            SetAlignment(UiAlignment.Center);
             SetLayer((int)UiLayer.UiImage);
             AddThis();
         }
         
-        public UiImage(Vector2 position, int width, int height, Vector4 color, int layer)
+        public UiImage(Vector2 position, int width, int height, Vector4 color, int layer, UiAlignment alignment = UiAlignment.Center)
         {
             this.width = width;
             this.height = height;
@@ -61,6 +63,7 @@ namespace SpatialEngine.Rendering
             texture = new Texture();
             texture.LoadTexture(pixels, width, height, InternalFormat.Rgb, GLEnum.Rgb);
             
+            SetAlignment(alignment);
             SetLayer(layer);
             AddThis();
         }

@@ -19,7 +19,7 @@ namespace SpatialEngine
         public static bool showImguiDebug = false;
         public static ImGuiController controller;
         //going to be true because my gpu squeals if vsync is off
-        public static bool vsync = false;
+        public static bool vsync = true;
         public static uint vertCount;
         public static uint indCount;
 

@@ -103,29 +103,6 @@ namespace SpatialGame
             //we still need to do this once instead of on each chunk as that will cause issues
             //DeleteParticlesOnQueue();
         }
-
-        static void DeleteParticlesOnQueue()
-        {
-            for (int i = 0; i < ParticleChunkManager.chunks.Length; i++)
-            {
-                if (ParticleChunkManager.chunks[i].idsToDelete.Count == 0)
-                    continue;
-
-                for (int g = 0; g < ParticleChunkManager.chunks[i].idsToDelete.Count; g++)
-                {
-                    int id = ParticleChunkManager.chunks[i].idsToDelete[g];
-                    if (ParticleChunkManager.chunks[i].particles[id].id.chunkIndex == -1)
-                        continue;
-                    if (id >= 0 && id < ParticleChunkManager.chunks[i].particles.Length)
-                    {
-                        ParticleChunkManager.chunks[i].particles[id].Delete();
-                    }
-                }
-
-                ParticleChunkManager.chunks[i].idsToDelete.Clear();
-                ParticleChunkManager.chunks[i].idsToDeleteInfo.Clear();
-            }
-        }
         
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -187,7 +164,10 @@ namespace SpatialGame
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
                 return false;
-            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
+            lock (ParticleChunkManager.chunks[index.chunkIndex].positionCheck)
+            {
+                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
+            }
             return true;
         }
 
@@ -199,7 +179,10 @@ namespace SpatialGame
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
                 return false;
-            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
+            lock (ParticleChunkManager.chunks[index.chunkIndex].idCheck)
+            {
+                ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
+            }
             return true;
         }
 
@@ -211,7 +194,10 @@ namespace SpatialGame
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
                 return 0;
-            return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
+            lock (ParticleChunkManager.chunks[index.chunkIndex].positionCheck)
+            {
+                return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
+            }
         }
 
 #if RELEASE
@@ -220,9 +206,12 @@ namespace SpatialGame
         public static int SafeIdCheckGet(Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
-            if (index.chunkIndex == -1)
+            if (index.particleIndex == -1)
                 return -1;
-            return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+            lock (ParticleChunkManager.chunks[index.chunkIndex].idCheck)
+            {
+                return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+            }
         }
         
 #if RELEASE
@@ -233,7 +222,10 @@ namespace SpatialGame
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
                 return index;
-            return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+            lock (ParticleChunkManager.chunks[index.chunkIndex].idCheck)
+            {
+                return new ChunkIndex(index.chunkIndex, ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+            }
         }
 
         //      Unsafe checks so no bounds checking
@@ -242,21 +234,25 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool UnsafePositionCheckSet(byte type, Vector2 position)
+        public static void UnsafePositionCheckSet(byte type, Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
-            return true;
+            lock (ParticleChunkManager.chunks[index.chunkIndex].positionCheck)
+            {
+                ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
+            }
         }
 
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool UnsafeIdCheckSet(short id, Vector2 position)
+        public static void UnsafeIdCheckSet(short id, Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
-            return true;
+            lock (ParticleChunkManager.chunks[index.chunkIndex].idCheck)
+            {
+                ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
+            }
         }
 
 #if RELEASE
@@ -265,7 +261,10 @@ namespace SpatialGame
         public static byte UnsafePositionCheckGet(Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-            return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
+            lock (ParticleChunkManager.chunks[index.chunkIndex].positionCheck)
+            {
+                return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
+            }
         }
 
 #if RELEASE
@@ -274,7 +273,10 @@ namespace SpatialGame
         public static int UnsafeIdCheckGet(Vector2 position)
         {
             ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
-            return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+            lock (ParticleChunkManager.chunks[index.chunkIndex].idCheck)
+            {
+                return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+            }
         }
         
 #if RELEASE
@@ -285,7 +287,10 @@ namespace SpatialGame
             ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
             if (index.chunkIndex == -1)
                 return index;
-            return new ChunkIndex(index.chunkIndex,ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+            lock (ParticleChunkManager.chunks[index.chunkIndex].idCheck)
+            {
+                return new ChunkIndex(index.chunkIndex, ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+            }
         }
 
 
@@ -295,21 +300,47 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool UnsafePositionCheckSet(int chunk, byte type, Vector2 position)
+        public static void UnsafePositionCheckSet(int chunk, byte type, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
-            ParticleChunkManager.chunks[chunk].positionCheck[particleIndex] = type;
-            return true;
+            lock (ParticleChunkManager.chunks[chunk].positionCheck)
+            {
+                ParticleChunkManager.chunks[chunk].positionCheck[particleIndex] = type;
+            }
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnsafePositionCheckSet(int chunk, byte type, short particle)
+        {
+            lock (ParticleChunkManager.chunks[chunk].positionCheck)
+            {
+                ParticleChunkManager.chunks[chunk].positionCheck[particle] = type;
+            }
         }
 
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool UnsafeIdCheckSet(int chunk, short id, Vector2 position)
+        public static void UnsafeIdCheckSet(int chunk, short id, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
-            ParticleChunkManager.chunks[chunk].idCheck[particleIndex] = id;
-            return true;
+            lock (ParticleChunkManager.chunks[chunk].idCheck)
+            {
+                ParticleChunkManager.chunks[chunk].idCheck[particleIndex] = id;
+            }
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnsafeIdCheckSet(int chunk, short id, short particle)
+        {
+            lock (ParticleChunkManager.chunks[chunk].idCheck)
+            {
+                ParticleChunkManager.chunks[chunk].idCheck[particle] = id;
+            }
         }
 
 #if RELEASE
@@ -318,7 +349,10 @@ namespace SpatialGame
         public static byte UnsafePositionCheckGet(int chunk, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
-            return ParticleChunkManager.chunks[chunk].positionCheck[particleIndex];
+            lock (ParticleChunkManager.chunks[chunk].positionCheck)
+            {
+                return ParticleChunkManager.chunks[chunk].positionCheck[particleIndex];
+            }
         }
 
 #if RELEASE
@@ -327,7 +361,10 @@ namespace SpatialGame
         public static int UnsafeIdCheckGet(int chunk, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
-            return ParticleChunkManager.chunks[chunk].idCheck[particleIndex];
+            lock (ParticleChunkManager.chunks[chunk].idCheck)
+            {
+                return ParticleChunkManager.chunks[chunk].idCheck[particleIndex];
+            }
         }
 
 
@@ -342,6 +379,239 @@ namespace SpatialGame
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
             if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
                 return false;
+            lock (ParticleChunkManager.chunks[chunk].positionCheck)
+            {
+                ParticleChunkManager.chunks[chunk].positionCheck[particleIndex] = type;
+                return true;
+            }
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool SafeIdCheckSet(int chunk, short id, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
+                return false;
+            lock (ParticleChunkManager.chunks[chunk].idCheck)
+            {
+                ParticleChunkManager.chunks[chunk].idCheck[particleIndex] = id;
+                return true;
+            }
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte SafePositionCheckGet(int chunk, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
+                return 0;
+            lock (ParticleChunkManager.chunks[chunk].positionCheck)
+            {
+                return ParticleChunkManager.chunks[chunk].positionCheck[particleIndex];
+            }
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int SafeIdCheckGet(int chunk, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
+                return -1;
+            lock (ParticleChunkManager.chunks[chunk].idCheck)
+            {
+                return ParticleChunkManager.chunks[chunk].idCheck[particleIndex];
+            }
+        }
+        
+        //
+        //      Unsafe multithreading
+        //----------------------------------------------------------------------------------------------------------
+        //
+        //
+        
+        #if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool UnLockSafePositionCheckSet(byte type, Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return false;
+            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
+            return true;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool UnLockSafeIdCheckSet(short id, Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return false;
+            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
+            return true;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte UnLockSafePositionCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return 0;
+            return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int UnLockSafeIdCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return -1;
+            return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+            
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static ChunkIndex UnLockSafeChunkIdCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return index;
+            return new ChunkIndex(index.chunkIndex, ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+        }
+
+        //      Unsafe checks so no bounds checking
+        //----------------------------------------------------------------------------------------------------------
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnLockUnsafePositionCheckSet(byte type, Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex] = type;
+            
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnLockUnsafeIdCheckSet(short id, Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex] = id;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte UnLockUnsafePositionCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            return ParticleChunkManager.chunks[index.chunkIndex].positionCheck[index.particleIndex];
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int UnLockUnsafeIdCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.UnsafeGetIndexInChunksMap(position);
+            return ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex];
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static ChunkIndex UnLockUnsafeChunkIdCheckGet(Vector2 position)
+        {
+            ChunkIndex index = ParticleChunkManager.SafeGetIndexInChunksMap(position);
+            if (index.chunkIndex == -1)
+                return index;
+            return new ChunkIndex(index.chunkIndex, ParticleChunkManager.chunks[index.chunkIndex].idCheck[index.particleIndex]);
+        }
+
+
+        //      Takes in a chunk index instead of caclulating it
+        //----------------------------------------------------------------------------------------------------------
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnLockUnsafePositionCheckSet(int chunk, byte type, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            ParticleChunkManager.chunks[chunk].positionCheck[particleIndex] = type;
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnLockUnsafePositionCheckSet(int chunk, byte type, short particle)
+        {
+            ParticleChunkManager.chunks[chunk].positionCheck[particle] = type;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnLockUnsafeIdCheckSet(int chunk, short id, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            ParticleChunkManager.chunks[chunk].idCheck[particleIndex] = id;
+        }
+        
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static void UnLockUnsafeIdCheckSet(int chunk, short id, short particle)
+        {
+            ParticleChunkManager.chunks[chunk].idCheck[particle] = id;
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static byte UnLockUnsafePositionCheckGet(int chunk, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            return ParticleChunkManager.chunks[chunk].positionCheck[particleIndex];
+        }
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static int UnLockUnsafeIdCheckGet(int chunk, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            return ParticleChunkManager.chunks[chunk].idCheck[particleIndex];
+        }
+
+
+        //      Takes in a chunk index instead of caclulating it Safe version
+        //----------------------------------------------------------------------------------------------------------
+
+#if RELEASE
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+        public static bool UnLockSafePositionCheckSet(int chunk, byte type, Vector2 position)
+        {
+            int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
+            if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
+                return false;
             ParticleChunkManager.chunks[chunk].positionCheck[particleIndex] = type;
             return true;
         }
@@ -349,7 +619,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static bool SafeIdCheckSet(int chunk, short id, Vector2 position)
+        public static bool UnLockSafeIdCheckSet(int chunk, short id, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
             if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
@@ -361,7 +631,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static byte SafePositionCheckGet(int chunk, Vector2 position)
+        public static byte UnLockSafePositionCheckGet(int chunk, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
             if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
@@ -372,7 +642,7 @@ namespace SpatialGame
 #if RELEASE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
 #endif
-        public static int SafeIdCheckGet(int chunk, Vector2 position)
+        public static int UnLockSafeIdCheckGet(int chunk, Vector2 position)
         {
             int particleIndex = (int)(ParticleChunkManager.chunkHeightAmount * (position.X % ParticleChunkManager.chunkWidthAmount) + (position.Y % ParticleChunkManager.chunkHeightAmount));
             if (particleIndex < 0 || particleIndex > ParticleChunkManager.chunks[chunk].particleCount)
